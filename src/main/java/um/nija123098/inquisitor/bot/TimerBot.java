@@ -36,14 +36,20 @@ public class TimerBot implements Runnable {
             this.tasks.add(task);
         }
     }
-    public void close(){
+    public void save(){
         synchronized (this.tasks){
             FileHelper.cleanDir("timers");
             this.tasks.forEach(timerTask -> {
-                List<String> strings = timerTask.close();
+                List<String> strings = timerTask.data();
                 strings.add(timerTask.getClass().getName());
                 FileHelper.writeStrings("timers\\" + FileHelper.getUniqueName("timers"), strings);
             });
+        }
+    }
+    public void close(){
+        this.save();
+        synchronized (this.tasks){
+            this.tasks.forEach(TimerTask::close);
         }
         this.thread = null;
     }

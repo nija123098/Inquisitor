@@ -8,7 +8,9 @@ import java.util.List;
 @FunctionalInterface
 public interface TimerTask {
     void tick();
-    default List<String> close(){
+    default List<String> data(){
         return null;
+    }
+    default void close(){
     }
 }
