@@ -4,7 +4,8 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.ContextHelper;
-import um.nija123098.inquisitor.util.Regard;
+import um.nija123098.inquisitor.util.RequestHandler;
+import um.nija123098.inquisitor.util.StringHelper;
 
 import java.lang.reflect.Method;
 
@@ -20,28 +21,20 @@ public class Execute {
         }
     }
     private static void execute(boolean command, boolean admin, User user, Guild guild, Channel channel, String msg){
+        msg = StringHelper.limitOneSpace(msg);
         if (!command){
             Registry.listen(admin, user, guild, channel, msg);
         }else{
             Method method = Registry.getCommand(msg);
             if (method != null){
+                msg = msg.toLowerCase().replace((method.isAnnotationPresent(Natural.class) ? "" : method.getDeclaringClass().getSimpleName().toLowerCase() + " ") + method.getName().toLowerCase(), "");
+                if (msg.startsWith(" ")){
+                    msg = msg.substring(1);
+                }
                 ContextHelper.execute(method, admin, user, guild, channel, msg);
             }else{
-                Regard.less(() -> channel.discordChannel().sendMessage("Unrecognized Command"));
+                RequestHandler.request(() -> channel.discordChannel().sendMessage("Unrecognized Command"));
             }
         }
-        /*if (msg.equals("CLOSE")){
-            User.save();
-            Channel.save();
-            Guild.save();
-            Regard.less(() -> {
-                Inquisitor.inquisitor().getClient().logout();
-                System.exit(7);
-            });
-        }else if (msg.equals("inspect roles")){
-            final String[] s = {""};
-            guild.discordGuild().getRoles().forEach(iRole -> s[0] += iRole.getName() + ", ");
-            Regard.less(() -> user.discordUser().getOrCreatePMChannel().sendMessage(s[0]));
-        }*/
     }
 }

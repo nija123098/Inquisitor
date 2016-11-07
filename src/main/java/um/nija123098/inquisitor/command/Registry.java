@@ -26,12 +26,21 @@ public class Registry {
     public static Method getCommand(String command){
         String[] parts = command.split(" ");
         for (Class clazz : commands) {
-            for (Method method : clazz.getMethods()) {
-                if (method.isAnnotationPresent(Natural.class) && method.getName().toLowerCase().equals(parts[0].toLowerCase())){
-                    return method;
+            if (clazz.isAnnotationPresent(Natural.class)){
+                for (Method method : clazz.getMethods()) {
+                    if (method.isAnnotationPresent(Command.class) && method.getName().toLowerCase().equals(parts[0].toLowerCase())){
+                        return method;
+                    }
                 }
             }
             if (clazz.getSimpleName().toLowerCase().equals(parts[0].toLowerCase())){
+                if (parts.length == 1){
+                    for (Method method : clazz.getMethods()) {
+                        if (method.isAnnotationPresent(Natural.class)){
+                            return method;
+                        }
+                    }
+                }
                 for (Method method : clazz.getMethods()) {
                     if (method.isAnnotationPresent(Command.class) && method.getName().toLowerCase().equals(parts[1].toLowerCase())){
                         return method;

@@ -42,4 +42,10 @@ public class StringHelper {
     public static String getPossessive(String name){
         return name + "'" + (name.endsWith("s") ? "" : "s");
     }
+    public static String limitOneSpace(String s){
+        if (s.contains("  ")){
+            return limitOneSpace(s.replace("  ", " "));
+        }
+        return s;
+    }
 }

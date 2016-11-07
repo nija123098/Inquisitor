@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
  * Made by nija123098 on 11/6/2016
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target(value = {ElementType.METHOD, ElementType.TYPE})
 public @interface Natural {
 }

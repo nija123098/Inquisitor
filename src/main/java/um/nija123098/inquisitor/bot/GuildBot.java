@@ -27,9 +27,12 @@ public class GuildBot {
             if (s.startsWith(this.guild.getPrefix())){
                 command = true;
                 s = s.substring(this.guild.getPrefix().length());
-            }else if (s.startsWith(event.getClient().getOurUser().mention())){
+            }else if (s.startsWith(event.getClient().getOurUser().mention(false))){
                 command = true;
-                s = s.substring(event.getClient().getOurUser().mention().length());
+                s = s.substring(event.getClient().getOurUser().mention(false).length());
+            }else if (s.startsWith(event.getClient().getOurUser().mention(true))){
+                command = true;
+                s = s.substring(event.getClient().getOurUser().mention(true).length());
             }
             if (command){
                 while (s.startsWith(" ")){
