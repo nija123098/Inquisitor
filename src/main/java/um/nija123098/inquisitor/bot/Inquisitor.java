@@ -25,11 +25,12 @@ public class Inquisitor {
     }
     public static void main(String[] args) {
         List<Class<?>> classes = ClassFinder.find("um.nija123098.inquisitor.register");
-        classes.forEach(aClass -> {
-            Registry.registerCommand(aClass);
-            Registry.registerListener(aClass);
-            Registry.registerStarter(aClass);
-            Registry.registerTimerTask(aClass);
+        classes.forEach(clazz -> {
+            Registry.registerCommand(clazz);
+            Registry.registerListener(clazz);
+            Registry.registerStarter(clazz);
+            Registry.registerTimerTask(clazz);
+            Registry.registerGuildOpenings(clazz);
         });
         inquisitor = new Inquisitor(args[0]);
     }

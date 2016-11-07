@@ -15,7 +15,10 @@ public class User extends Context {
     static {
         USERS = new ArrayList<User>();
         FileHelper.ensureFileExistence("users");
-        FileHelper.getFiles("users").forEach(file -> USERS.add(new User(file.getName(), FileHelper.getStrings(file.getPath()))));
+        FileHelper.getFiles("users").forEach(file -> {
+            try{USERS.add(new User(file.getName(), FileHelper.getStringsNoAdjust(file.getPath())));
+            }catch(Exception ignored){}
+        });
     }
     public static User getUser(String id){
         for (User user : USERS) {

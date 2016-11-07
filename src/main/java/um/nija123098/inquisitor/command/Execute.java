@@ -3,9 +3,7 @@ package um.nija123098.inquisitor.command;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
-import um.nija123098.inquisitor.util.ContextHelper;
-import um.nija123098.inquisitor.util.RequestHandler;
-import um.nija123098.inquisitor.util.StringHelper;
+import um.nija123098.inquisitor.util.*;
 
 import java.lang.reflect.Method;
 
@@ -27,13 +25,13 @@ public class Execute {
         }else{
             Method method = Registry.getCommand(msg);
             if (method != null){
-                msg = msg.toLowerCase().replace((method.isAnnotationPresent(Natural.class) ? "" : method.getDeclaringClass().getSimpleName().toLowerCase() + " ") + method.getName().toLowerCase(), "");
-                if (msg.startsWith(" ")){
+                msg = msg.substring(CommandHelper.command(method).length());
+                if (msg.length() > 0){
                     msg = msg.substring(1);
                 }
                 ContextHelper.execute(method, admin, user, guild, channel, msg);
             }else{
-                RequestHandler.request(() -> channel.discordChannel().sendMessage("Unrecognized Command"));
+                MessageHelper.send(channel, "Unrecognized Command");
             }
         }
     }

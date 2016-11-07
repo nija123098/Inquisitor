@@ -28,7 +28,15 @@ public class FileHelper {
         return existed;
     }
     public static List<String> getStrings(String path){
-        try{return Files.readAllLines(Paths.get(getJarContainer() + "\\" + path));
+        return getStringsNoAdjust(getJarContainer() + "\\");
+    }
+    public static List<String> getStringsNoAdjust(String path){
+        try{
+            List<String> strings = Files.readAllLines(Paths.get(path));
+            if (strings == null){
+                strings = new ArrayList<String>(0);
+            }
+            return strings;
         }catch(Exception ignored){
             return null;
         }
@@ -52,7 +60,7 @@ public class FileHelper {
         List<String> strings = new ArrayList<String>();
         ensureFileExistence(path);
         for (File file : new File(getJarContainer() + "\\" + path).listFiles()) {
-            strings.add(file.getPath());
+            strings.add(path + "\\" + file.getName());
         }
         return strings;
     }

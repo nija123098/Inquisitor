@@ -50,6 +50,25 @@ public class Registry {
         }
         return null;
     }
+    public static List<Method> getSurfaceCommands(){
+        List<Method> methods = new ArrayList<Method>(commands.size() * 10);
+        for (Class clazz : commands) {
+            if (clazz.isAnnotationPresent(Natural.class)){
+                for (Method method : clazz.getMethods()) {
+                    if (method.isAnnotationPresent(Command.class)){
+                        methods.add(method);
+                    }
+                }
+            }else{
+                for (Method method : clazz.getMethods()) {
+                    if (method.isAnnotationPresent(Natural.class) || method.isAnnotationPresent(Command.class)){
+                        methods.add(method);
+                    }
+                }
+            }
+        }
+        return methods;
+    }
     private static final List<Method> listeners;
     static {
         listeners = new ArrayList<Method>();
@@ -77,6 +96,20 @@ public class Registry {
     }
     public static void start(){
         starters.forEach(method -> Regard.less(() -> method.invoke(null)));
+    }
+    private static final List<Method> startUps;
+    static {
+        startUps = new ArrayList<Method>();
+    }
+    public static void registerGuildOpenings(Class clazz){
+        for (Method method : clazz.getMethods()) {
+            if (method.isAnnotationPresent(GuildOpen.class) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(Guild.class)){
+                startUps.add(method);
+            }
+        }
+    }
+    public static void guildOpen(Guild guild){
+        startUps.forEach(method -> ContextHelper.execute(method, false, null, guild, null, ""));
     }
     private static final List<Class> timerTaskTypes;
     static {

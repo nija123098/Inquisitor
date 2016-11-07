@@ -2,6 +2,7 @@ package um.nija123098.inquisitor.context;
 
 import sx.blah.discord.handle.obj.IGuild;
 import um.nija123098.inquisitor.bot.Inquisitor;
+import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.util.FileHelper;
 
 import java.util.ArrayList;
@@ -15,7 +16,10 @@ public class Guild extends Context {
     static {
         GUILDS = new ArrayList<Guild>();
         FileHelper.ensureFileExistence("guilds");
-        FileHelper.getFiles("guilds").forEach(file -> GUILDS.add(new Guild(file.getName(), FileHelper.getStrings("guilds\\" + file.getName()))));
+        FileHelper.getFiles("guilds").forEach(file -> {
+            try{GUILDS.add(new Guild(file.getName(), FileHelper.getStringsNoAdjust(file.getPath())));
+            }catch(Exception ignored){ignored.printStackTrace();}
+        });
     }
     public static Guild getGuild(String id){
         for (Guild guild : GUILDS) {
@@ -35,6 +39,7 @@ public class Guild extends Context {
     public Guild(String id) {
         super(id);
         this.prefix = "-";
+        Registry.guildOpen(this);
     }
     public Guild(String id, List<String> strings) {
         this(id);
