@@ -3,6 +3,7 @@ package um.nija123098.inquisitor.context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -15,10 +16,11 @@ public class Context {
         this(id, new ArrayList<String>());
     }
     public Context(String id, List<String> strings){
+        this.stringMap = new ConcurrentHashMap<String, String>(strings.size());
         this.id = id;
         for (String s : strings) {
             String[] st = s.split(":");
-            this.stringMap.put(st[0], s.substring(st[0].length()));
+            this.stringMap.put(st[0], s.substring(st[0].length() + 1));
         }
     }
     public String getID(){
@@ -30,7 +32,6 @@ public class Context {
     public void putData(String id, String data){
         this.stringMap.put(id, data);
     }
-
     public List<String> getStrings() {
         List<String> strings = new ArrayList<String>(this.stringMap.size());
         strings.addAll(this.stringMap.keySet().stream().map(key -> key + ":" + this.stringMap.get(key)).collect(Collectors.toList()));

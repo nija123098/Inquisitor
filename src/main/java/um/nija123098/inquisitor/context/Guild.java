@@ -2,7 +2,6 @@ package um.nija123098.inquisitor.context;
 
 import sx.blah.discord.handle.obj.IGuild;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.util.FileHelper;
 
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ public class Guild extends Context {
     }
     public Guild(String id) {
         super(id);
-        Registry.guildOpen(this);
     }
     public Guild(String id, List<String> strings) {
         super(id, strings);

@@ -1,6 +1,7 @@
 package um.nija123098.inquisitor.context;
 
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IPrivateChannel;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.util.FileHelper;
 
@@ -36,11 +37,17 @@ public class Channel extends Context {
     }
     public Channel(String id) {
         super(id);
+        if (this.discordChannel().getName().contains("test")){
+            this.putData("chat_approved", "true");
+        }
     }
     public Channel(String id, List<String> strings){
         super(id, strings);
     }
     public IChannel discordChannel(){
         return Inquisitor.inquisitor().getClient().getChannelByID(this.getID());
+    }
+    public boolean isPrivate(){
+        return discordChannel() instanceof IPrivateChannel;
     }
 }
