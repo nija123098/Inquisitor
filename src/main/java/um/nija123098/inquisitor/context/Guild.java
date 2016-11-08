@@ -35,26 +35,12 @@ public class Guild extends Context {
         FileHelper.cleanDir("guilds");
         GUILDS.forEach(channel -> FileHelper.writeStrings("guilds\\" + channel.getID(), channel.getStrings()));
     }
-    private volatile String prefix;
     public Guild(String id) {
         super(id);
-        this.prefix = "-";
         Registry.guildOpen(this);
     }
     public Guild(String id, List<String> strings) {
-        this(id);
-        this.prefix = strings.get(0);
-    }
-    public String getPrefix(){
-        return this.prefix;
-    }
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-    public List<String> getStrings(){
-        List<String> strings = new ArrayList<String>(1);
-        strings.add(this.prefix);
-        return strings;
+        super(id, strings);
     }
     public IGuild discordGuild(){
         return Inquisitor.inquisitor().getClient().getGuildByID(this.getID());

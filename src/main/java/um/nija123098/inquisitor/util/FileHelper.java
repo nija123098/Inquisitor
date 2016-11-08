@@ -28,7 +28,7 @@ public class FileHelper {
         return existed;
     }
     public static List<String> getStrings(String path){
-        return getStringsNoAdjust(getJarContainer() + "\\");
+        return getStringsNoAdjust(getJarContainer() + "\\" + path);
     }
     public static List<String> getStringsNoAdjust(String path){
         try{

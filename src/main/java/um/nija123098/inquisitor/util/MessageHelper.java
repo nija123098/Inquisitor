@@ -13,7 +13,7 @@ public class MessageHelper {
         RequestHandler.request(() -> channel.discordChannel().sendMessage(msg));
     }
     public static void send(Channel channel, String msg){
-        if (channel.chatApproved()){
+        if ("true".equals(channel.getData("chat_approved"))){
             sendOverride(channel, msg);
         }
     }

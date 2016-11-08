@@ -40,9 +40,6 @@ public class User extends Context {
     public User(String id, List<String> strings) {
         this(id);
     }
-    public List<String> getStrings(){
-        return new ArrayList<String>();
-    }
     public IUser discordUser(){
         return Inquisitor.inquisitor().getClient().getUserByID(this.getID());
     }

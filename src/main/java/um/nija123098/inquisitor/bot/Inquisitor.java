@@ -10,6 +10,7 @@ import sx.blah.discord.handle.obj.IPrivateChannel;
 import um.nija123098.inquisitor.command.Execute;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.util.ClassFinder;
+import um.nija123098.inquisitor.util.FileHelper;
 import um.nija123098.inquisitor.util.RequestHandler;
 
 import java.util.ArrayList;

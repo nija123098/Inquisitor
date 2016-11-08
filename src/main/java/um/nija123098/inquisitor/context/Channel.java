@@ -1,7 +1,6 @@
 package um.nija123098.inquisitor.context;
 
 import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IPrivateChannel;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.util.FileHelper;
 
@@ -35,27 +34,13 @@ public class Channel extends Context {
         FileHelper.cleanDir("channels");
         CHANNELS.forEach(channel -> FileHelper.writeStrings("channels\\" + channel.getID(), channel.getStrings()));
     }
-    private volatile boolean approved;
     public Channel(String id) {
         super(id);
-        this.approved = this.discordChannel().getName().toLowerCase().contains("test") || discordChannel() instanceof IPrivateChannel;
     }
     public Channel(String id, List<String> strings){
-        this(id);
-        this.approved = Boolean.parseBoolean(strings.get(0));
-    }
-    public List<String> getStrings(){
-        List<String> strings = new ArrayList<String>();
-        strings.add(this.approved + "");
-        return strings;
+        super(id, strings);
     }
     public IChannel discordChannel(){
         return Inquisitor.inquisitor().getClient().getChannelByID(this.getID());
-    }
-    public boolean chatApproved(){
-        return this.approved;
-    }
-    public void approveChat(boolean approved){
-        this.approved = approved;
     }
 }
