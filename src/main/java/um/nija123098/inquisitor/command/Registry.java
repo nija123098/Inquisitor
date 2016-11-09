@@ -3,6 +3,8 @@ package um.nija123098.inquisitor.command;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 11/7/2016
@@ -30,15 +32,16 @@ public class Registry {
         }
     }
     public static void startUp(){
-        COMMANDS.stream().filter(Command::runOnStartUp).forEach(command -> command.invoke(null, null, null, null));
+        COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null));
     }
     public static Command getCommand(String msg){
-        for (Command command : SURFACE) {
+        msg = msg.toLowerCase();
+        for (Command command : DEEP) {
             if (match(msg, command)){
                 return command;
             }
         }
-        for (Command command : DEEP) {
+        for (Command command : SURFACE) {
             if (match(msg, command)){
                 return command;
             }
@@ -57,5 +60,8 @@ public class Registry {
             }
         }
         return true;
+    }
+    public static List<Command> getCommands(Predicate<Command> predicate){
+        return COMMANDS.stream().filter(predicate).collect(Collectors.toList());
     }
 }

@@ -19,7 +19,7 @@ public enum Rank {
     @Deprecated
     NONE,;
     public static Rank getRank(User user, Guild guild){
-        if (user.discordUser().getID().equals("191677220027236352")){
+        if (user.user().getID().equals("191677220027236352")){
             return MAKER;
         }
         if ("true".equals(user.getData("banned"))){
@@ -29,16 +29,16 @@ public enum Rank {
             return BOT_ADMIN;
         }
         if (guild != null){
-            if (guild.discordGuild().getOwner().equals(user.discordUser())){
+            if (guild.guild().getOwner().equals(user.user())){
                 return GUILD_OWNER;
             }
-            for (IRole iRole : guild.discordGuild().getRolesForUser(user.discordUser())) {
+            for (IRole iRole : guild.guild().getRolesForUser(user.user())) {
                 if (iRole.getPermissions().contains(Permissions.ADMINISTRATOR)){
                     return GUILD_ADMIN;
                 }
             }
         }
-        if (user.discordUser().isBot()){
+        if (user.user().isBot()){
             return BOT;
         }
         return USER;

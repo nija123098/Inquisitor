@@ -37,17 +37,17 @@ public class Channel extends Context {
     }
     public Channel(String id) {
         super(id);
-        if (this.discordChannel().getName().contains("test")){
+        if (this.discord().getName().contains("test") || this.isPrivate()){
             this.putData("chat_approved", "true");
         }
     }
     public Channel(String id, List<String> strings){
         super(id, strings);
     }
-    public IChannel discordChannel(){
+    public IChannel discord(){
         return Inquisitor.inquisitor().getClient().getChannelByID(this.getID());
     }
     public boolean isPrivate(){
-        return discordChannel() instanceof IPrivateChannel;
+        return discord() instanceof IPrivateChannel;
     }
 }

@@ -13,25 +13,30 @@ import java.lang.reflect.Method;
  * Made by nija123098 on 11/7/2016
  */
 public class Command {
+    private final String name;
     private final Method method;
     private final Register register;
     public Command(Method method) {
         this.method = method;
         this.register = method.getAnnotation(Register.class);
+        String name = this.register.name().toLowerCase();
+        if (name.equals("")){
+            if (this.natural()){
+                this.name = this.method.getName().toLowerCase();
+            }else if (this.defaul()) {
+                this.name = this.method.getDeclaringClass().getSimpleName().toLowerCase();
+            }else{
+                this.name = this.method.getDeclaringClass().getSimpleName().toLowerCase() + " " + this.method.getName().toLowerCase();
+            }
+        }else{
+            this.name = name;
+        }
     }
     public String help(){
         return this.register.help();
     }
     public String name(){
-        String name = this.register.name();
-        if (name.equals("")){
-            if (this.natural()){
-                return this.method.getName();
-            }else{
-                return this.method.getDeclaringClass().getName().toLowerCase() + " " + this.method.getName().toLowerCase();
-            }
-        }
-        return name;
+        return this.name;
     }
     public boolean natural(){
         return this.register.natural();
@@ -45,12 +50,25 @@ public class Command {
     public Rank rank(){
         return this.register.rank();
     }
-    public boolean runOnStartUp() {
-        return this.register.runOnStartup();
+    public boolean rankSufficient(Rank rank){
+        return rank.ordinal() >= this.rank().ordinal();
+    }
+    public boolean startup() {
+        return this.register.startup();
+    }
+    public boolean guild(){
+        return this.register.guild();
+    }
+    public boolean hidden(){
+        return this.register.hidden();
     }
     public boolean invoke(User user, Guild guild, Channel channel, String s){
-        if (Rank.getRank(user, guild).ordinal() < this.rank().ordinal()){
-            MessageHelper.send(user, "That method is above your rank");
+        if (!this.rankSufficient(Rank.getRank(user, guild))){
+            MessageHelper.send(user, "That command is above your rank");
+            return false;
+        }
+        if (this.guild() && guild != null){
+            MessageHelper.send(user, "That command can not be used in a private channel");
             return false;
         }
         Object[] objects = new Object[this.method.getParameterTypes().length];
@@ -63,6 +81,13 @@ public class Command {
                 objects[i] = channel;
             }else if (this.method.getParameterTypes()[i].equals(String.class)){
                 objects[i] = s;
+            }else if (this.method.getParameterTypes()[i].equals(String[].class)){
+                String[] strings = s.split(" ");
+                if (strings[0].equals("")){
+                    objects[i] = new String[0];
+                }else{
+                    objects[i] = strings;
+                }
             }else if (this.method.getParameterTypes()[i].equals(Command.class)){
                 objects[i] = this;
             }
@@ -72,7 +97,7 @@ public class Command {
                 this.method.invoke(null);
             }else{
                 this.method.invoke(null, objects);
-            }
+             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage());
             return false;

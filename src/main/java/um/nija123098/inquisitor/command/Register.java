@@ -32,5 +32,7 @@ public @interface Register {
      */
     boolean defaul() default false;
     Rank rank() default Rank.USER;
-    boolean runOnStartup() default false;
+    boolean startup() default false;
+    boolean guild() default false;
+    boolean hidden() default false;
 }

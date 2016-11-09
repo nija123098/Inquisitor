@@ -40,7 +40,7 @@ public class Guild extends Context {
     public Guild(String id, List<String> strings) {
         super(id, strings);
     }
-    public IGuild discordGuild(){
+    public IGuild guild(){
         return Inquisitor.inquisitor().getClient().getGuildByID(this.getID());
     }
 }
