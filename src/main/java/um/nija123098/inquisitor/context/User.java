@@ -41,6 +41,6 @@ public class User extends Context {
         this(id);
     }
     public IUser user(){
-        return Inquisitor.inquisitor().getClient().getUserByID(this.getID());
+        return Inquisitor.discordClient().getUserByID(this.getID());
     }
 }

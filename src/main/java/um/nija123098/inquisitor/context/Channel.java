@@ -45,7 +45,7 @@ public class Channel extends Context {
         super(id, strings);
     }
     public IChannel discord(){
-        return Inquisitor.inquisitor().getClient().getChannelByID(this.getID());
+        return Inquisitor.discordClient().getChannelByID(this.getID());
     }
     public boolean isPrivate(){
         return discord() instanceof IPrivateChannel;

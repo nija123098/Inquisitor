@@ -10,6 +10,7 @@ import sx.blah.discord.handle.obj.IPrivateChannel;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.util.ClassFinder;
+import um.nija123098.inquisitor.util.FileHelper;
 import um.nija123098.inquisitor.util.RequestHandler;
 
 import java.util.ArrayList;
@@ -20,8 +21,17 @@ import java.util.List;
  */
 public class Inquisitor {
     private static Inquisitor inquisitor;
-    public static Inquisitor inquisitor(){
-        return inquisitor;
+    public static IDiscordClient discordClient(){
+        return inquisitor.getClient();
+    }
+    public static Entity getEntity(String name){
+        return inquisitor.getEnt(name);
+    }
+    public static void close(){
+        inquisitor.closeInner();
+    }
+    public static void save(){
+        inquisitor.saveInner();
     }
     public static void main(String[] args) {
         List<Class<?>> classes = ClassFinder.find("um.nija123098.inquisitor.commands");
@@ -29,8 +39,10 @@ public class Inquisitor {
         inquisitor = new Inquisitor(args[0]);
     }
     private final List<GuildBot> botList;
+    private final List<Entity> entities;
     private IDiscordClient client;
-    public Inquisitor(String token){
+    private Inquisitor(String token){
+        this.entities = new ArrayList<Entity>();
         this.botList = new ArrayList<GuildBot>(1);
         RequestHandler.request(() -> {
             this.client = new ClientBuilder().withToken(token).build();
@@ -39,6 +51,7 @@ public class Inquisitor {
                 this.client.getDispatcher().registerListener(this);
             });
         });
+        FileHelper.getFiles("entities").forEach(file -> this.entities.add(new Entity(file.getName(), FileHelper.getStringsNoAdjust(file.getPath()))));
     }
     @EventSubscriber
     public void handle(GuildCreateEvent event){
@@ -54,10 +67,26 @@ public class Inquisitor {
     public void handle(ReadyEvent event){
         Registry.startUp();
     }
+    public Entity getEnt(String name){
+        for (Entity ent : this.entities) {
+            if (ent.name().equals(name)){
+                return ent;
+            }
+        }
+        Entity entity = new Entity(name);
+        this.entities.add(entity);
+        System.out.println("B" + name);
+        return entity;
+    }
     public IDiscordClient getClient(){
         return this.client;
     }
-    public void close(){
+    public void saveInner(){
+        FileHelper.cleanDir("entities");
+        this.entities.forEach(entity -> FileHelper.writeStrings("entities\\" + entity.name(), entity.getStrings()));
+    }
+    public void closeInner(){
         this.botList.forEach(GuildBot::close);
+        this.save();
     }
 }

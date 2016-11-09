@@ -30,7 +30,7 @@ public class MessageHelper {
     }
     private static void innerSend(IChannel channel, String msg, long deleteMillis){
         RequestHandler.request(() -> {
-            IMessage message = new MessageBuilder(Inquisitor.inquisitor().getClient()).withChannel(channel).withContent(msg).send();
+            IMessage message = new MessageBuilder(Inquisitor.discordClient()).withChannel(channel).withContent(msg).send();
             if (deleteMillis > 0){
                 RequestHandler.request(deleteMillis, message::delete);
             }

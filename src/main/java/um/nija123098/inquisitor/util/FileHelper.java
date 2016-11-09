@@ -50,6 +50,7 @@ public class FileHelper {
         }catch(Exception ignored){}
     }
     public static List<File> getFiles(String path){
+        ensureFileExistence(path);
         path = getJarContainer() + "\\" + path;
         List<File> files = new ArrayList<File>();
         try{Collections.addAll(files, new File(path).listFiles());
