@@ -4,8 +4,8 @@ import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IPrivateChannel;
-import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.command.Invoke;
+import um.nija123098.inquisitor.context.Guild;
 
 /**
  * Made by nija123098 on 11/5/2016
@@ -42,6 +42,9 @@ public class GuildBot {
                 Invoke.invoke(event.getMessage().getAuthor().getID(), this.guildID, event.getMessage().getChannel().getID(), s);
             }
         }
+    }
+    public String guildID() {
+        return this.guildID;
     }
     public void close() {
 

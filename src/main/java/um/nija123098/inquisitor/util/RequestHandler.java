@@ -12,30 +12,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RequestHandler {
     private static final Timer REUQEST_TIMER = new Timer();
-    private static volatile int count;
     public static void request(Request request){
-        ++count;
         RequestBuffer.request(() -> {
-            try {
-                request.request();
-                --count;
-            } catch (DiscordException | MissingPermissionsException e) {
-                if (e instanceof DiscordException && e.getMessage().contains("CloudFlair")){
-                    throw new RateLimitException("CloudFlair thwarting", 100, "WHAT?", false);
-                }// may remove thwarting at next version bump
-                e.printStackTrace();
+            try{request.request();
+            } catch (DiscordException e) {
+                Log.error("Error in request due to DiscordException for reason " + e.getMessage());
+            } catch (MissingPermissionsException e) {
+                request.missingPermissions();
             }
         });
     }
     public static void request(long millis, Request request){
         REUQEST_TIMER.add(millis, request);
     }
-    public static int requestCount() {
-        return count;
-    }
     @FunctionalInterface
     public interface Request{
         void request() throws DiscordException, RateLimitException, MissingPermissionsException;
+        default void missingPermissions(){
+        }
     }
     private static class Timer implements Runnable {
         private Map<Long, List<Request>> requestMap;
@@ -44,6 +38,7 @@ public class RequestHandler {
             this.requestMap = new ConcurrentHashMap<Long, List<Request>>();
         }
         public void add(long millis, RequestHandler.Request request){
+            millis += System.currentTimeMillis();
             List<RequestHandler.Request> requests = this.requestMap.get(millis);
             if (request == null){
                 requests = new ArrayList<Request>(1);
@@ -62,8 +57,14 @@ public class RequestHandler {
                 if (delta > 0){
                     ++previous;
                     requests = this.requestMap.get(previous);
+                    this.requestMap.remove(previous);
                     if (requests != null){
-                        requests.forEach(RequestHandler::request);
+                        requests.forEach(request -> {
+                            try{request.request();
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
+                        });
                     }
                 }
             }

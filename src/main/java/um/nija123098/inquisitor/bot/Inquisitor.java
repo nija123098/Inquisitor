@@ -55,7 +55,14 @@ public class Inquisitor {
     }
     @EventSubscriber
     public void handle(GuildCreateEvent event){
-        this.botList.add(new GuildBot(this.client, event.getGuild().getID()));
+        synchronized (this.botList){
+            for (GuildBot guildBot : this.botList) {
+                if (guildBot.guildID().equals(event.getGuild().getID())){
+                    return;
+                }
+            }
+            this.botList.add(new GuildBot(this.client, event.getGuild().getID()));
+        }
     }
     @EventSubscriber
     public void handle(MessageReceivedEvent event){
@@ -65,6 +72,9 @@ public class Inquisitor {
     }
     @EventSubscriber
     public void handle(ReadyEvent event){
+        synchronized (this.botList){
+            event.getClient().getGuilds().forEach(guild -> this.botList.add(new GuildBot(this.client, guild.getID())));
+        }
         Registry.startUp();
     }
     public Entity getEnt(String name){
@@ -75,7 +85,6 @@ public class Inquisitor {
         }
         Entity entity = new Entity(name);
         this.entities.add(entity);
-        System.out.println("B" + name);
         return entity;
     }
     public IDiscordClient getClient(){
@@ -87,6 +96,6 @@ public class Inquisitor {
     }
     public void closeInner(){
         this.botList.forEach(GuildBot::close);
-        this.save();
+        save();
     }
 }
