@@ -67,7 +67,7 @@ public class Command {
             MessageHelper.send(user, "That command is above your rank");
             return false;
         }
-        if (this.guild() && guild != null){
+        if (this.guild() && guild == null){
             MessageHelper.send(user, "That command can not be used in a private channel");
             return false;
         }

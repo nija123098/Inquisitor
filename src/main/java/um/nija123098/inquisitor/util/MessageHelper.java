@@ -23,7 +23,7 @@ public class MessageHelper {
         }
     }
     public static void send(User user, String msg, long deleteMillis){
-        RequestHandler.request(() -> innerSend(user.user().getOrCreatePMChannel(), msg, deleteMillis));
+        RequestHandler.request(() -> innerSend(user.discord().getOrCreatePMChannel(), msg, deleteMillis));
     }
     public static void send(User user, String msg){
         send(user, msg, 0);
