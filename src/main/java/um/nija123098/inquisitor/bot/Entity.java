@@ -29,6 +29,9 @@ public class Entity {
     public void putData(String id, String data) {
         this.stringMap.put(id, data);
     }
+    public void clearData(String id){
+        this.stringMap.remove(id);
+    }
     public List<String> getStrings() {
         List<String> strings = new ArrayList<String>(this.stringMap.size());
         strings.addAll(this.stringMap.keySet().stream().map(key -> key + ":" + this.stringMap.get(key)).collect(Collectors.toList()));

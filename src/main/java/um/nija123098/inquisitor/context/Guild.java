@@ -17,7 +17,7 @@ public class Guild extends Context {
         FileHelper.ensureFileExistence("guilds");
         FileHelper.getFiles("guilds").forEach(file -> {
             try{GUILDS.add(new Guild(file.getName(), FileHelper.getStringsNoAdjust(file.getPath())));
-            }catch(Exception ignored){ignored.printStackTrace();}
+            }catch(Exception ignored){}
         });
     }
     public static Guild getGuild(String id){

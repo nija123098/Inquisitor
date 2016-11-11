@@ -63,7 +63,8 @@ public class Command {
         return this.register.hidden();
     }
     public boolean invoke(User user, Guild guild, Channel channel, String s){
-        if (!this.rankSufficient(Rank.getRank(user, guild))){
+        Rank rank = Rank.getRank(user, guild);
+        if (!this.rankSufficient(rank)){
             MessageHelper.send(user, "That command is above your rank");
             return false;
         }
@@ -72,24 +73,27 @@ public class Command {
             return false;
         }
         Object[] objects = new Object[this.method.getParameterTypes().length];
+        Class[] parameterTypes = this.method.getParameterTypes();
         for (int i = 0; i < objects.length; i++) {
-            if (this.method.getParameterTypes()[i].equals(User.class)){
+            if (parameterTypes[i].equals(User.class)){
                 objects[i] = user;
-            }else if (this.method.getParameterTypes()[i].equals(Guild.class)){
+            }else if (parameterTypes[i].equals(Guild.class)){
                 objects[i] = guild;
-            }else if (this.method.getParameterTypes()[i].equals(Channel.class)){
+            }else if (parameterTypes[i].equals(Channel.class)){
                 objects[i] = channel;
-            }else if (this.method.getParameterTypes()[i].equals(String.class)){
+            }else if (parameterTypes[i].equals(String.class)){
                 objects[i] = s;
-            }else if (this.method.getParameterTypes()[i].equals(String[].class)){
+            }else if (parameterTypes[i].equals(String[].class)){
                 String[] strings = s.split(" ");
                 if (strings[0].equals("")){
                     objects[i] = new String[0];
                 }else{
                     objects[i] = strings;
                 }
-            }else if (this.method.getParameterTypes()[i].equals(Command.class)){
+            }else if (parameterTypes[i].equals(Command.class)){
                 objects[i] = this;
+            }else if (parameterTypes[i].equals(Rank.class)){
+                objects[i] = rank;
             }
         }
         try {
@@ -99,7 +103,8 @@ public class Command {
                 this.method.invoke(null, objects);
              }
         } catch (IllegalAccessException | InvocationTargetException e) {
-            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage());
+            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked");
+            e.printStackTrace();
             return false;
         }
         return true;

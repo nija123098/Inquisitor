@@ -37,7 +37,7 @@ public class Channel extends Context {
     }
     public Channel(String id) {
         super(id);
-        if (this.discord().getName().contains("test") || this.isPrivate()){
+        if (this.discord().getName().contains("test") || this.discord().getName().contains("spam") || this.isPrivate()){
             this.putData("chat_approved", "true");
         }
     }

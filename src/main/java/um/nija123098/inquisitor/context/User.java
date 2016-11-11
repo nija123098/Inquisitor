@@ -38,7 +38,7 @@ public class User extends Context {
         super(id);
     }
     public User(String id, List<String> strings) {
-        this(id);
+        super(id, strings);
     }
     public IUser discord(){
         return Inquisitor.discordClient().getUserByID(this.getID());

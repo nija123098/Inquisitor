@@ -17,7 +17,7 @@ public class Invoke {
             invoke(User.getUser(user), Guild.getGuild(guild), Channel.getChannel(channel), msg);
         }
     }
-    private static void invoke(User user, Guild guild, Channel channel, String msg){
+    public static void invoke(User user, Guild guild, Channel channel, String msg){
         msg = StringHelper.limitOneSpace(msg);
         Command method = Registry.getCommand(msg);
         if (method != null){

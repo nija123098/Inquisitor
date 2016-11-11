@@ -35,27 +35,26 @@ public class Registry {
         COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null));
     }
     public static Command getCommand(String msg){
-        msg = msg.toLowerCase();
+        String[] strings = msg.toLowerCase().split(" ");
         for (Command command : DEEP) {
-            if (match(msg, command)){
+            if (match(strings, command)){
                 return command;
             }
         }
         for (Command command : SURFACE) {
-            if (match(msg, command)){
+            if (match(strings, command)){
                 return command;
             }
         }
         return null;
     }
-    private static boolean match(String msg, Command command){
+    private static boolean match(String[] msg, Command command){
         String[] commandStrings = command.name().split(" ");
-        String[] msgStrings = msg.split(" ");
-        if (commandStrings.length > msgStrings.length){
+        if (commandStrings.length > msg.length){
             return false;
         }
         for (int i = 0; i < commandStrings.length; i++) {
-            if (!commandStrings[i].equals(msgStrings[i])){
+            if (!commandStrings[i].equals(msg[i])){
                 return false;
             }
         }
