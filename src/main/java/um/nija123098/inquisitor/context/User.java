@@ -15,10 +15,6 @@ public class User extends Context {
     static {
         USERS = new ArrayList<User>();
         FileHelper.ensureFileExistence("users");
-        FileHelper.getFiles("users").forEach(file -> {
-            try{USERS.add(new User(file.getName(), FileHelper.getStringsNoAdjust(file.getPath())));
-            }catch(Exception ignored){}
-        });
     }
     public static User getUser(String id){
         for (User user : USERS) {
@@ -30,15 +26,8 @@ public class User extends Context {
         USERS.add(user);
         return user;
     }
-    public static void save(){
-        FileHelper.cleanDir("users");
-        USERS.forEach(channel -> FileHelper.writeStrings("users\\" + channel.getID(), channel.getStrings()));
-    }
     public User(String id) {
-        super(id);
-    }
-    public User(String id, List<String> strings) {
-        super(id, strings);
+        super("user", id);
     }
     public IUser discord(){
         return Inquisitor.discordClient().getUserByID(this.getID());

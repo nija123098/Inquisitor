@@ -10,9 +10,6 @@ import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
-import um.nija123098.inquisitor.context.Channel;
-import um.nija123098.inquisitor.context.Guild;
-import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.ClassFinder;
 import um.nija123098.inquisitor.util.FileHelper;
 import um.nija123098.inquisitor.util.RequestHandler;
@@ -55,7 +52,7 @@ public class Inquisitor {
                 this.client.getDispatcher().registerListener(this);
             });
         });
-        FileHelper.getFiles("entities").forEach(file -> this.entities.add(new Entity(file.getName(), FileHelper.getStringsNoAdjust(file.getPath()))));
+        FileHelper.ensureFileExistence("system");
     }
     @EventSubscriber
     public void handle(GuildCreateEvent event){
@@ -88,12 +85,12 @@ public class Inquisitor {
         }
     }
     public Entity getEnt(String name){
-        for (Entity ent : this.entities) {
-            if (ent.name().equals(name)){
-                return ent;
+        for (Entity entity : this.entities) {
+            if (entity.name().equals(name)){
+                return entity;
             }
         }
-        Entity entity = new Entity(name);
+        Entity entity = new Entity(FileHelper.getJarContainer() + "\\system", name);
         this.entities.add(entity);
         return entity;
     }
@@ -101,11 +98,7 @@ public class Inquisitor {
         return this.client;
     }
     public void saveInner(){
-        User.save();
-        Channel.save();
-        Guild.save();
-        FileHelper.cleanDir("entities");
-        this.entities.forEach(entity -> FileHelper.writeStrings("entities\\" + entity.name(), entity.getStrings()));
+        Entity.saveEntities();
     }
     public void closeInner(){
         this.botList.forEach(GuildBot::close);

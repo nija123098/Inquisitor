@@ -13,7 +13,7 @@ import java.util.List;
 public class FileHelper {
     private static final String container;
     static{container = new File(FileHelper.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();}
-    private static String getJarContainer(){
+    public static String getJarContainer(){
         return container;
     }
     public static boolean ensureFileExistence(String path) {
@@ -92,5 +92,8 @@ public class FileHelper {
                 return "uniquefile" + i;
             }
         }
+    }
+    public static File getFileForAdjusted(String path){
+        return new File(getJarContainer() + "\\" + path);
     }
 }

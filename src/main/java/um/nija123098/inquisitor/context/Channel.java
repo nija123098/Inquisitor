@@ -16,10 +16,6 @@ public class Channel extends Context {
     static {
         CHANNELS = new ArrayList<Channel>();
         FileHelper.ensureFileExistence("channels");
-        FileHelper.getFiles("channels").forEach(file -> {
-            try{CHANNELS.add(new Channel(file.getName(), FileHelper.getStringsNoAdjust(file.getPath())));
-            }catch(Exception ignored){}
-        });
     }
     public static Channel getChannel(String id){
         for (Channel channel : CHANNELS) {
@@ -31,18 +27,11 @@ public class Channel extends Context {
         CHANNELS.add(channel);
         return channel;
     }
-    public static void save(){
-        FileHelper.cleanDir("channels");
-        CHANNELS.forEach(channel -> FileHelper.writeStrings("channels\\" + channel.getID(), channel.getStrings()));
-    }
     public Channel(String id) {
-        super(id);
+        super("channel", id);
         if (this.discord().getName().contains("test") || this.discord().getName().contains("spam") || this.isPrivate()){
             this.putData("chat_approved", "true");
         }
-    }
-    public Channel(String id, List<String> strings){
-        super(id, strings);
     }
     public IChannel discord(){
         return Inquisitor.discordClient().getChannelByID(this.getID());

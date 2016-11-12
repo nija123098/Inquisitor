@@ -15,10 +15,6 @@ public class Guild extends Context {
     static {
         GUILDS = new ArrayList<Guild>();
         FileHelper.ensureFileExistence("guilds");
-        FileHelper.getFiles("guilds").forEach(file -> {
-            try{GUILDS.add(new Guild(file.getName(), FileHelper.getStringsNoAdjust(file.getPath())));
-            }catch(Exception ignored){}
-        });
     }
     public static Guild getGuild(String id){
         for (Guild guild : GUILDS) {
@@ -30,15 +26,8 @@ public class Guild extends Context {
         GUILDS.add(guild);
         return guild;
     }
-    public static void save(){
-        FileHelper.cleanDir("guilds");
-        GUILDS.forEach(channel -> FileHelper.writeStrings("guilds\\" + channel.getID(), channel.getStrings()));
-    }
     public Guild(String id) {
-        super(id);
-    }
-    public Guild(String id, List<String> strings) {
-        super(id, strings);
+        super("guilds", id);
     }
     public IGuild discord(){
         return Inquisitor.discordClient().getGuildByID(this.getID());
