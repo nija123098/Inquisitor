@@ -81,6 +81,8 @@ public class Inquisitor {
     @EventSubscriber
     public void handle(DiscordDisconnectedEvent event){
         if (event.getReason().equals(DiscordDisconnectedEvent.Reason.LOGGED_OUT)){
+            try{Thread.sleep(1000);
+            }catch(InterruptedException e){e.printStackTrace();}
             System.exit(11);
         }
     }
@@ -101,8 +103,12 @@ public class Inquisitor {
         Entity.saveEntities();
     }
     public void closeInner(){
-        this.botList.forEach(GuildBot::close);
-        this.saveInner();
-        RequestHandler.request(() -> this.client.logout());
+        try {
+            this.botList.forEach(GuildBot::close);
+            this.saveInner();
+            RequestHandler.request(() -> this.client.logout());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

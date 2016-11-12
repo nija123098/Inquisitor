@@ -16,6 +16,9 @@ public class Context {
     public String getData(String id) {
         return this.entity.getData(id);
     }
+    public String getData(String id, String defaul) {
+        return this.entity.getData(id, defaul);
+    }
     public void putData(String id, String data) {
         this.entity.putData(id, data);
     }

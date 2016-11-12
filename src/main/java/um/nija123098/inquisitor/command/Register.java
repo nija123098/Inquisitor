@@ -35,4 +35,6 @@ public @interface Register {
     boolean startup() default false;
     boolean guild() default false;
     boolean hidden() default false;
+    float suspicious() default 0;
+    Suspicion suspicion() default Suspicion.RADICAL;
 }

@@ -57,6 +57,13 @@ public class Entity {
     public String getData(String id) {
         return this.stringMap.get(id);
     }
+    public String getData(String id, String defaul) {
+        String data = this.stringMap.get(id);
+        if (data == null){
+            data = defaul;
+        }
+        return data;
+    }
     public void putData(String id, String data) {
         this.stringMap.put(id, data);
     }

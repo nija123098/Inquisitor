@@ -62,6 +62,12 @@ public class Command {
     public boolean hidden(){
         return this.register.hidden();
     }
+    public float suspicious(){
+        return this.register.suspicious();
+    }
+    public Suspicion suspicion(){
+        return this.register.suspicion();
+    }
     public boolean invoke(User user, Guild guild, Channel channel, String s){
         Rank rank = Rank.getRank(user, guild);
         if (!this.rankSufficient(rank)){
@@ -70,6 +76,10 @@ public class Command {
         }
         if (this.guild() && guild == null){
             MessageHelper.send(user, "That command can not be used in a private channel");
+            return false;
+        }
+        if (Suspicion.getLevel(user).ordinal() < this.suspicion().ordinal()){
+            MessageHelper.send(channel, user.discord().mention() + " you are " + Suspicion.getLevel(user).name() + ", you can not use that command");
             return false;
         }
         Object[] objects = new Object[this.method.getParameterTypes().length];
@@ -101,11 +111,19 @@ public class Command {
                 this.method.invoke(null);
             }else{
                 this.method.invoke(null, objects);
-             }
+            }
         } catch (IllegalAccessException | InvocationTargetException e) {
             Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked");
             e.printStackTrace();
             return false;
+        }
+        float level = Float.parseFloat(user.getData("suspicion", "0"));
+        Suspicion suspicion = Suspicion.getLevel(level);
+        float newLevel = level + this.suspicious();
+        user.putData("suspicion", newLevel + "");
+        Suspicion newSuspicion = Suspicion.getLevel(newLevel);
+        if (suspicion != newSuspicion){
+            MessageHelper.send(channel, user.discord().mention() + " you are now considered " + newSuspicion);
         }
         return true;
     }
