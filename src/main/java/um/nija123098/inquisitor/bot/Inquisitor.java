@@ -81,6 +81,7 @@ public class Inquisitor {
     @EventSubscriber
     public void handle(DiscordDisconnectedEvent event){
         if (event.getReason().equals(DiscordDisconnectedEvent.Reason.LOGGED_OUT)){
+            Registry.shutDown();
             try{Thread.sleep(1000);
             }catch(InterruptedException e){e.printStackTrace();}
             System.exit(11);

@@ -34,6 +34,9 @@ public class Registry {
     public static void startUp(){
         COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null));
     }
+    public static void shutDown(){
+        COMMANDS.stream().filter(Command::shutdown).forEach(command -> command.invoke(null, null, null, null));
+    }
     public static Command getCommand(String msg){
         String[] strings = msg.toLowerCase().split(" ");
         for (Command command : DEEP) {
@@ -55,12 +58,20 @@ public class Registry {
         }
         for (int i = 0; i < commandStrings.length; i++) {
             if (!commandStrings[i].equals(msg[i])){
+                if (!command.args() && commandStrings.length != msg.length){
+                    continue;
+                }
                 return false;
             }
         }
         return true;
     }
-    public static List<Command> getCommands(Predicate<Command> predicate){
-        return COMMANDS.stream().filter(predicate).collect(Collectors.toList());
+    public static List<Command> getCommands(Predicate<Command>...predicates){
+        List<Command> commands = new ArrayList<Command>(COMMANDS.size());
+        commands.addAll(COMMANDS);
+        for (Predicate<Command> predicate : predicates) {
+            commands = commands.stream().filter(predicate).collect(Collectors.toList());
+        }
+        return commands;
     }
 }

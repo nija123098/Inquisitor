@@ -22,7 +22,7 @@ public class Entity {
     public static void saveEntities(){
         ENTITIES.forEach(Entity::save);
     }
-    public static Entity getEnt(String path, String name){
+    public static Entity getEntity(String path, String name){
         File file = new File(path + "\\" + name);
         for (Entity entity : ENTITIES) {
             if (entity.file.equals(file)){
@@ -87,7 +87,7 @@ public class Entity {
                 if (!Files.exists(Paths.get(this.file.getPath()))){
                     Files.createFile(Paths.get(this.file.getPath()));
                 }
-                // Files.write(Paths.get(this.file.getPath()), this.getStrings());
+                Files.write(Paths.get(this.file.getPath()), this.getStrings());
             }catch(Exception e){Log.error("Can not save " + this.name() + " because of " + e.getMessage());
             e.printStackTrace();}
         }

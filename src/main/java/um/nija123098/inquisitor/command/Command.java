@@ -1,5 +1,6 @@
 package um.nija123098.inquisitor.command;
 
+import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
@@ -33,7 +34,7 @@ public class Command {
         }
     }
     public String help(){
-        return this.register.help();
+        return this.register.help().length() == 0 ? "Help not supported" : this.register.help();
     }
     public String name(){
         return this.name;
@@ -56,6 +57,9 @@ public class Command {
     public boolean startup() {
         return this.register.startup();
     }
+    public boolean shutdown() {
+        return this.register.shutdown();
+    }
     public boolean guild(){
         return this.register.guild();
     }
@@ -68,6 +72,9 @@ public class Command {
     public Suspicion suspicion(){
         return this.register.suspicion();
     }
+    public boolean args() {
+        return this.register.args();
+    }
     public boolean invoke(User user, Guild guild, Channel channel, String s){
         Rank rank = Rank.getRank(user, guild);
         if (!this.rankSufficient(rank)){
@@ -78,12 +85,13 @@ public class Command {
             MessageHelper.send(user, "That command can not be used in a private channel");
             return false;
         }
-        if (Suspicion.getLevel(user).ordinal() < this.suspicion().ordinal()){
+        Suspicion suspicion = Suspicion.getLevel(user);
+        if (suspicion.ordinal() < this.suspicion().ordinal()){
             MessageHelper.send(channel, user.discord().mention() + " you are " + Suspicion.getLevel(user).name() + ", you can not use that command");
             return false;
         }
-        Object[] objects = new Object[this.method.getParameterTypes().length];
         Class[] parameterTypes = this.method.getParameterTypes();
+        Object[] objects = new Object[parameterTypes.length];
         for (int i = 0; i < objects.length; i++) {
             if (parameterTypes[i].equals(User.class)){
                 objects[i] = user;
@@ -95,15 +103,15 @@ public class Command {
                 objects[i] = s;
             }else if (parameterTypes[i].equals(String[].class)){
                 String[] strings = s.split(" ");
-                if (strings[0].equals("")){
-                    objects[i] = new String[0];
-                }else{
-                    objects[i] = strings;
-                }
+                objects[i] = strings[0].equals("") ? new String[0] : strings;
             }else if (parameterTypes[i].equals(Command.class)){
                 objects[i] = this;
             }else if (parameterTypes[i].equals(Rank.class)){
                 objects[i] = rank;
+            }else if (parameterTypes[i].equals(Suspicion.class)){
+                objects[i] = suspicion;
+            }else if (parameterTypes[i].equals(Entity.class)){
+                objects[i] = Entity.getEntity("command", this.name.split(" ")[0]);
             }
         }
         try {
@@ -118,7 +126,6 @@ public class Command {
             return false;
         }
         float level = Float.parseFloat(user.getData("suspicion", "0"));
-        Suspicion suspicion = Suspicion.getLevel(level);
         float newLevel = level + this.suspicious();
         user.putData("suspicion", newLevel + "");
         Suspicion newSuspicion = Suspicion.getLevel(newLevel);

@@ -10,7 +10,7 @@ public class Context {
     private String id;
     private Entity entity;
     public Context(String contextName, String id) {
-        this.entity = Entity.getEnt(FileHelper.getJarContainer() + "\\" + contextName, id);
+        this.entity = Entity.getEntity(FileHelper.getJarContainer() + "\\" + contextName, id);
         this.id = id;
     }
     public String getData(String id) {
