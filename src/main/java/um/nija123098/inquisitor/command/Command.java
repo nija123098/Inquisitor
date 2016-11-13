@@ -13,66 +13,108 @@ import java.lang.reflect.Method;
 /**
  * Made by nija123098 on 11/7/2016
  */
+@Register
 public class Command {
+    private static final Register DEFAULT;
+    static {
+        DEFAULT = Command.class.getAnnotation(Register.class);
+    }
     private final String name;
     private final Method method;
-    private final Register register;
+    private final Register register, clazz;
     public Command(Method method) {
         this.method = method;
         this.register = method.getAnnotation(Register.class);
+        this.clazz = method.getDeclaringClass().getAnnotation(Register.class) == null ? DEFAULT : method.getDeclaringClass().getAnnotation(Register.class);
         String name = this.register.name().toLowerCase();
         if (name.equals("")){
             if (this.natural()){
                 this.name = this.method.getName().toLowerCase();
             }else if (this.defaul()) {
-                this.name = this.method.getDeclaringClass().getSimpleName().toLowerCase();
+                this.name = this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() : this.method.getDeclaringClass().getSimpleName().toLowerCase();
             }else{
-                this.name = this.method.getDeclaringClass().getSimpleName().toLowerCase() + " " + this.method.getName().toLowerCase();
+                this.name = (this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() : this.method.getDeclaringClass().getSimpleName().toLowerCase()) + " " + this.method.getName().toLowerCase();
             }
         }else{
             this.name = name;
         }
     }
     public String help(){
+        if (!DEFAULT.help().equals(this.clazz.help())){
+            return this.clazz.help();
+        }
         return this.register.help().length() == 0 ? "Help not supported" : this.register.help();
     }
     public String name(){
+        if (!DEFAULT.name().equals(this.clazz.name())){
+            return this.clazz.name();
+        }
         return this.name;
     }
     public boolean natural(){
+        if (DEFAULT.natural() != this.clazz.natural()){
+            return this.clazz.natural();
+        }
         return this.register.natural();
     }
     public boolean surface(){
-        return this.register.natural() || this.register.defaul();
+        return this.natural() || this.defaul();
     }
     public boolean defaul(){
+        if (DEFAULT.defaul() != this.clazz.defaul()){
+            return this.clazz.defaul();
+        }
         return this.register.defaul();
     }
     public Rank rank(){
+        if (DEFAULT.rank() != this.clazz.rank()){
+            return this.clazz.rank();
+        }
         return this.register.rank();
     }
     public boolean rankSufficient(Rank rank){
-        return rank.ordinal() >= this.rank().ordinal();
+        return Rank.isSufficient(this.rank(), rank);
     }
     public boolean startup() {
+        if (DEFAULT.startup() != this.clazz.startup()){
+            return this.clazz.startup();
+        }
         return this.register.startup();
     }
     public boolean shutdown() {
+        if (DEFAULT.shutdown() != this.clazz.shutdown()){
+            return this.clazz.shutdown();
+        }
         return this.register.shutdown();
     }
     public boolean guild(){
+        if (DEFAULT.guild() != this.clazz.guild()){
+            return this.clazz.guild();
+        }
         return this.register.guild();
     }
     public boolean hidden(){
+        if (DEFAULT.hidden() != this.clazz.hidden()){
+            return this.clazz.hidden();
+        }
         return this.register.hidden();
     }
     public float suspicious(){
+        if (DEFAULT.suspicious() != this.clazz.suspicious()){
+            return this.clazz.suspicious();
+        }
         return this.register.suspicious();
     }
     public Suspicion suspicion(){
+        if (DEFAULT.suspicion() != this.clazz.suspicion()){
+            return this.clazz.suspicion();
+        }
         return this.register.suspicion();
     }
     public boolean args() {
+        if (DEFAULT.args() != this.clazz.args()){
+            return this.clazz.args();
+        }
         return this.register.args();
     }
     public boolean invoke(User user, Guild guild, Channel channel, String s){

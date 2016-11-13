@@ -43,4 +43,7 @@ public enum Rank {
         }
         return USER;
     }
+    public static boolean isSufficient(Rank required, Rank level){
+        return level.ordinal() >= required.ordinal();
+    }
 }

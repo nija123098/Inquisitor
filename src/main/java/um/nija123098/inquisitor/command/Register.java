@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Made by nija123098 on 11/7/2016
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target(value = {ElementType.METHOD, ElementType.TYPE})
 public @interface Register {
     /**
      * This is the full length name of the method,
@@ -31,7 +31,7 @@ public @interface Register {
      * @return if the command is a default command for other commands
      */
     boolean defaul() default false;
-    Rank rank() default Rank.USER;
+    Rank rank() default Rank.BOT;
     boolean startup() default false;
     boolean shutdown() default false;
     boolean guild() default false;
