@@ -24,9 +24,9 @@ public class Entity {
     }
     public static Entity getEntity(String path, String name){
         File file = new File(path + "\\" + name);
-        for (Entity entity : ENTITIES) {
-            if (entity.file.equals(file)){
-                return entity;
+        for (int i = 0; i < ENTITIES.size(); i++) {
+            if (ENTITIES.get(i).file.equals(file)){
+                return ENTITIES.get(i);
             }
         }
         Entity entity = new Entity(file);

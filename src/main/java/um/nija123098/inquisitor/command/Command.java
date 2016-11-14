@@ -118,19 +118,23 @@ public class Command {
         return this.register.args();
     }
     public boolean invoke(User user, Guild guild, Channel channel, String s){
-        Rank rank = Rank.getRank(user, guild);
-        if (!this.rankSufficient(rank)){
-            MessageHelper.send(user, "That command is above your rank");
-            return false;
-        }
-        if (this.guild() && guild == null){
-            MessageHelper.send(user, "That command can not be used in a private channel");
-            return false;
-        }
-        Suspicion suspicion = Suspicion.getLevel(user);
-        if (suspicion.ordinal() < this.suspicion().ordinal()){
-            MessageHelper.send(channel, user.discord().mention() + " you are " + Suspicion.getLevel(user).name() + ", you can not use that command");
-            return false;
+        Rank rank = Rank.NONE;
+        Suspicion suspicion = Suspicion.ENLIGHTENED;
+        if (!this.startup() && !this.shutdown()){
+            rank = Rank.getRank(user, guild);
+            if (!this.rankSufficient(rank)){
+                MessageHelper.send(user, "That command is above your rank");
+                return false;
+            }
+            if (this.guild() && guild == null){
+                MessageHelper.send(user, "That command can not be used in a private channel");
+                return false;
+            }
+            suspicion = Suspicion.getLevel(user);
+            if (suspicion.ordinal() < this.suspicion().ordinal()){
+                MessageHelper.send(channel, user.discord().mention() + " you are " + Suspicion.getLevel(user).name() + ", you can not use that command");
+                return false;
+            }
         }
         Class[] parameterTypes = this.method.getParameterTypes();
         Object[] objects = new Object[parameterTypes.length];
@@ -167,12 +171,8 @@ public class Command {
             e.printStackTrace();
             return false;
         }
-        float level = Float.parseFloat(user.getData("suspicion", "0"));
-        float newLevel = level + this.suspicious();
-        user.putData("suspicion", newLevel + "");
-        Suspicion newSuspicion = Suspicion.getLevel(newLevel);
-        if (suspicion != newSuspicion){
-            MessageHelper.send(channel, user.discord().mention() + " you are now considered " + newSuspicion);
+        if (!this.startup() && !this.shutdown()){
+            Suspicion.addLevel(user, this.suspicious(), channel);
         }
         return true;
     }

@@ -34,13 +34,13 @@ public class RequestHandler {
     private static class Timer implements Runnable {
         private Map<Long, List<Request>> requestMap;
         private Timer() {
-            new Thread(this);
+            new Thread(this).start();
             this.requestMap = new ConcurrentHashMap<Long, List<Request>>();
         }
         public void add(long millis, RequestHandler.Request request){
             millis += System.currentTimeMillis();
             List<RequestHandler.Request> requests = this.requestMap.get(millis);
-            if (request == null){
+            if (requests == null){
                 requests = new ArrayList<Request>(1);
                 this.requestMap.put(millis, requests);
             }
@@ -50,10 +50,9 @@ public class RequestHandler {
         public void run() {
             List<RequestHandler.Request> requests;
             long previous = System.currentTimeMillis();
-            long n = System.currentTimeMillis();
             long delta;
             while (true){
-                delta = previous - n;
+                delta = System.currentTimeMillis() - previous;
                 if (delta > 0){
                     ++previous;
                     requests = this.requestMap.get(previous);

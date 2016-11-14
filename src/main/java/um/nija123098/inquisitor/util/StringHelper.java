@@ -48,4 +48,11 @@ public class StringHelper {
         }
         return s;
     }
+    public static String flip(String s){
+        String n = "";
+        for (int i = s.length() - 1; i > -1; --i) {
+            n += s.charAt(i);
+        }
+        return n;
+    }
 }

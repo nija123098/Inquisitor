@@ -22,6 +22,11 @@ public class MessageHelper {
             sendOverride(channel, msg);
         }
     }
+    public static void send(Channel channel, String msg, long deleteMillis){
+        if ("true".equals(channel.getData("chat_approved"))){
+            sendOverride(channel, msg, deleteMillis);
+        }
+    }
     public static void send(User user, String msg, long deleteMillis){
         RequestHandler.request(() -> innerSend(user.discord().getOrCreatePMChannel(), msg, deleteMillis));
     }
