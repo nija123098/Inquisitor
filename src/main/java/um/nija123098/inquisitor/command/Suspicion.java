@@ -45,4 +45,7 @@ public enum Suspicion {
             }
         }
     }
+    public static boolean isSufficient(Suspicion target, Suspicion level){
+        return target.ordinal() >= level.ordinal();
+    }
 }

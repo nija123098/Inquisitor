@@ -131,7 +131,7 @@ public class Command {
                 return false;
             }
             suspicion = Suspicion.getLevel(user);
-            if (suspicion.ordinal() < this.suspicion().ordinal()){
+            if (Suspicion.isSufficient(this.suspicion(), suspicion)){
                 MessageHelper.send(channel, user.discord().mention() + " you are " + Suspicion.getLevel(user).name() + ", you can not use that command");
                 return false;
             }
@@ -168,7 +168,6 @@ public class Command {
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked");
-            e.printStackTrace();
             return false;
         }
         if (!this.startup() && !this.shutdown()){

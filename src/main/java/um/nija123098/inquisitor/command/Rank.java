@@ -16,7 +16,6 @@ public enum Rank {
     GUILD_OWNER,
     BOT_ADMIN,
     MAKER,
-    @Deprecated
     NONE,;
     public static Rank getRank(User user, Guild guild){
         if (user.discord().getID().equals("191677220027236352")){
