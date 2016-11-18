@@ -38,6 +38,12 @@ public class Inquisitor {
         List<Class<?>> classes = ClassFinder.find("um.nija123098.inquisitor.commands");
         classes.forEach(Registry::register);
         inquisitor = new Inquisitor(args[0]);
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @Override
+            public void run(){
+                save();
+            }
+        });
     }
     private final List<GuildBot> botList;
     private final List<Entity> entities;

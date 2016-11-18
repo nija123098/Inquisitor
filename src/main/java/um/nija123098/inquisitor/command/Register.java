@@ -38,7 +38,6 @@ public @interface Register {
     boolean hidden() default false;
     float suspicious() default 0;
     Suspicion suspicion() default Suspicion.RADICAL;
-
     /**
      * Returns true if it accepts args
      * @return If the command is invoked if there are args
