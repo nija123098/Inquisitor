@@ -34,8 +34,8 @@ public class RequestHandler {
     private static class Timer implements Runnable {
         private Map<Long, List<Request>> requestMap;
         private Timer() {
-            new Thread(this).start();
             this.requestMap = new ConcurrentHashMap<Long, List<Request>>();
+            new Thread(this).start();
         }
         public void add(long millis, RequestHandler.Request request){
             millis += System.currentTimeMillis();

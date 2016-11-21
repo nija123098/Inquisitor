@@ -55,4 +55,28 @@ public class StringHelper {
         }
         return n;
     }
+    public static boolean affirmative(String s){
+        s = s.trim().toLowerCase();
+        switch (s){
+            case "1":
+            case "true":
+            case "yes":
+            case "affirmative":
+            case "yep":
+                return true;
+        }
+        return false;
+    }
+    public static boolean negative(String s){
+        s = s.trim().toLowerCase();
+        switch (s){
+            case "0":
+            case "false":
+            case "no":
+            case "negative":
+            case "nope":
+                return true;
+        }
+        return false;
+    }
 }

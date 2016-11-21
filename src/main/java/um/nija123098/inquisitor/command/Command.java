@@ -120,7 +120,7 @@ public class Command {
     public boolean invoke(User user, Guild guild, Channel channel, String s){
         Rank rank = Rank.NONE;
         Suspicion suspicion = Suspicion.ENLIGHTENED;
-        if (!this.startup() && !this.shutdown()){
+        if (!this.startup() && !this.shutdown() && user != null){
             rank = Rank.getRank(user, guild);
             if (!this.rankSufficient(rank)){
                 MessageHelper.send(user, "That command is above your rank");
@@ -167,11 +167,12 @@ public class Command {
                 this.method.invoke(null, objects);
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
-            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked");
+            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName());
+            e.printStackTrace();
             return false;
         }
-        if (!this.startup() && !this.shutdown()){
-            Suspicion.addLevel(user, this.suspicious(), channel);
+        if (!this.startup() && !this.shutdown()  && user != null){
+            Suspicion.addLevel(user, this.suspicious(), channel, true);
         }
         return true;
     }

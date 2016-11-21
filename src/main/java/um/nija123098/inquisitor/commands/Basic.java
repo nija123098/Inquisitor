@@ -29,13 +29,14 @@ public class Basic {
     @Register(help = "Lists information on Inquisitor")
     public static void info(Channel channel){
         MessageHelper.send(channel, "" +
-                "This is " + Inquisitor.discordClient().getOurUser().mention(false) + ", a Discord info bot.\n" +
-                "It collects and displays information on servers, users, and bots for a benevolent purpose.");
+                "This is " + Inquisitor.discordClient().getOurUser().mention(false) + " is a Discord info bot.\n" +
+                "It collects and displays information on servers, users, and bots for a benevolent purpose.\n" +
+                Inquisitor.discordClient().getOurUser().mention() + " is made by nija123098#7242");
     }
-    @Register(rank = Rank.BOT_ADMIN, help = "Saves all bot configuration files")
+    @Register(rank = Rank.BOT_ADMIN, suspicion = Suspicion.HERETICAL, help = "Saves all bot configuration files")
     public static void save(Channel channel){
         Inquisitor.save();
-        MessageHelper.send(channel, "```Files saved```");
+        MessageHelper.send(channel, "*Files saved*");
     }
     @Register(rank = Rank.BOT_ADMIN, suspicion = Suspicion.HERETICAL, help = "Shuts down the bot without restart")
     public static void close(User user){
@@ -94,11 +95,11 @@ public class Basic {
             ++i;
         }
         if (deletes.size() > 1){
-            if (channel.isPrivate()){
-                deletes.forEach(iMessage -> RequestHandler.request(iMessage::delete));
+            deletes.forEach(iMessage -> RequestHandler.request(iMessage::delete));
+            /*if (channel.isPrivate()){
             }else{
                 RequestHandler.request(() -> messages.bulkDelete(deletes));
-            }
+            }*/// Bulk delete not currently working
         }else{
             RequestHandler.request(() -> deletes.get(0).delete());
         }

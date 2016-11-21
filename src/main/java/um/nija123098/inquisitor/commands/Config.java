@@ -7,6 +7,7 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.StringHelper;
 
 /**
  * Made by nija123098 on 11/8/2016
@@ -25,23 +26,14 @@ public class Config {
     }
     @Register(rank = Rank.GUILD_ADMIN, guild = true, help = "Edits the bot's ability to speak in the channel")
     public static void chat(String s, Channel channel){
-        switch (s.split(" ")[0]){
-            case "1":
-            case "true":
-            case "yes":
-            case "affirmative":
-                channel.putData("chat_approved", "true");
-                MessageHelper.sendOverride(channel, "Now allowed to chat in " + channel.discord().mention());
-                break;
-            case "0":
-            case "false":
-            case "no":
-            case "negative":
-                channel.putData("chat_approved", "false");
-                MessageHelper.sendOverride(channel, "No longer allowed to chat in " + channel.discord().mention());
-                break;
-            default:
-                MessageHelper.sendOverride(channel, "I did not understand if you want me to chat or not, please use yes or no");
+        if (StringHelper.affirmative(s.split(" ")[0])){
+            channel.putData("chat_approved", "true");
+            MessageHelper.sendOverride(channel, "Now allowed to chat in " + channel.discord().mention());
+        }else if (StringHelper.negative(s.split(" ")[0])){
+            channel.putData("chat_approved", "false");
+            MessageHelper.sendOverride(channel, "No longer allowed to chat in " + channel.discord().mention());
+        }else{
+            MessageHelper.sendOverride(channel, "I did not understand if you want me to chat or not, please use yes or no");
         }
     }
     @Register(guild = true, rank = Rank.GUILD_ADMIN, help = "Sets the user as the liaison for this bot for the guild")

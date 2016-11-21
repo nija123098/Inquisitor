@@ -16,9 +16,9 @@ public enum Suspicion {
     SAINTLY(-1000),
     ENLIGHTENED(Long.MIN_VALUE),;
     Suspicion(long mini){
-        min = mini;
+        this.min = mini;
     }
-    private long min;
+    private final long min;
     public static Suspicion getLevel(User user){
         return getLevel(Float.parseFloat(user.getData("suspicion", "0")));
     }
@@ -26,18 +26,17 @@ public enum Suspicion {
         for (Suspicion suspicion : Suspicion.values()) {
             if (level > suspicion.min){
                 return suspicion;
-                //return Suspicion.values()[suspicion.ordinal()-1];
             }
         }
         return ORTHODOX;
     }
-    public static void addLevel(User user, float delta, Channel channel){
+    public static void addLevel(User user, float delta, Channel channel, boolean message){
         float level = Float.parseFloat(user.getData("suspicion", "0"));
         Suspicion suspicion = Suspicion.getLevel(level);
         float newLevel = level + delta;
         user.putData("suspicion", newLevel + "");
         Suspicion newSuspicion = Suspicion.getLevel(newLevel);
-        if (suspicion != newSuspicion){
+        if (suspicion != newSuspicion && message){
             if (channel != null){
                 MessageHelper.send(channel, user.discord().mention() + " you are now considered " + newSuspicion);
             }else{

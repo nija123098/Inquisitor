@@ -26,21 +26,21 @@ public class Susp {
     @EventSubscriber
     public void hande(UserUpdateEvent event){
         if (event.getOldUser().getName().equals(event.getNewUser().getName())){
-            Suspicion.addLevel(User.getUser(event.getNewUser().getID()), 1, null);
+            Suspicion.addLevel(User.getUser(event.getNewUser().getID()), 1, null, false);
         }
     }
     @EventSubscriber
     public void handle(NickNameChangeEvent event){
-        Suspicion.addLevel(User.getUser(event.getUser().getID()), -.25f, null);
+        Suspicion.addLevel(User.getUser(event.getUser().getID()), -.25f, null, false);
     }
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){
         User user = User.getUser(event.getUser().getID());
         if (event.getNewPresence().equals(Presences.DND)){
-            Suspicion.addLevel(user, .3f, null);
+            Suspicion.addLevel(user, .3f, null, false);
         }else if (event.getNewPresence().equals(Presences.ONLINE)){
             if (!Suspicion.isSufficient(Suspicion.LOYAL, Suspicion.getLevel(user))){
-                Suspicion.addLevel(user, .25f, null);
+                Suspicion.addLevel(user, -.25f, null, false);
             }
         }
     }
