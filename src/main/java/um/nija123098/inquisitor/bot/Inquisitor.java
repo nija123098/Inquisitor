@@ -25,6 +25,12 @@ public class Inquisitor {
     public static IDiscordClient discordClient(){
         return inquisitor.getClient();
     }
+    public static boolean getLockdown(){
+        return inquisitor.lockdown;
+    }
+    public static void lockdown(){
+        inquisitor.lockdown = true;
+    }// restart required to unlock Inquisitor is on purpose
     public static Entity getEntity(String name){
         return inquisitor.getEnt(name);
     }
@@ -45,6 +51,7 @@ public class Inquisitor {
             }
         });
     }
+    private volatile boolean lockdown;
     private final List<GuildBot> botList;
     private final List<Entity> entities;
     private IDiscordClient client;

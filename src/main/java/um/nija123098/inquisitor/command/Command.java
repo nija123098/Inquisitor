@@ -1,6 +1,7 @@
 package um.nija123098.inquisitor.command;
 
 import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
@@ -120,8 +121,12 @@ public class Command {
     public boolean invoke(User user, Guild guild, Channel channel, String s){
         Rank rank = Rank.NONE;
         Suspicion suspicion = Suspicion.ENLIGHTENED;
-        if (!this.startup() && !this.shutdown() && user != null){
+        if (!this.startup() && !this.shutdown()){
             rank = Rank.getRank(user, guild);
+            if (Inquisitor.getLockdown() && !Rank.isSufficient(Rank.BOT_ADMIN, rank)){
+                MessageHelper.send(channel, Inquisitor.discordClient().getOurUser().mention() + " is currently on lockdown");
+                return false;
+            }
             if (!this.rankSufficient(rank)){
                 MessageHelper.send(user, "That command is above your rank");
                 return false;
@@ -171,7 +176,7 @@ public class Command {
             e.printStackTrace();
             return false;
         }
-        if (!this.startup() && !this.shutdown()  && user != null){
+        if (!this.startup() && !this.shutdown()){
             Suspicion.addLevel(user, this.suspicious(), channel, true);
         }
         return true;
