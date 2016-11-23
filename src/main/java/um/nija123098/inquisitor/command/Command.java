@@ -34,7 +34,7 @@ public class Command {
             }else if (this.defaul()) {
                 this.name = this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() : this.method.getDeclaringClass().getSimpleName().toLowerCase();
             }else{
-                this.name = (this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() : this.method.getDeclaringClass().getSimpleName().toLowerCase()) + " " + this.method.getName().toLowerCase();
+                this.name = (this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() + " " + this.method.getName().toLowerCase() : this.method.getDeclaringClass().getSimpleName().toLowerCase()) + " " + this.method.getName().toLowerCase();
             }
         }else{
             this.name = name;
@@ -121,7 +121,7 @@ public class Command {
     public boolean invoke(User user, Guild guild, Channel channel, String s){
         Rank rank = Rank.NONE;
         Suspicion suspicion = Suspicion.ENLIGHTENED;
-        if (!this.startup() && !this.shutdown()){
+        if (!this.startup() && !this.shutdown() && user != null){
             rank = Rank.getRank(user, guild);
             if (Inquisitor.getLockdown() && !Rank.isSufficient(Rank.BOT_ADMIN, rank)){
                 MessageHelper.send(channel, Inquisitor.discordClient().getOurUser().mention() + " is currently on lockdown");
@@ -165,20 +165,21 @@ public class Command {
                 objects[i] = Entity.getEntity("command", this.name.split(" ")[0]);
             }
         }
+        Object ret;
         try {
             if (objects.length == 0){
-                this.method.invoke(null);
+                ret = this.method.invoke(null);
             }else{
-                this.method.invoke(null, objects);
+                ret = this.method.invoke(null, objects);
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName());
             e.printStackTrace();
             return false;
         }
-        if (!this.startup() && !this.shutdown()){
+        if (!this.startup() && !this.shutdown() && user != null){
             Suspicion.addLevel(user, this.suspicious(), channel, true);
         }
-        return true;
+        return ret == null || ret.equals(true);
     }
 }
