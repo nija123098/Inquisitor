@@ -16,7 +16,9 @@ public class User extends Context {
         USERS = new ArrayList<User>();
         FileHelper.ensureFileExistence("users");
     }
-    public static User getUser(String id){
+    public static User getUserFromID(String id){
+        try{Long.parseLong(id);
+        }catch(Exception e){return null;}
         for (User user : USERS) {
             if (user.getID().equals(id)){
                 return user;
@@ -25,6 +27,38 @@ public class User extends Context {
         User user = new User(id);
         USERS.add(user);
         return user;
+    }
+    public static User getUser(String s){
+        if (s.contains("<@") && s.contains(">")){
+            String id = s.replace("<@", "").replace("!", "").replace(">", "");
+            for (User user : USERS) {
+                if (user.getID().equals(id)){
+                    return user;
+                }
+            }
+        }
+        String undiscrim = s;
+        String discrim = null;
+        if (undiscrim.contains("#")){
+            undiscrim = s.substring(0, s.indexOf("#"));
+            discrim = s.substring(s.indexOf("#") + 1);
+        }
+        List<IUser> users = new ArrayList<IUser>();
+        for (IUser user : Inquisitor.discordClient().getUsers()) {
+            if (user.getName().equals(undiscrim)){
+                users.add(user);
+            }
+        }
+        if (users.size() == 1){
+            return getUserFromID(users.get(0).getID());
+        }else if (users.size() > 1 && discrim != null){
+            for (IUser user : users) {
+                if (discrim.equals(user.getDiscriminator())){
+                    return getUserFromID(user.getID());
+                }
+            }
+        }
+        return null;
     }
     public User(String id) {
         super("user", id);

@@ -19,11 +19,11 @@ public class Uptime {
     @Register(rank = Rank.NONE, startup = true)
     public static void monitor(){
         Inquisitor.discordClient().getDispatcher().registerListener(new Uptime());
-        Inquisitor.discordClient().getUsers().forEach(iUser -> setPresence(User.getUser(iUser.getID()), !iUser.getPresence().equals(Presences.OFFLINE)));
+        Inquisitor.discordClient().getUsers().forEach(iUser -> setPresence(User.getUserFromID(iUser.getID()), !iUser.getPresence().equals(Presences.OFFLINE)));
     }
     @Register(defaul = true)
     public static void uptime(Channel channel, String s){
-        User user = User.getUser(s.replace("<@", "").replace(">", "").replace("!", ""));
+        User user = User.getUserFromID(s.replace("<@", "").replace(">", "").replace("!", ""));
         if (user == null){
             MessageHelper.send(channel, "There is no user by that name");
             return;
@@ -39,7 +39,7 @@ public class Uptime {
     }
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){
-        setPresence(User.getUser(event.getUser().getID()), !event.getNewPresence().equals(Presences.OFFLINE));
+        setPresence(User.getUserFromID(event.getUser().getID()), !event.getNewPresence().equals(Presences.OFFLINE));
     }
     private static void setPresence(User user, boolean on){
         String s = user.getData("uptime");

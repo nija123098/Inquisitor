@@ -12,9 +12,9 @@ import um.nija123098.inquisitor.util.StringHelper;
 public class Invoke {
     public static void invoke(String user, String guild, String channel, String msg){
         if (guild == null){
-            invoke(User.getUser(user), null, Channel.getChannel(channel), msg);
+            invoke(User.getUserFromID(user), null, Channel.getChannel(channel), msg);
         }else{
-            invoke(User.getUser(user), Guild.getGuild(guild), Channel.getChannel(channel), msg);
+            invoke(User.getUserFromID(user), Guild.getGuild(guild), Channel.getChannel(channel), msg);
         }
     }
     public static void invoke(User user, Guild guild, Channel channel, String msg){

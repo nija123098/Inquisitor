@@ -40,7 +40,7 @@ public class Mark {
             if (user.getData("mark") != null){
                 String[] mark = user.getData("mark").split(":");
                 if (mark.length == 3){
-                    user = User.getUser(mark[2]);
+                    user = User.getUserFromID(mark[2]);
                 }
                 Invoke.invoke(user, Guild.getGuild(mark[0]), Channel.getChannel(mark[1]), s);
             }else{
@@ -56,7 +56,7 @@ public class Mark {
             noMark(user);
         }else{
             String[] mark = user.getData("mark").split(":");
-            MessageHelper.send(user, "Marked " + Channel.getChannel(mark[1]).discord().getName() + " on guild " + Guild.getGuild(mark[0]).discord().getName() + (mark.length == 3 && User.getUser(mark[2]) != null ? " using " + User.getUser(mark[2]).discord().getName() + "'s account" : ""));
+            MessageHelper.send(user, "Marked " + Channel.getChannel(mark[1]).discord().getName() + " on guild " + Guild.getGuild(mark[0]).discord().getName() + (mark.length == 3 && User.getUserFromID(mark[2]) != null ? " using " + User.getUserFromID(mark[2]).discord().getName() + "'s account" : ""));
         }
     }
     @Register(suspicious = 1.5f)
