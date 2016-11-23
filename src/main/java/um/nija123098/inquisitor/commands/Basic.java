@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Made by nija123098 on 11/7/2016
  */
-@Register(natural = true)
+@Register(natural = true, suspicion = Suspicion.HERETICAL)
 public class Basic {
     @Register(hidden = true)
     public static void ping(Channel channel){
@@ -33,15 +33,9 @@ public class Basic {
                 "It collects and displays information on servers, users, and bots for a benevolent purpose.\n" +
                 Inquisitor.discordClient().getOurUser().mention() + " is made by nija123098#7242");
     }
-    @Register(rank = Rank.BOT_ADMIN, suspicion = Suspicion.HERETICAL, help = "Saves all bot configuration files")
-    public static void save(Channel channel){
-        Inquisitor.save();
-        MessageHelper.send(channel, "*Files saved*");
-    }
-    @Register(rank = Rank.BOT_ADMIN, suspicion = Suspicion.HERETICAL, help = "Shuts down the bot without restart")
-    public static void close(User user){
-        Log.warn(user.discord().getName() + " is closing Inquisitor");
-        Inquisitor.close();
+    @Register(guild = true, help = "Displays the guild's prefix for this bot, to configure use config prefix")
+    public static void prefix(Guild guild, Channel channel){
+        MessageHelper.send(channel, "The prefix for this guild is \"" + guild.getData("prefix") + "\"");
     }
     @Register(help = "Displays all commands or help on a specific command by help <command>")
     public static void help(Channel channel, User user, Guild guild, String s){
@@ -60,7 +54,7 @@ public class Basic {
             }
         }
     }
-    @Register(help = "Displays the invite link for Inquisitor")
+    @Register(suspicion = Suspicion.RADICAL, help = "Displays the invite link for Inquisitor")
     public static void invite(Channel channel){
         MessageHelper.send(channel, "You must have the manage server permission to add this bot to the server\n" +
                 "https://discordapp.com/oauth2/authorize?client_id=244634255727132673&scope=bot");

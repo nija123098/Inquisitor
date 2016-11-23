@@ -21,7 +21,7 @@ public class Uptime {
         Inquisitor.discordClient().getDispatcher().registerListener(new Uptime());
         Inquisitor.discordClient().getUsers().forEach(iUser -> setPresence(User.getUser(iUser.getID()), !iUser.getPresence().equals(Presences.OFFLINE)));
     }
-    @Register(natural = true)
+    @Register(defaul = true)
     public static void uptime(Channel channel, String s){
         User user = User.getUser(s.replace("<@", "").replace(">", "").replace("!", ""));
         if (user == null){

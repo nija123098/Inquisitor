@@ -14,11 +14,7 @@ import um.nija123098.inquisitor.util.CommonMessageHelper;
 import um.nija123098.inquisitor.util.ListHelper;
 import um.nija123098.inquisitor.util.MessageHelper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Made by nija123098 on 11/8/2016
@@ -86,30 +82,17 @@ public class Inquire {
         }
     }
     @Register
-    public static void lang(User user, Channel channel){
+    public static void lang(Channel channel){
         MessageList messages = channel.discord().getMessages();
         String content;
-        End:
         for (IMessage message : messages) {
             content = message.getContent();
             if (content.startsWith("```")) {
-                StringBuilder stringBuilder = new StringBuilder();
-                int k = 3;
-                while (true) {
-                    char c = content.charAt(k++);
-                    if (c != '\n') {
-                        stringBuilder.append(c);
-                    } else {
-                        if (content.split("\n").length > 2 && stringBuilder.length() > 0) {
-                            MessageHelper.send(user, "Language used is " + stringBuilder.toString());
-                            return;
-                        } else {
-                            break End;
-                        }
-                    }
-                }
+                content = content.replace("```", "").split("\n")[0];
+                MessageHelper.send(channel, "The language used is \"" + content + "\"");
+                return;
             }
         }
-        MessageHelper.send(user, "No language detected");
+        MessageHelper.send(channel, "No language detected");
     }
 }
