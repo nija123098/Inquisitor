@@ -1,7 +1,5 @@
 package um.nija123098.inquisitor.commands;
 
-import sx.blah.discord.handle.obj.IUser;
-import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Rank;
 import um.nija123098.inquisitor.command.Register;
@@ -9,6 +7,7 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.StringHelper;
 
 /**
  * Made by nija123098 on 11/10/2016
@@ -18,21 +17,21 @@ public class Mark {
     @Register(defaul = true, guild = true, suspicious = 3, help = "Be careful or it could reveal your command")
     public static void mark(User user, Guild guild, Channel channel, String s, Rank rank){
         String mark = guild.getID() + ":" + channel.getID();
-        IUser u = null;
+        String u = null;
         if (s.length() != 0){
             if (!Rank.isSufficient(Rank.BOT_ADMIN, rank)){
                 MessageHelper.send(channel, user.discord().mention() + ", you do not have permission to use another user's account for mark commands");
                 return;
             }
-            u = Inquisitor.discordClient().getUserByID(s.replace("<@", "").replace(">", "").replace("!", ""));
+            u = User.getUser(s).getID();
             if (u != null){
-                mark += ":" + u.getID();
+                mark += ":" + u;
             }else{
                 MessageHelper.send(channel, "No ID found");
             }
         }
         user.putData("mark", mark);
-        MessageHelper.send(user, "Marked " + channel.discord().getName() + " on guild " + guild.discord().getName() + (u != null ? " using " + u.getName() + "'s account" : ""));
+        MessageHelper.send(user, "Marked " + channel.discord().getName() + " on guild " + guild.discord().getName() + (u != null ? " using " + StringHelper.getPossessive(User.getUserFromID(u).discord().getName()) + " account" : ""));
     }
     @Register(suspicious = 1, help = "Invokes a command using the mark parameters")
     public static void invoke(User user, String s){

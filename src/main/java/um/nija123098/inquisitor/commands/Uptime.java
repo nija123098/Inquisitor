@@ -23,7 +23,7 @@ public class Uptime {
     }
     @Register(defaul = true)
     public static void uptime(Channel channel, String s){
-        User user = User.getUserFromID(s.replace("<@", "").replace(">", "").replace("!", ""));
+        User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "There is no user by that name");
             return;

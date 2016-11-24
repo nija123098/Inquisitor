@@ -29,6 +29,9 @@ public class User extends Context {
         return user;
     }
     public static User getUser(String s){
+        return getUser(s, null);
+    }
+    public static User getUser(String s, Guild guild){
         if (s.contains("<@") && s.contains(">")){
             String id = s.replace("<@", "").replace("!", "").replace(">", "");
             for (User user : USERS) {
@@ -43,8 +46,19 @@ public class User extends Context {
             undiscrim = s.substring(0, s.indexOf("#"));
             discrim = s.substring(s.indexOf("#") + 1);
         }
+        User user = null;
+        if (guild != null){
+            user = getUserFromList(discrim, undiscrim, guild.discord().getUsers());
+        }
+        if (user != null){
+            return user;
+        }
+        user = getUserFromList(discrim, undiscrim, Inquisitor.discordClient().getUsers());
+        return user;
+    }
+    private static User getUserFromList(String discrim, String undiscrim, List<IUser> iUsers){
         List<IUser> users = new ArrayList<IUser>();
-        for (IUser user : Inquisitor.discordClient().getUsers()) {
+        for (IUser user : iUsers) {
             if (user.getName().equals(undiscrim)){
                 users.add(user);
             }
