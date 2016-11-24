@@ -18,6 +18,7 @@ import um.nija123098.inquisitor.util.MessageHelper;
  * Made by nija123098 on 11/12/2016
  */
 @ClassName(value = "suspicion")
+@Register(suspicion = Suspicion.HERETICAL)
 public class Susp {
     @Register(startup = true, rank = Rank.NONE)
     public static void setUp(){
@@ -48,12 +49,12 @@ public class Susp {
     public static void suspicion(User user, Channel channel, Suspicion suspicion){
         MessageHelper.send(channel, user.discord().mention() + ", you are " + suspicion.name());
     }
-    @Register(suspicion = Suspicion.HERETICAL, rank = Rank.BOT_ADMIN)
+    @Register(rank = Rank.BOT_ADMIN, help = "Sets a user's suspicion level")
     public static void set(User user, Channel channel, String s){
         float v;
         try{v = Float.parseFloat(s);
         }catch(Exception e){
-            MessageHelper.send(channel, "\"" + s + "\" os not a number");
+            MessageHelper.send(channel, "\"" + s + "\" is not a number");
             return;
         }
         user.putData("suspicion", v + "");

@@ -10,7 +10,7 @@ import java.util.List;
  * Made by nija123098 on 11/10/2016
  */
 public class CommonMessageHelper {
-    public static void displayHelp(String pre, String post, List<Command> commandList, User user){
+    public static void displayCommands(String pre, String post, List<Command> commandList, User user){
         List<String> one = new ArrayList<String>(commandList.size()), two = new ArrayList<String>(commandList.size());
         commandList.forEach(command -> {
             one.add(command.name());

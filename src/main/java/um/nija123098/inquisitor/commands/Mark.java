@@ -12,7 +12,7 @@ import um.nija123098.inquisitor.util.StringHelper;
 /**
  * Made by nija123098 on 11/10/2016
  */
-@Register(hidden = true)
+@Register(rank = Rank.USER, hidden = true)
 public class Mark {
     @Register(defaul = true, guild = true, suspicious = 3, help = "Be careful or it could reveal your command")
     public static void mark(User user, Guild guild, Channel channel, String s, Rank rank){

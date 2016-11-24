@@ -23,7 +23,12 @@ public class Uptime {
     }
     @Register(defaul = true)
     public static void uptime(Channel channel, String s){
-        User user = User.getUser(s);
+        User user;
+        if (s.length() == 0){
+            user = User.getUserFromID(Inquisitor.discordClient().getOurUser().getID());
+        }else{
+            user = User.getUser(s);
+        }
         if (user == null){
             MessageHelper.send(channel, "There is no user by that name");
             return;

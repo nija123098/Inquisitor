@@ -30,33 +30,37 @@ public class Inquire {
     }
     @Register(help = "Lists all inquire commands")
     public static void commands(User user, Command command){
-        CommonMessageHelper.displayHelp("# Inquire commands", "", Registry.getCommands(com -> com.name().split(" ")[0].equals(command.name().split(" ")[0]), com -> !com.hidden()), user);
+        CommonMessageHelper.displayCommands("# Inquire commands", "", Registry.getCommands(com -> com.name().split(" ")[0].equals(command.name().split(" ")[0]), com -> !com.hidden()), user);
     }
     @Register(suspicious = .125f, guild = true, help = "Lists all roles on a server")
     public static void roles(Guild guild, User user){
-        try {
-            IGuild iGuild = guild.discord();
-            Map<Integer, Pair<String, Integer>> map = new HashMap<Integer, Pair<String, java.lang.Integer>>();
-            iGuild.getRoles().forEach(role -> {
-                final int[] count = {0};
-                iGuild.getUsers().stream().filter(u -> u.getPresence().equals(Presences.ONLINE)).filter(u -> u.getRolesForGuild(iGuild).contains(role)).forEach(u -> ++count[0]);
-                map.put(role.getPosition(), new Pair<String, Integer>(role.getName(), count[0]));
-            });
-            Pair<String, Integer>[] pairs = new Pair[map.size() + 1];
-            map.forEach((integer, pair) -> pairs[integer] = pair);
-            List<Pair<String, Integer>> pairList = new ArrayList<Pair<String, Integer>>(pairs.length);
-            Collections.addAll(pairList, pairs);
-            pairList.remove(null);
-            ListHelper.flip(pairList);
-            List<String> names = new ArrayList<String>(pairList.size()), online = new ArrayList<String>(pairList.size());
-            pairList.forEach(pair -> {
+        IGuild iGuild = guild.discord();
+        Map<Integer, Pair<String, Integer>> map = new HashMap<Integer, Pair<String, java.lang.Integer>>();
+        iGuild.getRoles().forEach(role -> {
+            final int[] count = {0};
+            iGuild.getUsers().stream().filter(u -> u.getPresence().equals(Presences.ONLINE)).filter(u -> u.getRolesForGuild(iGuild).contains(role)).forEach(u -> ++count[0]);
+            map.put(role.getPosition(), new Pair<String, Integer>(role.getName(), count[0]));
+        });
+        final int[] max = {0};
+        map.forEach((integer, pair) -> {
+            if (integer > max[0]){
+                max[0] = integer;
+            }
+        });
+        Pair<String, Integer>[] pairs = new Pair[max[0] + 1];
+        map.forEach((integer, pair) -> pairs[integer] = pair);
+        List<Pair<String, Integer>> pairList = new ArrayList<Pair<String, Integer>>(pairs.length);
+        Collections.addAll(pairList, pairs);
+        pairList.remove(null);
+        ListHelper.flip(pairList);
+        List<String> names = new ArrayList<String>(pairList.size()), online = new ArrayList<String>(pairList.size());
+        pairList.forEach(pair -> {
+            if (pair != null){
                 names.add(pair.getKey());
                 online.add(pair.getValue() + "");
-            });
-            CommonMessageHelper.displayLists("# Roles for guild \"" + iGuild.getName() + "\"", "", names, online, user);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+            }
+        });
+        CommonMessageHelper.displayLists("# Roles for guild \"" + iGuild.getName() + "\"", "", names, online, user);
     }
     @Register(suspicious = .5f, guild = true, help = "Lists the permissions of a role on a server, use everyone instead of @everyone")
     public static void role(Guild guild, User user, String s){

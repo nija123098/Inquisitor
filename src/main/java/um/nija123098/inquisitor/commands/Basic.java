@@ -35,7 +35,11 @@ public class Basic {
     }
     @Register(guild = true, help = "Displays the guild's prefix for this bot, to configure use config prefix")
     public static void prefix(Guild guild, Channel channel){
-        MessageHelper.send(channel, "The prefix for this guild is \"" + guild.getData("prefix") + "\"");
+        if (guild.getData("prefix") == null){
+            MessageHelper.send(channel, "No prefix has been set for this guild, to add one use configure prefix");
+        }else{
+            MessageHelper.send(channel, "The prefix for this guild is \"" + guild.getData("prefix") + "\"");
+        }
     }
     @Register(help = "Displays all commands or help on a specific command by help <command>")
     public static void help(Channel channel, User user, Guild guild, String s){
@@ -44,7 +48,7 @@ public class Basic {
             if (guild != null){
                 MessageHelper.send(channel, user.discord().mention() + " check your DMs!");
             }
-            CommonMessageHelper.displayHelp("# Help at rank " + rank.name().replace("_", " "), "", Registry.getCommands(command -> command.rankSufficient(rank), Command::surface, command -> !command.hidden()), user);
+            CommonMessageHelper.displayCommands("# Help at rank " + rank.name().replace("_", " "), "", Registry.getCommands(command -> command.rankSufficient(rank), Command::surface, command -> !command.hidden()), user);
         }else{
             Command command = Registry.getCommand(s);
             if (command != null){
