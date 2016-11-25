@@ -11,6 +11,7 @@ import um.nija123098.inquisitor.command.Rank;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.command.Suspicion;
 import um.nija123098.inquisitor.context.Channel;
+import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageHelper;
 
@@ -32,7 +33,7 @@ public class Susp {
     }
     @EventSubscriber
     public void handle(NickNameChangeEvent event){
-        Suspicion.addLevel(User.getUserFromID(event.getUser().getID()), -.25f, null, false);
+        Suspicion.addLevel(User.getUserFromID(event.getUser().getID()), .25f, null, false);
     }
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){
@@ -45,9 +46,18 @@ public class Susp {
             }
         }
     }
-    @Register(defaul = true, suspicious = .1f)
-    public static void suspicion(User user, Channel channel, Suspicion suspicion){
-        MessageHelper.send(channel, user.discord().mention() + ", you are " + suspicion.name());
+    @Register(defaul = true, suspicious = .1f, help = "Displays the suspicion level of the user")
+    public static void suspicion(User user, Channel channel, Suspicion suspicion, Guild guild, String s){
+        if (s.length() == 0){
+            MessageHelper.send(channel, user.discord().mention() + ", you are " + suspicion.name());
+        }else{
+            User u = User.getUser(s, guild);
+            if (u != null){
+                MessageHelper.send(channel, u.discord().getName() + "#" + u.discord().getDiscriminator() + " has been " + Suspicion.getLevel(u).name());
+            }else{
+                MessageHelper.send(channel, "No user has been found");
+            }
+        }
     }
     @Register(rank = Rank.BOT_ADMIN, help = "Sets a user's suspicion level")
     public static void set(User user, Channel channel, String s){
@@ -58,6 +68,6 @@ public class Susp {
             return;
         }
         user.putData("suspicion", v + "");
-        suspicion(user, channel, Suspicion.getLevel(user));
+        suspicion(user, channel, Suspicion.getLevel(user), null, "");
     }
 }

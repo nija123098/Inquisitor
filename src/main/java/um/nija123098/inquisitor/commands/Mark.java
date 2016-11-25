@@ -17,21 +17,21 @@ public class Mark {
     @Register(defaul = true, guild = true, suspicious = 3, help = "Be careful or it could reveal your command")
     public static void mark(User user, Guild guild, Channel channel, String s, Rank rank){
         String mark = guild.getID() + ":" + channel.getID();
-        String u = null;
+        User u = null;
         if (s.length() != 0){
             if (!Rank.isSufficient(Rank.BOT_ADMIN, rank)){
                 MessageHelper.send(channel, user.discord().mention() + ", you do not have permission to use another user's account for mark commands");
                 return;
             }
-            u = User.getUser(s).getID();
+            u = User.getUser(s);
             if (u != null){
-                mark += ":" + u;
+                mark += ":" + u.getID();
             }else{
                 MessageHelper.send(channel, "No ID found");
             }
         }
         user.putData("mark", mark);
-        MessageHelper.send(user, "Marked " + channel.discord().getName() + " on guild " + guild.discord().getName() + (u != null ? " using " + StringHelper.getPossessive(User.getUserFromID(u).discord().getName()) + " account" : ""));
+        MessageHelper.send(user, "Marked " + channel.discord().getName() + " on guild " + guild.discord().getName() + (u != null ? " using " + StringHelper.getPossessive(u.discord().getName()) + " account" : ""));
     }
     @Register(suspicious = 1, help = "Invokes a command using the mark parameters")
     public static void invoke(User user, String s){

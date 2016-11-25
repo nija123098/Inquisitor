@@ -29,7 +29,7 @@ public class Basic {
     @Register(help = "Lists information on Inquisitor")
     public static void info(Channel channel){
         MessageHelper.send(channel, "" +
-                "This is " + Inquisitor.discordClient().getOurUser().mention(false) + " is a Discord info bot.\n" +
+                "This is " + Inquisitor.discordClient().getOurUser().mention(false) + ", a Discord info bot.\n" +
                 "It collects and displays information on servers, users, and bots for a benevolent purpose.\n" +
                 Inquisitor.discordClient().getOurUser().mention() + " is made by nija123098#7242");
     }
@@ -41,14 +41,15 @@ public class Basic {
             MessageHelper.send(channel, "The prefix for this guild is \"" + guild.getData("prefix") + "\"");
         }
     }
-    @Register(help = "Displays all commands or help on a specific command by help <command>")
-    public static void help(Channel channel, User user, Guild guild, String s){
+    @Register(help = "Displays all commands or help on a specific command")
+    public static void help(Channel channel, User user, Guild guild, Rank rank, String s){
         if (s.equals("")){
-            Rank rank = Rank.getRank(user, guild);
+            rank = Rank.USER;
             if (guild != null){
-                MessageHelper.send(channel, user.discord().mention() + " check your DMs!");
+                MessageHelper.send(channel, user.discord().mention() + " check your DMs!", 10000);
             }
-            CommonMessageHelper.displayCommands("# Help at rank " + rank.name().replace("_", " "), "", Registry.getCommands(command -> command.rankSufficient(rank), Command::surface, command -> !command.hidden()), user);
+            final Rank finalRank = rank;
+            CommonMessageHelper.displayCommands("# Help at rank " + rank.name().replace("_", " "), "", Registry.getCommands(command -> command.rankSufficient(finalRank), Command::surface, command -> !command.hidden()), user);
         }else{
             Command command = Registry.getCommand(s);
             if (command != null){

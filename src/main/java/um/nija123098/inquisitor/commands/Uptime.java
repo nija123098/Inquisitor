@@ -16,12 +16,12 @@ import um.nija123098.inquisitor.util.TimeHelper;
  * Made by nija123098 on 11/13/2016
  */
 public class Uptime {
-    @Register(rank = Rank.NONE, startup = true)
+    @Register(rank = Rank.NONE, startup = true, hidden = true)
     public static void monitor(){
         Inquisitor.discordClient().getDispatcher().registerListener(new Uptime());
         Inquisitor.discordClient().getUsers().forEach(iUser -> setPresence(User.getUserFromID(iUser.getID()), !iUser.getPresence().equals(Presences.OFFLINE)));
     }
-    @Register(defaul = true)
+    @Register(defaul = true, help = "Displays the time a user has been off or online")
     public static void uptime(Channel channel, String s){
         User user;
         if (s.length() == 0){

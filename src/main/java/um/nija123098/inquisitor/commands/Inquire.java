@@ -3,9 +3,7 @@ package um.nija123098.inquisitor.commands;
 import javafx.util.Pair;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.MessageList;
-import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Register;
-import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.command.Suspicion;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
@@ -27,10 +25,6 @@ public class Inquire {
         }
         MessageHelper.send(channel, "User " + user.getID() + " are you ready to be interrogated?\n" +
                 user.discord().mention() + ", if that is your name, you so far have been " + Suspicion.getLevel(Float.parseFloat(user.getData("suspicion", "0"))));
-    }
-    @Register(help = "Lists all inquire commands")
-    public static void commands(User user, Command command){
-        CommonMessageHelper.displayCommands("# Inquire commands", "", Registry.getCommands(com -> com.name().split(" ")[0].equals(command.name().split(" ")[0]), com -> !com.hidden()), user);
     }
     @Register(suspicious = .125f, guild = true, help = "Lists all roles on a server")
     public static void roles(Guild guild, User user){
@@ -85,7 +79,7 @@ public class Inquire {
             }
         }
     }
-    @Register
+    @Register(help = "Displays the language of a previous message")
     public static void lang(Channel channel){
         MessageList messages = channel.discord().getMessages();
         String content;
