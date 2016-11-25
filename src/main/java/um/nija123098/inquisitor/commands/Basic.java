@@ -44,7 +44,6 @@ public class Basic {
     @Register(help = "Displays all commands or help on a specific command")
     public static void help(Channel channel, User user, Guild guild, Rank rank, String s){
         if (s.equals("")){
-            rank = Rank.USER;
             if (guild != null){
                 MessageHelper.send(channel, user.discord().mention() + " check your DMs!", 10000);
             }
@@ -57,6 +56,20 @@ public class Basic {
             }else{
                 MessageHelper.send(channel, "No such command");
             }
+        }
+    }
+    @Register(help = "Lists commands for a default command")
+    public static void commands(Channel channel, User user, String s){
+        Command command = Registry.getCommand(s);
+        if (command == null || command.hidden()){
+            MessageHelper.send(channel, "No such command");
+        }else if (!command.defaul()){
+            MessageHelper.send(channel, "That command is not a default command");
+        }else{
+            if (!channel.isPrivate()){
+                MessageHelper.send(channel, "<@" + user.getID() + "> check your DMs!", 10000);
+            }
+            CommonMessageHelper.displayCommands("# All extension commands for " + command.name().split(" ")[0] + "\n[" + command.name() + "](" + command.help() + ")", "", Registry.getCommands(c -> c.name().split(" ")[0].equals(command.name().split(" ")[0]), c -> !c.defaul()), user);
         }
     }
     @Register(suspicion = Suspicion.RADICAL, help = "Displays the invite link for Inquisitor")
