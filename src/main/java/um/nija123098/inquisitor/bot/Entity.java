@@ -41,18 +41,17 @@ public class Entity {
     public Entity(File file) {
         this.stringMap = new ConcurrentHashMap<String, String>();
         this.file = file;
-        ENTITIES.add(this);
         List<String> strings = new ArrayList<String>();
-        try{
-            strings = Files.readAllLines(Paths.get(this.file.getPath()));
-            if (strings == null){
-                strings = new ArrayList<String>(0);
-            }
-        }catch(Exception ignored){}
-        for (String s : strings) {
-            String[] st = s.split(":");
-            this.stringMap.put(st[0], s.substring(st[0].length() + 1));
+        try{strings = Files.readAllLines(Paths.get(this.file.getPath()));
+        }catch(Exception e){e.printStackTrace();}
+        if (strings == null){
+            strings = new ArrayList<String>(0);
         }
+        strings.forEach(str -> {
+            String[] st = str.split(":");
+            this.stringMap.put(st[0], str.substring(st[0].length() + 1));
+        });
+        ENTITIES.add(this);
     }
     public String getData(String id) {
         return this.stringMap.get(id);

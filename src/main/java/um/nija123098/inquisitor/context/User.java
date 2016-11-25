@@ -2,7 +2,6 @@ package um.nija123098.inquisitor.context;
 
 import sx.blah.discord.handle.obj.IUser;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.util.FileHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ public class User extends Context {
     private static final List<User> USERS;
     static {
         USERS = new ArrayList<User>();
-        FileHelper.ensureFileExistence("users");
     }
     public static User getUserFromID(String id){
         try{Long.parseLong(id);
