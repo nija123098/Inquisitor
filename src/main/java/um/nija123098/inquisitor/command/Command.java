@@ -34,7 +34,7 @@ public class Command {
             }else if (this.defaul()) {
                 this.name = this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() : this.method.getDeclaringClass().getSimpleName().toLowerCase();
             }else{
-                this.name = (this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() + " " + this.method.getName().toLowerCase() : this.method.getDeclaringClass().getSimpleName().toLowerCase()) + " " + this.method.getName().toLowerCase();
+                this.name = (this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() : this.method.getDeclaringClass().getSimpleName().toLowerCase()) + " " + this.method.getName().toLowerCase();
             }
         }else{
             this.name = name;

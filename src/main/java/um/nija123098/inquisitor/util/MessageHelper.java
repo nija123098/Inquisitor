@@ -41,4 +41,9 @@ public class MessageHelper {
             }
         });
     }
+    public static void checkYourDMs(Channel channel, User user){
+        if (!channel.isPrivate()){
+            send(channel, user.discord().mention() + " check your DMs!", 20000);
+        }
+    }
 }
