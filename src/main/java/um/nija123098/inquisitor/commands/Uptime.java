@@ -4,7 +4,7 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.PresenceUpdateEvent;
 import sx.blah.discord.handle.obj.Presences;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.command.Rank;
+import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.User;

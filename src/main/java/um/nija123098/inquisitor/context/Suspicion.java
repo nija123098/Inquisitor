@@ -1,7 +1,5 @@
-package um.nija123098.inquisitor.command;
+package um.nija123098.inquisitor.context;
 
-import um.nija123098.inquisitor.context.Channel;
-import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageHelper;
 
 /**

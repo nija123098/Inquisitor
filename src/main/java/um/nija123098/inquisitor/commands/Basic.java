@@ -5,9 +5,7 @@ import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.MessageList;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.*;
-import um.nija123098.inquisitor.context.Channel;
-import um.nija123098.inquisitor.context.Guild;
-import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.context.*;
 import um.nija123098.inquisitor.util.CommonMessageHelper;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.MessageHelper;
@@ -42,7 +40,7 @@ public class Basic {
         }
     }
     @Register(help = "Displays all commands or help on a specific command")
-    public static void help(Channel channel, User user, Guild guild, Rank rank, String s){
+    public static void help(Channel channel, User user, Rank rank, String s){
         if (s.equals("")){
             MessageHelper.checkYourDMs(channel, user);
             final Rank finalRank = rank;

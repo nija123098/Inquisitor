@@ -30,4 +30,7 @@ public class Guild extends Context {
     public IGuild discord(){
         return Inquisitor.discordClient().getGuildByID(this.getID());
     }
+    public User liaison(){
+        return User.getUserFromID(this.getData("liaison"));
+    }
 }

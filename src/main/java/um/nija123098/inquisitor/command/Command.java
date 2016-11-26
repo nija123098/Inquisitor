@@ -2,14 +2,13 @@ package um.nija123098.inquisitor.command;
 
 import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.context.Channel;
-import um.nija123098.inquisitor.context.Guild;
-import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.context.*;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.MessageHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * Made by nija123098 on 11/7/2016
@@ -26,15 +25,15 @@ public class Command {
     public Command(Method method) {
         this.method = method;
         this.register = method.getAnnotation(Register.class);
-        this.clazz = method.getDeclaringClass().getAnnotation(Register.class) == null ? DEFAULT : method.getDeclaringClass().getAnnotation(Register.class);
+        this.clazz = !method.getDeclaringClass().isAnnotationPresent(Register.class) || this.register.override() ? DEFAULT : method.getDeclaringClass().getAnnotation(Register.class);
         String name = this.register.name().toLowerCase();
         if (name.equals("")){
             if (this.natural()){
                 this.name = this.method.getName().toLowerCase();
             }else if (this.defaul()) {
-                this.name = this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() : this.method.getDeclaringClass().getSimpleName().toLowerCase();
+                this.name = this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName().toLowerCase() : this.clazz.name();
             }else{
-                this.name = (this.method.getDeclaringClass().isAnnotationPresent(ClassName.class) ? this.method.getDeclaringClass().getAnnotation(ClassName.class).value() : this.method.getDeclaringClass().getSimpleName().toLowerCase()) + " " + this.method.getName().toLowerCase();
+                this.name = (this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName().toLowerCase() : this.clazz.name()) + " " + this.method.getName().toLowerCase();
             }
         }else{
             this.name = name;
@@ -47,9 +46,6 @@ public class Command {
         return this.register.help().length() == 0 ? "Help not supported" : this.register.help();
     }
     public String name(){
-        if (!DEFAULT.name().equals(this.clazz.name())){
-            return this.clazz.name();
-        }
         return this.name;
     }
     public boolean natural(){
@@ -118,6 +114,12 @@ public class Command {
         }
         return this.register.args();
     }
+    public boolean override(){
+        if (DEFAULT.override() != this.clazz.override()){
+            return this.clazz.override();
+        }
+        return this.register.override();
+    }
     public boolean invoke(User user, Guild guild, Channel channel, String s){
         Rank rank = Rank.NONE;
         Suspicion suspicion = Suspicion.ENLIGHTENED;
@@ -165,21 +167,30 @@ public class Command {
                 objects[i] = Entity.getEntity("command", this.name.split(" ")[0]);
             }
         }
-        Object ret;
+        Object ret = null;
         try {
             if (objects.length == 0){
                 ret = this.method.invoke(null);
             }else{
                 ret = this.method.invoke(null, objects);
             }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName());
-            e.printStackTrace();
-            return false;
+        } catch (IllegalAccessException e){
+            Log.error(this.name() + " command has been poorly formed and has thrown a IllegalAccessException");
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof ExitCommandException){
+                ((ExitCommandException) e.getTargetException()).sendMessage();
+                if (!((ExitCommandException) e.getTargetException()).executed()){
+                    return false;
+                }
+            }else{
+                Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName());
+                e.printStackTrace();
+                return false;
+            }
         }
         if (!this.startup() && !this.shutdown() && user != null){
             Suspicion.addLevel(user, this.suspicious(), channel, true);
         }
-        return ret == null || ret.equals(true);
+        return ret == null || Objects.equals(true, ret);
     }
 }

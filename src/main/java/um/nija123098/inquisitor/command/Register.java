@@ -1,5 +1,8 @@
 package um.nija123098.inquisitor.command;
 
+import um.nija123098.inquisitor.context.Rank;
+import um.nija123098.inquisitor.context.Suspicion;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -43,4 +46,5 @@ public @interface Register {
      * @return If the command is invoked if there are args
      */
     boolean args() default true;
+    boolean override() default false;
 }

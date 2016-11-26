@@ -1,9 +1,7 @@
-package um.nija123098.inquisitor.command;
+package um.nija123098.inquisitor.context;
 
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.Permissions;
-import um.nija123098.inquisitor.context.Guild;
-import um.nija123098.inquisitor.context.User;
 
 /**
  * Made by nija123098 on 11/7/2016

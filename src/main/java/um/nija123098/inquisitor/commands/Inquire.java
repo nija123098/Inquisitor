@@ -4,7 +4,7 @@ import javafx.util.Pair;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.MessageList;
 import um.nija123098.inquisitor.command.Register;
-import um.nija123098.inquisitor.command.Suspicion;
+import um.nija123098.inquisitor.context.Suspicion;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
