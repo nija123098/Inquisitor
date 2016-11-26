@@ -2,7 +2,6 @@ package um.nija123098.inquisitor.context;
 
 import sx.blah.discord.handle.obj.IGuild;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.util.FileHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ public class Guild extends Context {
     private static final List<Guild> GUILDS;
     static {
         GUILDS = new ArrayList<Guild>();
-        FileHelper.ensureFileExistence("guilds");
     }
     public static Guild getGuild(String id){
         for (Guild guild : GUILDS) {

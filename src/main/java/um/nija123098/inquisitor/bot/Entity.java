@@ -16,9 +16,7 @@ import java.util.stream.Collectors;
  */
 public class Entity {
     private static final List<Entity> ENTITIES;
-    static {
-        ENTITIES = new ArrayList<Entity>();
-    }
+    static{ENTITIES = new ArrayList<Entity>();}
     public static void saveEntities(){
         ENTITIES.forEach(Entity::save);
     }
@@ -43,7 +41,7 @@ public class Entity {
         this.file = file;
         List<String> strings = new ArrayList<String>();
         try{strings = Files.readAllLines(Paths.get(this.file.getPath()));
-        }catch(Exception e){e.printStackTrace();}
+        }catch(Exception ignored){}
         if (strings == null){
             strings = new ArrayList<String>(0);
         }

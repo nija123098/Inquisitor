@@ -3,7 +3,6 @@ package um.nija123098.inquisitor.context;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.util.FileHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ public class Channel extends Context {
     private static final List<Channel> CHANNELS;
     static {
         CHANNELS = new ArrayList<Channel>();
-        FileHelper.ensureFileExistence("channels");
     }
     public static Channel getChannel(String id){
         for (Channel channel : CHANNELS) {
