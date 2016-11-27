@@ -14,13 +14,19 @@ import um.nija123098.inquisitor.util.StringHelper;
  */
 @Register(guild = true, rank = Rank.GUILD_ADMIN)
 public class Config {
-    @Register(help = "Changes or displays the prefix for the server")
-    public static void prefix(String[] s, Guild guild, Channel channel){
+    @Register(natural = true, guild = true, rank = Rank.USER, override = true, help = "Changes or displays the prefix for the server")
+    public static void prefix(String[] s, Guild guild, Channel channel, User user, Rank rank){
         if (s.length == 0){
-            MessageHelper.send(channel, "The prefix on this server is \"" + guild.getData("prefix") + "\"");
-        }else{
+            if (guild.getData("prefix") == null){
+                MessageHelper.send(channel, "No prefix has been set for this guild, to add one use configure prefix");
+            }else{
+                MessageHelper.send(channel, "The prefix on this server is \"" + guild.getData("prefix") + "\"");
+            }
+        }else if (Rank.isSufficient(Rank.GUILD_ADMIN, rank)){
             guild.putData("prefix", s[0]);
             MessageHelper.sendOverride(channel, "Prefix set to \"" + guild.getData("prefix") + "\"");
+        }else{
+            MessageHelper.send(channel, user.discord().mention() + ", you do not have permission to set " + Inquisitor.discordClient().getOurUser().mention() + "'s prefix for " + guild.discord().getName());
         }
     }
     @Register(help = "Edits the bot's ability to speak in the channel")

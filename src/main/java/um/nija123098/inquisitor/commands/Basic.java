@@ -31,14 +31,7 @@ public class Basic {
                 "It collects and displays information on servers, users, and bots for a benevolent purpose.\n" +
                 Inquisitor.discordClient().getOurUser().mention() + " is made by nija123098#7242");
     }
-    @Register(guild = true, help = "Displays the guild's prefix for this bot, to configure use config prefix")
-    public static void prefix(Guild guild, Channel channel){
-        if (guild.getData("prefix") == null){
-            MessageHelper.send(channel, "No prefix has been set for this guild, to add one use configure prefix");
-        }else{
-            MessageHelper.send(channel, "The prefix for this guild is \"" + guild.getData("prefix") + "\"");
-        }
-    }
+
     @Register(help = "Displays all commands or help on a specific command")
     public static void help(Channel channel, User user, Rank rank, String s){
         if (s.equals("")){
