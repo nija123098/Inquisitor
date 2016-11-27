@@ -177,16 +177,9 @@ public class Command {
         } catch (IllegalAccessException e){
             Log.error(this.name() + " command has been poorly formed and has thrown a IllegalAccessException");
         } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof ExitCommandException){
-                ((ExitCommandException) e.getTargetException()).sendMessage();
-                if (!((ExitCommandException) e.getTargetException()).executed()){
-                    return false;
-                }
-            }else{
-                Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName());
-                e.printStackTrace();
-                return false;
-            }
+            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName());
+            e.printStackTrace();
+            return false;
         }
         if (!this.startup() && !this.shutdown() && user != null){
             Suspicion.addLevel(user, this.suspicious(), channel, true);
