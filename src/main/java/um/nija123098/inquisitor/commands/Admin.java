@@ -14,6 +14,42 @@ import um.nija123098.inquisitor.util.MessageHelper;
  */
 @Register(natural = true, rank = Rank.BOT_ADMIN, suspicion = Suspicion.HERETICAL)
 public class Admin {
+    @Register(natural = true, rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Makes a user a bot admin")
+    public static void makeAdmin(Channel channel, String s){
+        User user = User.getUser(s);
+        if (user == null){
+            MessageHelper.send(channel, "\"" + s + "\" is not a known user");
+        }else{
+            MessageHelper.send(channel, user.discord().mention() + " is now a " + Inquisitor.discordClient().getOurUser().mention() + " admin!");
+        }
+    }
+    @Register(natural = true, rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Removes a user as a bot admin")
+    public static void removeAdmin(Channel channel, String s){
+        User user = User.getUser(s);
+        if (user == null){
+            MessageHelper.send(channel, "\"" + s + "\" is not a known user");
+        }else{
+            MessageHelper.send(channel, user.discord().mention() + " is no longer a " + Inquisitor.discordClient().getOurUser().mention() + " admin!");
+        }
+    }
+    @Register(natural = true, help = "Bans a user from using the bot")
+    public static void ban(Channel channel, String s){
+        User user = User.getUser(s);
+        if (user == null){
+            MessageHelper.send(channel, "\"" + s + "\" is not a known user");
+        }else{
+            MessageHelper.send(channel, user.discord().mention() + " is now banned from using " + Inquisitor.discordClient().getOurUser().mention() + "!");
+        }
+    }
+    @Register(natural = true, help = "Unbans a user from using the bot")
+    public static void unban(Channel channel, String s){
+        User user = User.getUser(s);
+        if (user == null){
+            MessageHelper.send(channel, "\"" + s + "\" is not a known user");
+        }else{
+            MessageHelper.send(channel, user.discord().mention() + " is no longer banned from using " + Inquisitor.discordClient().getOurUser().mention() + "!");
+        }
+    }
     @Register
     public static void lockdown(User user){
         Inquisitor.lockdown();

@@ -54,6 +54,19 @@ public class Basic {
             }
         }
     }
+    @Register(hidden = true, help = "Displays all commands of a specific rank")
+    public static void helpatrank(Channel channel, User user, Rank rank, String s){
+        Rank targetRank = null;
+        try{targetRank = Rank.valueOf(s.toUpperCase().replace(" ", "_"));
+        }catch(Exception ignored){}
+        if (targetRank == null){
+            MessageHelper.send(channel, "No such rank as \"" + s + "\"");
+        }else if (Rank.isSufficient(targetRank, rank)){
+            help(channel, user, targetRank, "");
+        }else{
+            MessageHelper.send(user, "You can not check commands for ranks you are not above or at");
+        }
+    }
     @Register(help = "Lists commands for a default command")
     public static void commands(Channel channel, User user, String s){
         Command command = Registry.getCommand(s);
