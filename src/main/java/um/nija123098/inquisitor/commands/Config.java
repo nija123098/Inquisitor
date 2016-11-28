@@ -1,6 +1,8 @@
 package um.nija123098.inquisitor.commands;
 
 import um.nija123098.inquisitor.bot.Inquisitor;
+import um.nija123098.inquisitor.command.Command;
+import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
@@ -39,6 +41,32 @@ public class Config {
             MessageHelper.sendOverride(channel, "No longer allowed to chat in " + channel.discord().mention());
         }else{
             MessageHelper.sendOverride(channel, "I did not understand if you want me to chat or not, please use yes or no");
+        }
+    }
+    @Register(help = "Disables the following command")
+    public static void blacklist(Channel channel, Guild guild, String s){
+        Command command = Registry.getCommand(s);
+        if (command == null){
+            MessageHelper.sendOverride(channel, StringHelper.addQuotes(s) + " is not a recognized command");
+        }else if (guild.getData("blacklist").contains(command.name())){
+            MessageHelper.sendOverride(channel, "That command has already been blacklisted");
+        }else if (command.name().contains("blacklist")){
+            MessageHelper.sendOverride(channel, "You can not blacklist a blacklist command");
+        }else{
+            guild.putData("blacklist", guild.getData("blacklist", "") + ":" + command.name());
+            MessageHelper.sendOverride(channel, "```md\n# Now blocking\n[" + command.name() + "](" + command.help() + ")\n# on server " + guild.discord().getName() + "```");
+        }
+    }
+    @Register(help = "Enables the following command")
+    public static void unblacklist(Channel channel, Guild guild, String s) {
+        Command command = Registry.getCommand(s);
+        if (command == null){
+            MessageHelper.sendOverride(channel, StringHelper.addQuotes(s) + " is not a recognized command");
+        }else if (!guild.getData("blacklist").contains(command.name())){
+            MessageHelper.sendOverride(channel, "That command is not blacklisted");
+        }else{
+            guild.putData("blacklist", guild.getData("blacklist", "").replace(":" + command.name(), ""));
+            MessageHelper.sendOverride(channel, "```md\n# No longer blocking\n[" + command.name() + "](" + command.help() + ")\n# on server " + guild.discord().getName() + "```");
         }
     }
     @Register(help = "Sets the user as the liaison for this bot for the guild")

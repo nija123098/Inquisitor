@@ -133,9 +133,16 @@ public class Command {
                 MessageHelper.send(user, "That command is above your rank");
                 return false;
             }
-            if (this.guild() && guild == null){
-                MessageHelper.send(user, "That command can not be used in a private channel");
-                return false;
+            if (guild == null){
+                if (this.guild()){
+                    MessageHelper.send(user, "That command can not be used in a private channel");
+                    return false;
+                }
+            }else{
+                if (guild.getData("blacklist", "").contains(this.name())){
+                    MessageHelper.send(user, "That command has been blacklisted for " + guild.discord().getName());
+                    return false;
+                }
             }
             suspicion = Suspicion.getLevel(user);
             if (Suspicion.isSufficient(this.suspicion(), suspicion)){

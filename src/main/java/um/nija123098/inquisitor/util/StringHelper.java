@@ -79,4 +79,7 @@ public class StringHelper {
         }
         return false;
     }
+    public static String addQuotes(String s){
+        return "\"" + s + "\"";
+    }
 }
