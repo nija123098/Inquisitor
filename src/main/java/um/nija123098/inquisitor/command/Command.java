@@ -2,7 +2,11 @@ package um.nija123098.inquisitor.command;
 
 import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.context.*;
+import um.nija123098.inquisitor.context.Channel;
+import um.nija123098.inquisitor.context.Guild;
+import um.nija123098.inquisitor.context.Rank;
+import um.nija123098.inquisitor.context.Suspicion;
+import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.MessageHelper;
 
@@ -126,7 +130,7 @@ public class Command {
         if (!this.startup() && !this.shutdown() && user != null){
             rank = Rank.getRank(user, guild);
             if (Inquisitor.getLockdown() && !Rank.isSufficient(Rank.BOT_ADMIN, rank)){
-                MessageHelper.send(channel, Inquisitor.discordClient().getOurUser().mention() + " is currently on lockdown");
+                MessageHelper.send(channel, Inquisitor.ourUser().mention() + " is currently on lockdown");
                 return false;
             }
             if (!this.rankSufficient(rank)){

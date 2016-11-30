@@ -27,10 +27,10 @@ public class GuildBot {
             boolean command = true;
             if (this.guild.getData("prefix") != null && s.startsWith(this.guild.getData("prefix"))){
                 s = s.substring(this.guild.getData("prefix").length());
-            }else if (s.startsWith(event.getClient().getOurUser().mention(false))){
-                s = s.substring(event.getClient().getOurUser().mention(false).length());
-            }else if (s.startsWith(event.getClient().getOurUser().mention(true))){
-                s = s.substring(event.getClient().getOurUser().mention(true).length());
+            }else if (s.startsWith(Inquisitor.ourUser().mention(false))){
+                s = s.substring(Inquisitor.ourUser().mention(false).length());
+            }else if (s.startsWith(Inquisitor.ourUser().mention(true))){
+                s = s.substring(Inquisitor.ourUser().mention(true).length());
             }else{
                 command = false;
             }
@@ -46,6 +46,6 @@ public class GuildBot {
         return this.guildID;
     }
     public void close() {
-
+        Inquisitor.discordClient().getDispatcher().unregisterListener(this);
     }
 }

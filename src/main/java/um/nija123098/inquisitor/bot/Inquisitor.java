@@ -8,6 +8,7 @@ import sx.blah.discord.handle.impl.events.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.obj.IPrivateChannel;
+import sx.blah.discord.handle.obj.IUser;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.util.ClassFinder;
@@ -24,6 +25,9 @@ public class Inquisitor {
     private static Inquisitor inquisitor;
     public static IDiscordClient discordClient(){
         return inquisitor.getClient();
+    }
+    public static IUser ourUser(){
+        return inquisitor.getClient().getOurUser();
     }
     public static boolean getLockdown(){
         return inquisitor.lockdown;
@@ -65,7 +69,6 @@ public class Inquisitor {
                 this.client.getDispatcher().registerListener(this);
             });
         });
-        FileHelper.ensureFileExistence("system");
     }
     @EventSubscriber
     public void handle(GuildCreateEvent event){

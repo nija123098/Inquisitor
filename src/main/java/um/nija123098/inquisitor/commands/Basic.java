@@ -27,11 +27,10 @@ public class Basic {
     @Register(help = "Lists information on Inquisitor")
     public static void info(Channel channel){
         MessageHelper.send(channel, "" +
-                "This is " + Inquisitor.discordClient().getOurUser().mention(false) + ", a Discord info bot.\n" +
+                "This is " + Inquisitor.ourUser().mention(false) + ", a Discord info bot.\n" +
                 "It collects and displays information on servers, users, and bots for a benevolent purpose.\n" +
-                Inquisitor.discordClient().getOurUser().mention() + " is made by nija123098#7242");
+                Inquisitor.ourUser().mention() + " is made by nija123098#7242");
     }
-
     @Register(help = "Displays all commands or help on a specific command")
     public static void help(Channel channel, User user, Rank rank, String s){
         if (s.equals("")){
@@ -97,7 +96,7 @@ public class Basic {
             }
         }
         MessageList messages = channel.discord().getMessages();
-        IUser user = Inquisitor.discordClient().getOurUser();
+        IUser user = Inquisitor.ourUser();
         List<IMessage> deletes = new ArrayList<IMessage>(count);
         int i = 0;
         while (count != deletes.size()){

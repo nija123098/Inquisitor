@@ -25,7 +25,7 @@ public class Uptime {
     public static void uptime(Channel channel, String s){
         User user;
         if (s.length() == 0){
-            user = User.getUserFromID(Inquisitor.discordClient().getOurUser().getID());
+            user = User.getUserFromID(Inquisitor.ourUser().getID());
         }else{
             user = User.getUser(s);
         }

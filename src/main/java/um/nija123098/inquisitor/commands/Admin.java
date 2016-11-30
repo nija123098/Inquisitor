@@ -20,7 +20,7 @@ public class Admin {
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
         }else{
-            MessageHelper.send(channel, user.discord().mention() + " is now a " + Inquisitor.discordClient().getOurUser().mention() + " admin!");
+            MessageHelper.send(channel, user.discord().mention() + " is now a " + Inquisitor.ourUser().mention() + " admin!");
         }
     }
     @Register(natural = true, rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Removes a user as a bot admin")
@@ -29,7 +29,7 @@ public class Admin {
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
         }else{
-            MessageHelper.send(channel, user.discord().mention() + " is no longer a " + Inquisitor.discordClient().getOurUser().mention() + " admin!");
+            MessageHelper.send(channel, user.discord().mention() + " is no longer a " + Inquisitor.ourUser().mention() + " admin!");
         }
     }
     @Register(natural = true, help = "Bans a user from using the bot")
@@ -38,7 +38,7 @@ public class Admin {
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
         }else{
-            MessageHelper.send(channel, user.discord().mention() + " is now banned from using " + Inquisitor.discordClient().getOurUser().mention() + "!");
+            MessageHelper.send(channel, user.discord().mention() + " is now banned from using " + Inquisitor.ourUser().mention() + "!");
         }
     }
     @Register(natural = true, help = "Unbans a user from using the bot")
@@ -47,7 +47,7 @@ public class Admin {
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
         }else{
-            MessageHelper.send(channel, user.discord().mention() + " is no longer banned from using " + Inquisitor.discordClient().getOurUser().mention() + "!");
+            MessageHelper.send(channel, user.discord().mention() + " is no longer banned from using " + Inquisitor.ourUser().mention() + "!");
         }
     }
     @Register

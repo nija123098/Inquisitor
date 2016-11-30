@@ -28,7 +28,7 @@ public class Config {
             guild.putData("prefix", s[0]);
             MessageHelper.sendOverride(channel, "Prefix set to \"" + guild.getData("prefix") + "\"");
         }else{
-            MessageHelper.send(channel, user.discord().mention() + ", you do not have permission to set " + Inquisitor.discordClient().getOurUser().mention() + "'s prefix for " + guild.discord().getName());
+            MessageHelper.send(channel, user.discord().mention() + ", you do not have permission to set " + Inquisitor.ourUser().mention() + "'s prefix for " + guild.discord().getName());
         }
     }
     @Register(help = "Edits the bot's ability to speak in the channel")
@@ -72,6 +72,6 @@ public class Config {
     @Register(help = "Sets the user as the liaison for this bot for the guild")
     public static void liaison(User user, Guild guild){
         guild.putData("liaison", user.getID());
-        MessageHelper.send(user, user.discord().mention() + ", you are now " + Inquisitor.discordClient().getOurUser().mention() + "'s liaison for the guild " + guild.discord().getName());
+        MessageHelper.send(user, user.discord().mention() + ", you are now " + Inquisitor.ourUser().mention() + "'s liaison for the guild " + guild.discord().getName());
     }
 }

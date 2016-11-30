@@ -25,7 +25,7 @@ public class Guild extends Context {
         return guild;
     }
     public Guild(String id) {
-        super("guilds", id);
+        super("guild", id);
     }
     public IGuild discord(){
         return Inquisitor.discordClient().getGuildByID(this.getID());
