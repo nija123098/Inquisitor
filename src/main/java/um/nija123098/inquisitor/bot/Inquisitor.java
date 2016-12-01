@@ -3,7 +3,7 @@ package um.nija123098.inquisitor.bot;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent;
+import sx.blah.discord.handle.impl.events.DisconnectedEvent;
 import sx.blah.discord.handle.impl.events.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
@@ -45,6 +45,7 @@ public class Inquisitor {
         inquisitor.saveInner();
     }
     public static void main(String[] args) {
+        //((Discord4J.Discord4JLogger) Discord4J.LOGGER).setLevel(Discord4J.Discord4JLogger.Level.TRACE);
         List<Class<?>> classes = ClassFinder.find("um.nija123098.inquisitor.commands");
         classes.forEach(Registry::register);
         inquisitor = new Inquisitor(args[0]);
@@ -72,31 +73,21 @@ public class Inquisitor {
     }
     @EventSubscriber
     public void handle(GuildCreateEvent event){
-        synchronized (this.botList){
-            for (GuildBot guildBot : this.botList) {
-                if (guildBot.guildID().equals(event.getGuild().getID())){
-                    return;
-                }
-            }
-            this.botList.add(new GuildBot(this.client, event.getGuild().getID()));
-        }
+        this.botList.add(new GuildBot(this.client, event.getGuild().getID()));
+    }
+    @EventSubscriber
+    public void handle(ReadyEvent event){
+        Registry.startUp();
     }
     @EventSubscriber
     public void handle(MessageReceivedEvent event){
         if (event.getMessage().getChannel() instanceof IPrivateChannel){
-            Invoke.invoke(event.getMessage().getAuthor().getID(), null, event.getMessage().getChannel().getID(), event.getMessage().getContent());
+            Invoke.invoke(event.getMessage().getAuthor().getID(), null, event.getMessage().getChannel().getID(), event.getMessage().getContent(), event.getMessage());
         }
     }
     @EventSubscriber
-    public void handle(ReadyEvent event){
-        synchronized (this.botList){
-            event.getClient().getGuilds().forEach(guild -> this.botList.add(new GuildBot(this.client, guild.getID())));
-        }
-        Registry.startUp();
-    }
-    @EventSubscriber
-    public void handle(DiscordDisconnectedEvent event){
-        if (event.getReason().equals(DiscordDisconnectedEvent.Reason.LOGGED_OUT)){
+    public void handle(DisconnectedEvent event){
+        if (event.getReason().equals(DisconnectedEvent.Reason.LOGGED_OUT)){
             Registry.shutDown();
             try{Thread.sleep(1000);
             }catch(InterruptedException e){e.printStackTrace();}

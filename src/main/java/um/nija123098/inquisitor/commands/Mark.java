@@ -1,5 +1,6 @@
 package um.nija123098.inquisitor.commands;
 
+import sx.blah.discord.handle.obj.IMessage;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.command.Register;
@@ -34,13 +35,13 @@ public class Mark {
         MessageHelper.send(user, "Marked " + channel.discord().getName() + " on guild " + guild.discord().getName() + (u != null ? " using " + StringHelper.getPossessive(u.discord().getName()) + " account" : ""));
     }
     @Register(suspicious = 1, help = "Invokes a command using the mark parameters")
-    public static void invoke(User user, String s){
+    public static void invoke(User user, String s, IMessage message){
         if (user.getData("mark") != null){
             String[] mark = user.getData("mark").split(":");
             if (mark.length == 3){
                 user = User.getUserFromID(mark[2]);
             }
-            Invoke.invoke(user, Guild.getGuild(mark[0]), Channel.getChannel(mark[1]), s);
+            Invoke.invoke(user, Guild.getGuild(mark[0]), Channel.getChannel(mark[1]), s, message);
         }else{
             noMark(user);
         }

@@ -38,7 +38,7 @@ public class GuildBot {
                 s = s.substring(1);
             }
             if (command){
-                Invoke.invoke(event.getMessage().getAuthor().getID(), this.guildID, event.getMessage().getChannel().getID(), s);
+                Invoke.invoke(event.getMessage().getAuthor().getID(), this.guildID, event.getMessage().getChannel().getID(), s, event.getMessage());
             }
         }
     }

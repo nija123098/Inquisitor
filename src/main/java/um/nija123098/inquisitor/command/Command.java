@@ -1,5 +1,6 @@
 package um.nija123098.inquisitor.command;
 
+import sx.blah.discord.handle.obj.IMessage;
 import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.Channel;
@@ -124,7 +125,7 @@ public class Command {
         }
         return this.register.override();
     }
-    public boolean invoke(User user, Guild guild, Channel channel, String s){
+    public boolean invoke(User user, Guild guild, Channel channel, String s, IMessage message){
         Rank rank = Rank.NONE;
         Suspicion suspicion = Suspicion.ENLIGHTENED;
         if (!this.startup() && !this.shutdown() && user != null){
@@ -176,6 +177,8 @@ public class Command {
                 objects[i] = suspicion;
             }else if (parameterTypes[i].equals(Entity.class)){
                 objects[i] = Entity.getEntity("command", this.name.split(" ")[0]);
+            }else if (parameterTypes[i].equals(IMessage.class)){
+                objects[i] = message;
             }
         }
         Object ret = null;
@@ -187,6 +190,7 @@ public class Command {
             }
         } catch (IllegalAccessException e){
             Log.error(this.name() + " command has been poorly formed and has thrown a IllegalAccessException");
+            return false;
         } catch (InvocationTargetException e) {
             Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName());
             e.printStackTrace();

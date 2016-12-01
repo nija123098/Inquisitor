@@ -32,10 +32,10 @@ public class Registry {
         }
     }
     public static void startUp(){
-        COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null));
+        COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null, null));
     }
     public static void shutDown(){
-        COMMANDS.stream().filter(Command::shutdown).forEach(command -> command.invoke(null, null, null, null));
+        COMMANDS.stream().filter(Command::shutdown).forEach(command -> command.invoke(null, null, null, null, null));
     }
     public static Command getCommand(String msg){
         String[] strings = msg.toLowerCase().split(" ");
