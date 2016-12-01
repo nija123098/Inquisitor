@@ -34,7 +34,7 @@ public @interface Register {
      * @return if the command is a default command for other commands
      */
     boolean defaul() default false;
-    Rank rank() default Rank.BOT;
+    Rank rank() default Rank.USER;
     boolean startup() default false;
     boolean shutdown() default false;
     boolean guild() default false;

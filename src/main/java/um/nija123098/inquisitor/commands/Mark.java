@@ -27,7 +27,7 @@ public class Mark {
             if (u != null){
                 mark += ":" + u.getID();
             }else{
-                MessageHelper.send(channel, "No ID found");
+                MessageHelper.send(channel, "No account \"" + s + "\" found");
             }
         }
         user.putData("mark", mark);
@@ -35,18 +35,14 @@ public class Mark {
     }
     @Register(suspicious = 1, help = "Invokes a command using the mark parameters")
     public static void invoke(User user, String s){
-        try {
-            if (user.getData("mark") != null){
-                String[] mark = user.getData("mark").split(":");
-                if (mark.length == 3){
-                    user = User.getUserFromID(mark[2]);
-                }
-                Invoke.invoke(user, Guild.getGuild(mark[0]), Channel.getChannel(mark[1]), s);
-            }else{
-                noMark(user);
+        if (user.getData("mark") != null){
+            String[] mark = user.getData("mark").split(":");
+            if (mark.length == 3){
+                user = User.getUserFromID(mark[2]);
             }
-        }catch (Exception e){
-            e.printStackTrace();
+            Invoke.invoke(user, Guild.getGuild(mark[0]), Channel.getChannel(mark[1]), s);
+        }else{
+            noMark(user);
         }
     }
     @Register(suspicious = .5f, help = "Displays info on the current mark")
@@ -55,7 +51,7 @@ public class Mark {
             noMark(user);
         }else{
             String[] mark = user.getData("mark").split(":");
-            MessageHelper.send(user, "Marked " + Channel.getChannel(mark[1]).discord().getName() + " on guild " + Guild.getGuild(mark[0]).discord().getName() + (mark.length == 3 && User.getUserFromID(mark[2]) != null ? " using " + User.getUserFromID(mark[2]).discord().getName() + "'s account" : ""));
+            MessageHelper.send(user, "Marked " + Channel.getChannel(mark[1]).discord().getName() + " on guild " + Guild.getGuild(mark[0]).discord().getName() + (mark.length == 3 && User.getUserFromID(mark[2]) != null ? " using " + StringHelper.getPossessive(User.getUserFromID(mark[2]).discord().getName()) + " account" : ""));
         }
     }
     @Register(suspicious = 1.5f)
