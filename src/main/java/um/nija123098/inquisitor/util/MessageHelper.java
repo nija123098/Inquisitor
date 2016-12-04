@@ -7,6 +7,9 @@ import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.User;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Made by nija123098 on 11/6/2016
  */
@@ -45,5 +48,31 @@ public class MessageHelper {
         if (!channel.isPrivate()){
             send(channel, user.discord().mention() + " check your DMs!", 20000);
         }
+    }
+    public static boolean react(String s, IMessage message){
+        String val = getEmoticon(s);
+        if (val != null){
+            RequestHandler.request(() -> message.addReaction(val));
+            return true;
+        }else{
+            Log.warn("No emoticon " + StringHelper.addQuotes(s));
+            return false;
+        }
+    }
+    private static final Map<String, String> MAP = new HashMap<String, String>();
+    public static String getEmoticon(String key){
+        return MAP.get(key);
+    }
+    static {
+        MAP.put("floppy_disk", "\uD83D\uDCBE");
+        MAP.put("lock", "\uD83D\uDD12");
+        MAP.put("x", "\u274C");
+        MAP.put("question", "\u2753");
+        MAP.put("ok_hand", "\ud83d\udc4c");
+        MAP.put("tada", "\ud83D\uDC4C");
+        MAP.put("no_entry", "\u26D4");
+        MAP.put("no_entry_sign", "\ud83D\udEAB");
+        MAP.put("spy", "\uD83D\uDD75");
+        MAP.put("thumbs_up", "\uD83D\uDC4D");
     }
 }
