@@ -1,5 +1,6 @@
 package um.nija123098.inquisitor.commands;
 
+import sx.blah.discord.handle.obj.IMessage;
 import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -19,11 +20,12 @@ import java.util.List;
  */
 @Register(rank = Rank.BOT_ADMIN, suspicion = Suspicion.HERETICAL)
 public class Admin {
-    @Register(defaul = true, override = true)
+    @Register(defaul = true, override = true, help = "Lists bot admins")
     public static void admin(User user, Entity entity){
         List<String> strings = new ArrayList<String>();
-        String[] strs = entity.getData("admins").split(":");
+        String[] strs = entity.getData("admins", "").split(":");
         for (int i = 0; i < strs.length - 1; i++) {
+            System.out.println(strs[i]);
             User admin = User.getUserFromID(strs[i]);
             strings.add(admin.discord().getName() + "#" + admin.discord().getDiscriminator());
         }
@@ -31,13 +33,17 @@ public class Admin {
     }
     @Register(rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Makes a user a bot admin")
     public static void op(Channel channel, String s, Entity entity){
+        entity.clearData("admins");
         User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
+        }else if ("true".equals(user.getData("admin"))) {
+            MessageHelper.send(channel, user.discord().mention() + " is already a " + Inquisitor.ourUser().mention() + " admin!");
         }else{
             user.putData("admin", true + "");
-            entity.putData("admins", entity.getData("admins") + user.getID() + ":");
+            entity.putData("admins", entity.getData("admins", "") + user.getID() + ":");
             MessageHelper.send(channel, user.discord().mention() + " is now a " + Inquisitor.ourUser().mention() + " admin!");
+            System.out.println(entity.getData("admins"));
         }
     }
     @Register(rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Removes a user as a bot admin")
@@ -45,6 +51,8 @@ public class Admin {
         User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
+        }else if (user.getData("admin") == null){
+            MessageHelper.send(channel, user.discord().mention() + " not a " + Inquisitor.ourUser().mention() + " admin!");
         }else{
             user.clearData("admin");
             entity.putData("admins", entity.getData("admins").replace(user.getID() + ":", ""));
@@ -72,18 +80,19 @@ public class Admin {
         }
     }
     @Register
-    public static void lockdown(User user){
+    public static void lockdown(User user, IMessage message){
         Inquisitor.lockdown();
-        Inquisitor.discordClient().getShards().forEach(shard -> shard.changePresence(true));
+        Inquisitor.discordClient().getShards().forEach(iShard -> iShard.changePresence(true));
+        MessageHelper.react("lock", message);
         Log.warn(user.discord().getName() + " put Inquisitor in lockdown");
     }
     @Register(help = "Saves all bot configuration files")
-    public static void save(Channel channel){
+    public static void save(IMessage message){
         Inquisitor.save();
-        MessageHelper.send(channel, "*Files saved*");
+        MessageHelper.react("floppy_disk", message);
     }
     @Register(help = "Shuts down the bot without restart")
-    public static void close(User user){
+    public static void close(User user, IMessage message){
         Inquisitor.lockdown();
         Log.warn(user.discord().getName() + " is closing Inquisitor");
         Inquisitor.close();
