@@ -8,6 +8,7 @@ import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.Suspicion;
 import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.util.FileHelper;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.MessageHelper;
 
@@ -176,7 +177,7 @@ public class Command {
             }else if (parameterTypes[i].equals(Suspicion.class)){
                 objects[i] = suspicion;
             }else if (parameterTypes[i].equals(Entity.class)){
-                objects[i] = Entity.getEntity("command", this.name.split(" ")[0]);
+                objects[i] = Entity.getEntity(FileHelper.getJarContainer() + "\\" + "command", this.name.split(" ")[0]);
             }else if (parameterTypes[i].equals(IMessage.class)){
                 objects[i] = message;
             }

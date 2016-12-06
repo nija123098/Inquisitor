@@ -24,16 +24,14 @@ public class Admin {
     public static void admin(User user, Entity entity){
         List<String> strings = new ArrayList<String>();
         String[] strs = entity.getData("admins", "").split(":");
-        for (int i = 0; i < strs.length - 1; i++) {
-            System.out.println(strs[i]);
+        for (int i = 0; i < strs.length; i++) {
             User admin = User.getUserFromID(strs[i]);
             strings.add(admin.discord().getName() + "#" + admin.discord().getDiscriminator());
         }
-        CommonMessageHelper.displayList("# A list of Inquisitor Admins", "", strings, user);
+        CommonMessageHelper.displayList("# A list of Inquisitor admins", "", strings, user);
     }
     @Register(rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Makes a user a bot admin")
     public static void op(Channel channel, String s, Entity entity){
-        entity.clearData("admins");
         User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
@@ -43,7 +41,6 @@ public class Admin {
             user.putData("admin", true + "");
             entity.putData("admins", entity.getData("admins", "") + user.getID() + ":");
             MessageHelper.send(channel, user.discord().mention() + " is now a " + Inquisitor.ourUser().mention() + " admin!");
-            System.out.println(entity.getData("admins"));
         }
     }
     @Register(rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Removes a user as a bot admin")

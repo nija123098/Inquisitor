@@ -4,12 +4,14 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.MessageList;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.command.*;
-import um.nija123098.inquisitor.context.*;
-import um.nija123098.inquisitor.util.CommonMessageHelper;
-import um.nija123098.inquisitor.util.Log;
-import um.nija123098.inquisitor.util.MessageHelper;
-import um.nija123098.inquisitor.util.RequestHandler;
+import um.nija123098.inquisitor.command.Command;
+import um.nija123098.inquisitor.command.Register;
+import um.nija123098.inquisitor.command.Registry;
+import um.nija123098.inquisitor.context.Channel;
+import um.nija123098.inquisitor.context.Rank;
+import um.nija123098.inquisitor.context.Suspicion;
+import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,15 +62,21 @@ public class Basic {
         }
     }
     @Register(help = "Lists commands for a default command")
-    public static void commands(Channel channel, User user, String s){
-        Command command = Registry.getCommand(s);
-        if (command == null || command.hidden()){
-            MessageHelper.send(channel, "No such command");
-        }else if (!command.defaul()){
-            MessageHelper.send(channel, "That command is not a default command");
+    public static void commands(Channel channel, User user, Rank rank, String s){
+        if (s.length() == 0){
+            help(channel, user, rank, s);
         }else{
-            MessageHelper.checkYourDMs(channel, user);
-            CommonMessageHelper.displayCommands("# All extension commands for " + command.name().split(" ")[0] + "\n[" + command.name() + "](" + command.help() + ")", "", Registry.getCommands(c -> c.name().split(" ")[0].equals(command.name().split(" ")[0]), c -> !c.defaul()), user);
+            Command command = Registry.getCommand(s);
+            if (command == null) {
+                MessageHelper.send(channel, "No such command " + StringHelper.addQuotes(s));
+            }else if (command.hidden()){
+                MessageHelper.send(channel, "We don't talk about that command");
+            }else if (!command.defaul()){
+                MessageHelper.send(channel, "That command is not a default command");
+            }else{
+                MessageHelper.checkYourDMs(channel, user);
+                CommonMessageHelper.displayCommands("# All extension commands for " + command.name().split(" ")[0] + "\n[" + command.name() + "](" + command.help() + ")", "", Registry.getCommands(c -> c.name().split(" ")[0].equals(command.name().split(" ")[0]), c -> !c.defaul(), c -> c.rankSufficient(rank)), user);
+            }
         }
     }
     @Register(suspicion = Suspicion.RADICAL, help = "Displays the invite link for Inquisitor")
