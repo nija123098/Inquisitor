@@ -57,11 +57,13 @@ public class Admin {
         }
     }
     @Register(help = "Bans a user from using the bot")
-    public static void ban(Channel channel, String s){
+    public static void ban(Channel channel, String s) {
         User user = User.getUser(s);
-        if (user == null){
+        if (user == null) {
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
-        }else{
+        } else if (user.getData("banned").equals("true")){
+            MessageHelper.send(channel, user.discord().mention() + " has already been banned from using " + Inquisitor.ourUser().mention() + "!");
+        }else {
             user.putData("banned", true + "");
             MessageHelper.send(channel, user.discord().mention() + " is now banned from using " + Inquisitor.ourUser().mention() + "!");
         }
@@ -71,8 +73,11 @@ public class Admin {
         User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
+        }else if (user.getData("banned") == null){
+            MessageHelper.send(channel, user.discord().mention() + " was not banned from using " + Inquisitor.ourUser().mention() + "!");
         }else{
             user.putData("admin", false + "");
+            user.clearData("banned");
             MessageHelper.send(channel, user.discord().mention() + " is no longer banned from using " + Inquisitor.ourUser().mention() + "!");
         }
     }
@@ -91,6 +96,7 @@ public class Admin {
     @Register(help = "Shuts down the bot without restart")
     public static void close(User user, IMessage message){
         Inquisitor.lockdown();
+        MessageHelper.react("lock_and_key", message);
         Log.warn(user.discord().getName() + " is closing Inquisitor");
         Inquisitor.close();
     }

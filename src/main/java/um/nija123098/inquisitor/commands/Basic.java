@@ -22,8 +22,8 @@ import java.util.List;
 @Register(natural = true, suspicion = Suspicion.HERETICAL)
 public class Basic {
     @Register(hidden = true)
-    public static void ping(Channel channel){
-        MessageHelper.send(channel, "pong");
+    public static void ping(Channel channel, IMessage message){
+        MessageHelper.react("ping", message);
         Log.info("pong");
     }
     @Register(help = "Lists information on Inquisitor")

@@ -67,10 +67,12 @@ public class MessageHelper {
         MAP.put("floppy_disk", "\uD83D\uDCBE");
         MAP.put("nerd", "\ud83e\udd13");
         MAP.put("lock", "\uD83D\uDD12");
+        MAP.put("lock_and_key", "\uD83D\uDD10");
         MAP.put("x", "\u274C");
         MAP.put("question", "\u2753");
         MAP.put("ok_hand", "\ud83d\udc4c");
         MAP.put("tada", "\ud83D\uDC4C");
+        MAP.put("ping", "\ud83c\udfd3");
         MAP.put("no_entry", "\u26D4");
         MAP.put("no_entry_sign", "\ud83D\udEAB");
         MAP.put("spy", "\uD83D\uDD75");

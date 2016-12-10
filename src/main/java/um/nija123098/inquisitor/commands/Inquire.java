@@ -4,13 +4,11 @@ import javafx.util.Pair;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.MessageList;
 import um.nija123098.inquisitor.command.Register;
-import um.nija123098.inquisitor.context.Suspicion;
-import um.nija123098.inquisitor.context.Channel;
-import um.nija123098.inquisitor.context.Guild;
-import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.context.*;
 import um.nija123098.inquisitor.util.CommonMessageHelper;
 import um.nija123098.inquisitor.util.ListHelper;
 import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.StringHelper;
 
 import java.util.*;
 
@@ -19,12 +17,21 @@ import java.util.*;
  */
 public class Inquire {
     @Register(defaul = true, help = "Displays information on the user, use \"help inquire commands\" to see more")
-    public static void inquire(Channel channel, User user, String s){
-        if (s.length() != 0){
-            return;
+    public static void inquire(Guild guild, Channel channel, User user, String s, IMessage message){
+        if (s.length() == 0){
+            MessageHelper.send(channel, "User " + user.getID() + " are you ready to be interrogated?\n" +
+                    user.discord().mention() + ", if that is your name, you so far have been " + Suspicion.getLevel(user));
+        }else{
+            if ((user = User.getUser(s)) == null){
+                MessageHelper.send(channel, "There is no known user by the name of " + StringHelper.addQuotes(s));
+            }else{
+                MessageHelper.react("eye", message);
+                Suspicion.addLevel(user, .1f, channel, false);
+                MessageHelper.send(channel, "User " + user.getID() + " goes by the name of " + (guild == null ? user.discord().getName() : user.discord().getDisplayName(guild.discord())) + "\n" +
+                        (guild != null && !user.discord().getDisplayName(guild.discord()).equals(user.discord().getName()) ? user.discord().getDisplayName(guild.discord()) + " is actually " + user.discord().getName() + "\n" : "") +
+                        user.discord().getName() + " has thus far been " + Suspicion.getLevel(user) + " and is a " + Rank.getRankName(user, guild));
+            }
         }
-        MessageHelper.send(channel, "User " + user.getID() + " are you ready to be interrogated?\n" +
-                user.discord().mention() + ", if that is your name, you so far have been " + Suspicion.getLevel(Float.parseFloat(user.getData("suspicion", "0"))));
     }
     @Register(suspicious = .125f, guild = true, help = "Lists all roles on a server")
     public static void roles(Guild guild, User user){

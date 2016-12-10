@@ -199,6 +199,9 @@ public class Command {
         }
         if (!this.startup() && !this.shutdown() && user != null){
             Suspicion.addLevel(user, this.suspicious(), channel, true);
+            if (this.suspicious() > 0){
+                MessageHelper.react("eye", message);
+            }
         }
         return ret == null || Objects.equals(true, ret);
     }

@@ -28,7 +28,7 @@ public class Invoke {
             }
             method.invoke(user, guild, channel, msg, iMessage);
         }else{
-            MessageHelper.send(channel, "Not a recognized command" + (channel.isPrivate() ? ", make sure you are not using a prefix" : ""));
+            MessageHelper.react("question", iMessage);
         }
     }
 }

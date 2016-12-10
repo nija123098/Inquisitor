@@ -32,7 +32,6 @@ public class Mark {
             }
         }
         user.putData("mark", mark);
-        MessageHelper.send(user, "Marked " + channel.discord().getName() + " on guild " + guild.discord().getName() + (u != null ? " using " + StringHelper.getPossessive(u.discord().getName()) + " account" : ""));
     }
     @Register(suspicious = 1, help = "Invokes a command using the mark parameters")
     public static void invoke(User user, String s, IMessage message){
