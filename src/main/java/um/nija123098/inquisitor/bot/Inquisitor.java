@@ -44,8 +44,10 @@ public class Inquisitor {
     public static void save(){
         inquisitor.saveInner();
     }
+    public static String mention(){
+        return inquisitor.client.getOurUser().mention(false);
+    }
     public static void main(String[] args) {
-        //((Discord4J.Discord4JLogger) Discord4J.LOGGER).setLevel(Discord4J.Discord4JLogger.Level.TRACE);
         List<Class<?>> classes = ClassFinder.find("um.nija123098.inquisitor.commands");
         classes.forEach(Registry::register);
         inquisitor = new Inquisitor(args[0]);
@@ -65,10 +67,8 @@ public class Inquisitor {
         this.botList = new ArrayList<GuildBot>(1);
         RequestHandler.request(() -> {
             this.client = new ClientBuilder().withToken(token).build();
-            RequestHandler.request(() -> {
-                this.client.login();
-                this.client.getDispatcher().registerListener(this);
-            });
+            this.client.getDispatcher().registerListener(this);
+            RequestHandler.request(() -> this.client.login());
         });
     }
     @EventSubscriber
@@ -88,7 +88,6 @@ public class Inquisitor {
     @EventSubscriber
     public void handle(DisconnectedEvent event){
         if (event.getReason().equals(DisconnectedEvent.Reason.LOGGED_OUT)){
-            Registry.shutDown();
             try{Thread.sleep(1000);
             }catch(InterruptedException e){e.printStackTrace();}
             System.exit(11);
@@ -111,6 +110,7 @@ public class Inquisitor {
         Entity.saveEntities();
     }
     public void closeInner(){
+        Registry.shutDown();
         try {
             this.botList.forEach(GuildBot::close);
             this.saveInner();

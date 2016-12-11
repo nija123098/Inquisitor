@@ -8,7 +8,7 @@ import java.util.List;
  * Made by nija123098 on 10/22/2016
  */
 public class StringHelper {
-    public static String getList(List<String> list){
+    public static String getEnglishList(List<String> list){
         switch (list.size()){
             case 0:
                 return "";
@@ -25,10 +25,13 @@ public class StringHelper {
                 return s;
         }
     }
-    public static String getList(String...list){
+    public static String getEnglishList(String...list){
+        return getEnglishList(getList(list));
+    }
+    public static List<String> getList(String...list){
         List<String> strings = new ArrayList<String>(list.length);
         Collections.addAll(strings, list);
-        return getList(strings);
+        return strings;
     }
     public static boolean exclusiveLetters(String s){
         for (int i = 0; i < s.length(); i++) {

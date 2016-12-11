@@ -35,15 +35,14 @@ public class Command {
         String name = this.register.name().toLowerCase();
         if (name.equals("")){
             if (this.natural()){
-                this.name = this.method.getName().toLowerCase();
+                name = this.method.getName();
             }else if (this.defaul()) {
-                this.name = this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName().toLowerCase() : this.clazz.name();
+                name = this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName() : this.clazz.name();
             }else{
-                this.name = (this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName().toLowerCase() : this.clazz.name()) + " " + this.method.getName().toLowerCase();
+                name = (this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName() : this.clazz.name()) + " " + this.method.getName();
             }
-        }else{
-            this.name = name;
         }
+        this.name = name.toLowerCase();
     }
     public String help(){
         if (!DEFAULT.help().equals(this.clazz.help())){
@@ -127,8 +126,8 @@ public class Command {
         return this.register.override();
     }
     public boolean invoke(User user, Guild guild, Channel channel, String s, IMessage message){
-        Rank rank = Rank.NONE;
-        Suspicion suspicion = Suspicion.ENLIGHTENED;
+        Rank rank = null;
+        Suspicion suspicion = null;
         if (!this.startup() && !this.shutdown() && user != null){
             rank = Rank.getRank(user, guild);
             if (Inquisitor.getLockdown() && !Rank.isSufficient(Rank.BOT_ADMIN, rank)){
@@ -168,8 +167,7 @@ public class Command {
             }else if (parameterTypes[i].equals(String.class)){
                 objects[i] = s;
             }else if (parameterTypes[i].equals(String[].class)){
-                String[] strings = s.split(" ");
-                objects[i] = strings[0].equals("") ? new String[0] : strings;
+                objects[i] = s.length() == 0 ? new String[0] : s.split(" ");
             }else if (parameterTypes[i].equals(Command.class)){
                 objects[i] = this;
             }else if (parameterTypes[i].equals(Rank.class)){
@@ -182,7 +180,7 @@ public class Command {
                 objects[i] = message;
             }
         }
-        Object ret = null;
+        Object ret;
         try {
             if (objects.length == 0){
                 ret = this.method.invoke(null);
@@ -190,14 +188,13 @@ public class Command {
                 ret = this.method.invoke(null, objects);
             }
         } catch (IllegalAccessException e){
-            Log.error(this.name() + " command has been poorly formed and has thrown a IllegalAccessException");
             return false;
         } catch (InvocationTargetException e) {
             Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName());
             e.printStackTrace();
             return false;
         }
-        if (!this.startup() && !this.shutdown() && user != null){
+        if (!this.startup() && !this.shutdown() && user != null && (ret == null || Objects.equals(true, ret))){
             Suspicion.addLevel(user, this.suspicious(), channel, true);
             if (this.suspicious() > 0){
                 MessageHelper.react("eye", message);

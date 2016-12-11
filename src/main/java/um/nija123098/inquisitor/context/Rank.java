@@ -52,18 +52,6 @@ public enum Rank {
         }
         return build.replace("_", " ");
     }
-    public static void main(String[] args) {
-        Rank rank = BOT_ADMIN;
-        String name = rank.name(), build = name.charAt(0) + "";
-        for (int i = 1; i < name.length(); i++) {
-            if (name.charAt(i - 1) == '_'){
-                build += name.charAt(i);
-            }else{
-                build += name.toLowerCase().charAt(i);
-            }
-        }
-        System.out.println(build.replace("_", " "));
-    }
     public static boolean isSufficient(Rank required, Rank level){
         return level.ordinal() >= required.ordinal();
     }
