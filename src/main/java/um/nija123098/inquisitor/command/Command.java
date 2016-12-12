@@ -28,6 +28,7 @@ public class Command {
     private final String name;
     private final Method method;
     private final Register register, clazz;
+    private final Entity entity;
     public Command(Method method) {
         this.method = method;
         this.register = method.getAnnotation(Register.class);
@@ -43,6 +44,18 @@ public class Command {
             }
         }
         this.name = name.toLowerCase();
+        Entity ent = null;
+        for (Class clazz : this.method.getParameterTypes()) {
+            if (clazz.equals(Entity.class)){
+                ent = Entity.getEntity(FileHelper.getJarContainer() + "\\" + "command", this.name.split(" ")[0]);
+                break;
+            }
+        }
+        if (ent == null){
+            this.entity = null;
+        }else{
+            this.entity = ent;
+        }
     }
     public String help(){
         if (!DEFAULT.help().equals(this.clazz.help())){
@@ -175,7 +188,7 @@ public class Command {
             }else if (parameterTypes[i].equals(Suspicion.class)){
                 objects[i] = suspicion;
             }else if (parameterTypes[i].equals(Entity.class)){
-                objects[i] = Entity.getEntity(FileHelper.getJarContainer() + "\\" + "command", this.name.split(" ")[0]);
+                objects[i] = this.entity;
             }else if (parameterTypes[i].equals(IMessage.class)){
                 objects[i] = message;
             }
@@ -190,7 +203,7 @@ public class Command {
         } catch (IllegalAccessException e){
             return false;
         } catch (InvocationTargetException e) {
-            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName());
+            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName() + user.discord().getDiscriminator());
             e.printStackTrace();
             return false;
         }

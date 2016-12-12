@@ -1,5 +1,6 @@
 package um.nija123098.inquisitor.bot;
 
+import sx.blah.discord.Discord4J;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -12,7 +13,7 @@ import sx.blah.discord.handle.obj.IUser;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.util.ClassFinder;
-import um.nija123098.inquisitor.util.FileHelper;
+import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.RequestHandler;
 
 import java.util.ArrayList;
@@ -22,6 +23,17 @@ import java.util.List;
  * Made by nija123098 on 11/5/2016
  */
 public class Inquisitor {
+    public static void main(String[] args) {
+        Discord4J.disableChannelWarnings();
+        ClassFinder.find("um.nija123098.inquisitor.commands").forEach(Registry::register);
+        inquisitor = new Inquisitor(args[0]);
+        Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook"){
+            @Override
+            public void run(){
+                save();
+            }
+        });
+    }
     private static Inquisitor inquisitor;
     public static IDiscordClient discordClient(){
         return inquisitor.getClient();
@@ -45,18 +57,7 @@ public class Inquisitor {
         inquisitor.saveInner();
     }
     public static String mention(){
-        return inquisitor.client.getOurUser().mention(false);
-    }
-    public static void main(String[] args) {
-        List<Class<?>> classes = ClassFinder.find("um.nija123098.inquisitor.commands");
-        classes.forEach(Registry::register);
-        inquisitor = new Inquisitor(args[0]);
-        Runtime.getRuntime().addShutdownHook(new Thread(){
-            @Override
-            public void run(){
-                save();
-            }
-        });
+        return inquisitor.client.getOurUser().mention(true);
     }
     private volatile boolean lockdown;
     private final List<GuildBot> botList;
@@ -78,6 +79,7 @@ public class Inquisitor {
     @EventSubscriber
     public void handle(ReadyEvent event){
         Registry.startUp();
+        Log.info("Command registration complete");
     }
     @EventSubscriber
     public void handle(MessageReceivedEvent event){
@@ -94,27 +96,21 @@ public class Inquisitor {
         }
     }
     public Entity getEnt(String name){
-        for (Entity entity : this.entities) {
-            if (entity.name().equals(name)){
-                return entity;
-            }
-        }
-        Entity entity = new Entity(FileHelper.getJarContainer() + "\\system", name);
-        this.entities.add(entity);
-        return entity;
+        return Entity.getEntity("system", name);
     }
     public IDiscordClient getClient(){
         return this.client;
     }
     public void saveInner(){
+        Log.info("Saving");
         Entity.saveEntities();
     }
     public void closeInner(){
         Registry.shutDown();
         try {
             this.botList.forEach(GuildBot::close);
-            this.saveInner();
             RequestHandler.request(() -> this.client.logout());
+            Log.info("Shutting down");
         }catch (Exception e){
             e.printStackTrace();
         }

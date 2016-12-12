@@ -17,26 +17,21 @@ import java.util.stream.Collectors;
 public class Entity {
     private static final List<Entity> ENTITIES;
     static{ENTITIES = new ArrayList<Entity>();}
-    public static void saveEntities(){
+    public static synchronized void saveEntities(){
         ENTITIES.forEach(Entity::save);
     }
-    public static Entity getEntity(String path, String name){
+    public static synchronized Entity getEntity(String path, String name){
         File file = new File(path + "\\" + name);
-        for (int i = 0; i < ENTITIES.size(); i++) {
-            if (ENTITIES.get(i).file.equals(file)){
-                return ENTITIES.get(i);
+        for (Entity ENTITY : ENTITIES) {
+            if (ENTITY.file.equals(file)) {
+                return ENTITY;
             }
         }
-        Entity entity = new Entity(file);
-        ENTITIES.add(entity);
-        return entity;
+        return new Entity(file);
     }
     private final Map<String, String> stringMap;
     private final File file;
-    public Entity(String path, String name) {
-        this(new File(path + "\\" + name));
-    }
-    public Entity(File file) {
+    private Entity(File file) {
         this.stringMap = new ConcurrentHashMap<String, String>();
         this.file = file;
         List<String> strings = new ArrayList<String>();
@@ -66,6 +61,9 @@ public class Entity {
     }
     public void clearData(String id){
         this.stringMap.remove(id);
+    }
+    public List<String> getSaved(){
+        return new ArrayList<String>(this.stringMap.keySet());
     }
     private List<String> getStrings() {
         List<String> strings = new ArrayList<String>(this.stringMap.size());
