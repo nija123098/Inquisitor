@@ -13,6 +13,7 @@ import sx.blah.discord.handle.obj.IUser;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.util.ClassFinder;
+import um.nija123098.inquisitor.util.FileHelper;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.RequestHandler;
 
@@ -96,7 +97,7 @@ public class Inquisitor {
         }
     }
     public Entity getEnt(String name){
-        return Entity.getEntity("system", name);
+        return Entity.getEntity(FileHelper.getJarContainer() + "\\system", name);
     }
     public IDiscordClient getClient(){
         return this.client;

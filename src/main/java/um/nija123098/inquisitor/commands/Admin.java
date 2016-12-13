@@ -1,6 +1,7 @@
 package um.nija123098.inquisitor.commands;
 
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.Status;
 import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -24,14 +25,14 @@ public class Admin {
     public static void admin(User user, Entity entity){
         List<String> strings = new ArrayList<String>();
         String[] strs = entity.getData("admins", "").split(":");
-        for (int i = 0; i < strs.length; i++) {
-            User admin = User.getUserFromID(strs[i]);
+        for (String str : strs) {
+            User admin = User.getUserFromID(str);
             strings.add(admin.discord().getName() + "#" + admin.discord().getDiscriminator());
         }
         CommonMessageHelper.displayList("# A list of Inquisitor admins", "", strings, user);
     }
     @Register(rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Makes a user a bot admin")
-    public static void op(Channel channel, String s, Entity entity){
+    public static void authorize(Channel channel, String s, Entity entity){
         User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
@@ -44,7 +45,7 @@ public class Admin {
         }
     }
     @Register(rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Removes a user as a bot admin")
-    public static void unop(Channel channel, String s, Entity entity){
+    public static void unauthorize(Channel channel, String s, Entity entity){
         User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
@@ -85,6 +86,7 @@ public class Admin {
     public static void lockdown(User user, IMessage message){
         Inquisitor.lockdown();
         Inquisitor.discordClient().getShards().forEach(iShard -> iShard.changePresence(true));
+        Inquisitor.discordClient().getShards().forEach(iShard -> iShard.changeStatus(Status.game("with locks")));
         MessageHelper.react("lock", message);
         Log.warn(user.discord().getName() + " put Inquisitor in lockdown");
     }

@@ -1,5 +1,6 @@
 package um.nija123098.inquisitor.commands;
 
+import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Registry;
@@ -18,15 +19,16 @@ import um.nija123098.inquisitor.util.StringHelper;
 public class Config {
     @Register(natural = true, guild = true, rank = Rank.USER, override = true, help = "Changes or displays the prefix for the server")
     public static void prefix(String[] s, Guild guild, Channel channel, User user, Rank rank){
+        Entity prefixEntity = Inquisitor.getEntity("prefixes");
         if (s.length == 0){
-            if (guild.getData("prefix") == null){
+            if (prefixEntity.getData(guild.getID()) == null){
                 MessageHelper.send(channel, "No prefix has been set for this guild, to add one use configure prefix");
             }else{
                 MessageHelper.send(channel, "The prefix on this server is \"" + guild.getData("prefix") + "\"");
             }
         }else if (Rank.isSufficient(Rank.GUILD_ADMIN, rank)){
-            guild.putData("prefix", s[0]);
-            MessageHelper.sendOverride(channel, "Prefix set to \"" + guild.getData("prefix") + "\"");
+            prefixEntity.putData(guild.getID(), s[0]);
+            MessageHelper.sendOverride(channel, "Prefix set to \"" + prefixEntity.getData(guild.getID()) + "\"");
         }else{
             MessageHelper.send(channel, user.discord().mention() + ", you do not have permission to set " + Inquisitor.ourUser().mention() + "'s prefix for " + guild.discord().getName());
         }
