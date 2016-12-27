@@ -62,10 +62,8 @@ public class Inquisitor {
     }
     private volatile boolean lockdown;
     private final List<GuildBot> botList;
-    private final List<Entity> entities;
     private IDiscordClient client;
     private Inquisitor(String token){
-        this.entities = new ArrayList<Entity>();
         this.botList = new ArrayList<GuildBot>(1);
         RequestHandler.request(() -> {
             this.client = new ClientBuilder().withToken(token).build();

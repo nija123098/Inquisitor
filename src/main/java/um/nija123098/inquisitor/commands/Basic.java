@@ -23,7 +23,7 @@ import java.util.List;
 public class Basic {
     @Register(hidden = true)
     public static void ping(Channel channel, IMessage message){
-        MessageHelper.react("ping", message);
+        MessageHelper.react("ping_pong", message);
         Log.info("pong");
     }
     @Register(help = "Lists information on Inquisitor")

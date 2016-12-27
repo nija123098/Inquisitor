@@ -11,6 +11,7 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.RequestHandler;
 import um.nija123098.inquisitor.util.StringHelper;
 
 import java.util.ArrayList;
@@ -55,6 +56,27 @@ public class Alert {
     @Register(shutdown = true, rank = Rank.NONE)
     public static void shutdown(){
         Inquisitor.discordClient().getDispatcher().unregisterListener(ALERT);
+    }
+    @Register(defaul = true, help = "Specify a time in hours to be reminded of something")
+    public static Boolean alert(Channel channel, User user, String string, String[] strings){
+        float hours;
+        try{hours = Float.parseFloat(strings[0]);
+        }catch(Exception e){
+            MessageHelper.send(channel, strings[0] + " is not a time");
+            return false;
+        }
+        if (hours == 0){
+            MessageHelper.send(channel, "You should go do that now then.");
+            return false;
+        }else if (hours < 0){
+            MessageHelper.send(channel, "You already should have done that.");
+            return false;
+        }
+        string = string.substring(string.length() - strings[0].length());
+        MessageHelper.send(channel, "I will remind you to " + string + " in " + hours + " hour" + (hours == 1 ? "" : "s"));
+        final String finalS = string;
+        RequestHandler.request((long) (hours * 60 * 60 * 1000), () -> MessageHelper.send(user, "You asked me to remind you to " + finalS));
+        return true;
     }
     @Register(help = "Notifies if a specified user changes their presence, it defaults to online")
     public static Boolean presence(Channel channel, User user, String[] s){
@@ -133,7 +155,6 @@ public class Alert {
     @Register(help = "Notifies if an specified user stops playing games")
     public static Boolean noStatus(Channel channel, User user, String[] strings, String s){
         User target = User.getUser(strings[0]);
-        String statusName = s.substring((strings[0] + " ").length());
         if (target != null){
             if (user.equals(target) && user.discord().getStatus().getType() == Status.StatusType.NONE){
                 MessageHelper.send(channel, target.discord().getName() + " is not playing a game already");

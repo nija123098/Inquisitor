@@ -98,7 +98,7 @@ public class Admin {
     @Register(help = "Shuts down the bot without restart")
     public static void close(User user, IMessage message){
         Inquisitor.lockdown();
-        MessageHelper.react("lock_and_key", message);
+        MessageHelper.react("closed_lock_with_key", message);
         Log.warn(user.discord().getName() + " is closing Inquisitor");
         Inquisitor.close();
     }

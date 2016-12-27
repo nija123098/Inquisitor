@@ -18,7 +18,7 @@ public class Registry {
         SURFACE = new ArrayList<Command>();
         DEEP = new ArrayList<Command>();
     }
-    public static void register(Class clazz){
+    public static synchronized void register(Class clazz){
         for (Method method : clazz.getMethods()) {
             if (method.isAnnotationPresent(Register.class)){
                 Command command = new Command(method);
@@ -37,7 +37,7 @@ public class Registry {
     public static void shutDown(){
         COMMANDS.stream().filter(Command::shutdown).forEach(command -> command.invoke(null, null, null, null, null));
     }
-    public static Command getCommand(String msg){
+    public static synchronized Command getCommand(String msg){
         String[] strings = msg.toLowerCase().split(" ");
         for (Command command : DEEP) {
             if (match(strings, command)){
@@ -66,6 +66,7 @@ public class Registry {
         }
         return true;
     }
+    @SafeVarargs
     public static List<Command> getCommands(Predicate<Command>...predicates){
         List<Command> commands = new ArrayList<Command>(COMMANDS.size());
         commands.addAll(COMMANDS);
