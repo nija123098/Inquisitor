@@ -33,6 +33,14 @@ public class StringHelper {
         Collections.addAll(strings, list);
         return strings;
     }
+    public static List<String> getContentList(String...list){
+        List<String> strings = new ArrayList<String>(list.length);
+        Collections.addAll(strings, list);
+        while (strings.contains("")){
+            strings.remove("");
+        }
+        return strings;
+    }
     public static boolean exclusiveLetters(String s){
         for (int i = 0; i < s.length(); i++) {
             Character character = s.charAt(i);

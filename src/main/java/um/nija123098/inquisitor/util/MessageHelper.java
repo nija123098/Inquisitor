@@ -6,6 +6,7 @@ import sx.blah.discord.util.MessageBuilder;
 import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.Channel;
+import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 
 /**
@@ -33,6 +34,13 @@ public class MessageHelper {
     }
     public static void send(User user, String msg){
         send(user, msg, 0);
+    }
+    public static void send(Guild guild, String msg){
+        String liaison = guild.getData("liaison");
+        if (liaison == null){
+            return;
+        }
+        send(User.getUserFromID(liaison), "Regarding guild " + guild.discord().getName() + "\n" + msg);
     }
     private static void innerSend(IChannel channel, String msg, long deleteMillis){
         RequestHandler.request(() -> {

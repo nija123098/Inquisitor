@@ -1,14 +1,14 @@
 package um.nija123098.inquisitor.commands;
 
 import javafx.util.Pair;
+import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.MessageList;
+import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.*;
-import um.nija123098.inquisitor.util.CommonMessageHelper;
-import um.nija123098.inquisitor.util.ListHelper;
-import um.nija123098.inquisitor.util.MessageHelper;
-import um.nija123098.inquisitor.util.StringHelper;
+import um.nija123098.inquisitor.util.*;
 
 import java.util.*;
 
@@ -100,4 +100,31 @@ public class Inquire {
         }
         MessageHelper.send(channel, "No language detected");
     }
+    @Register
+    public static Boolean activity(Guild guild, Channel channel, String s, String[] ss){
+        User inquired = User.getUser(s);
+        if (inquired == null){
+            MessageHelper.send(channel, StringHelper.addQuotes(s) + " is not a known user.");
+            return false;
+        }
+        long current = System.currentTimeMillis();
+        final int[] count = new int[1];
+        StringHelper.getContentList(inquired.getData("tracking" + "message" + guild, "").split(":")).stream().filter(st -> current - Long.parseLong(st) < 604800000).forEach(st -> ++count[0]);
+        MessageHelper.send(channel, inquired.discord().getName() + " has sent " + count[0] + " messages in the last week");
+        return true;
+    }
+    @Register(startup = true, rank = Rank.NONE)
+    public static void startup(){
+        Inquisitor.discordClient().getDispatcher().registerListener(new ActivityMonitor());
+    }
+    public static class ActivityMonitor {
+        @EventSubscriber
+        public void handle(MessageReceivedEvent event){
+            adjustActivity("message", Guild.getGuild(event.getMessage().getGuild().getID()), User.getUserFromID(event.getMessage().getAuthor().getID()));
+        }
+        public static void adjustActivity(String type, Guild guild, User user){
+            String id = "tracking" + type + guild;
+            user.putData(id, user.getData(id, "") + System.currentTimeMillis() + ":");
+        }
+    }//*/
 }
