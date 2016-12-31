@@ -110,7 +110,7 @@ public class Alert {
             MessageHelper.send(channel, "No such user " + StringHelper.addQuotes(s[0]));
             return false;
         }
-        MessageHelper.send(channel, Inquisitor.ourUser().mention() + " will alert you when " + user.discord().getName() + (presence[0] == Presences.ONLINE ? " comes " : " goes ") + presence[0].name().toLowerCase());
+        MessageHelper.send(channel, Inquisitor.ourUser().mention() + " will alert you when " + target.discord().getName() + (presence[0] == Presences.ONLINE ? " comes " : " goes ") + presence[0].name().toLowerCase());
         return true;
     }
     @Register(help = "Notifies if a specified user changes their status to the one specified")

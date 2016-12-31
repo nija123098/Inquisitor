@@ -16,22 +16,23 @@ import java.util.*;
  * Made by nija123098 on 11/8/2016
  */
 public class Inquire {
-    @Register(defaul = true, help = "Displays information on the user, use \"help inquire commands\" to see more")
-    public static void inquire(Guild guild, Channel channel, User user, String s, IMessage message){
+    @Register(defaul = true, help = "Displays information on the user")
+    public static Boolean inquire(Guild guild, Channel channel, User user, String s, IMessage message){
         if (s.length() == 0){
             MessageHelper.send(channel, "User " + user.getID() + " are you ready to be interrogated?\n" +
                     user.discord().mention() + ", if that is your name, you so far have been " + Suspicion.getLevel(user));
         }else{
             if ((user = User.getUser(s)) == null){
                 MessageHelper.send(channel, "There is no known user by the name of " + StringHelper.addQuotes(s));
-            }else{
-                MessageHelper.react("eye", message);
-                Suspicion.addLevel(user, .1f, channel, false);
-                MessageHelper.send(channel, "User " + user.getID() + " goes by the name of " + (guild == null ? user.discord().getName() : user.discord().getDisplayName(guild.discord())) + "\n" +
-                        (guild != null && !user.discord().getDisplayName(guild.discord()).equals(user.discord().getName()) ? user.discord().getDisplayName(guild.discord()) + " is actually " + user.discord().getName() + "\n" : "") +
-                        user.discord().getName() + " has thus far been " + Suspicion.getLevel(user) + " and is a " + Rank.getRankName(user, guild));
+                return false;
             }
+            MessageHelper.react("eye", message);
+            Suspicion.addLevel(user, .1f, channel, false);
+            MessageHelper.send(channel, "User " + user.getID() + " goes by the name of " + (guild == null ? user.discord().getName() : user.discord().getDisplayName(guild.discord())) + "\n" +
+                    (guild != null && !user.discord().getDisplayName(guild.discord()).equals(user.discord().getName()) ? user.discord().getDisplayName(guild.discord()) + " is actually " + user.discord().getName() + "\n" : "") +
+                    user.discord().getName() + " has thus far been " + Suspicion.getLevel(user) + " and is a " + Rank.getRankName(user, guild));
         }
+        return true;
     }
     @Register(suspicious = .125f, guild = true, help = "Lists all roles on a server")
     public static void roles(Guild guild, User user){
@@ -64,7 +65,7 @@ public class Inquire {
         CommonMessageHelper.displayLists("# Roles for guild \"" + iGuild.getName() + "\"", "", names, online, user);
     }
     @Register(suspicious = .5f, guild = true, help = "Lists the permissions of a role on a server, use everyone instead of @everyone")
-    public static void role(Guild guild, User user, String s){
+    public static Boolean role(Guild guild, User user, String s){
         if (s.length() == 0){
             roles(guild, user);
         }else{
@@ -74,20 +75,21 @@ public class Inquire {
             List<IRole> roles = guild.discord().getRolesByName(s);
             if (roles.size() == 0){
                 MessageHelper.send(user, "No roles called \"" + s + "\"");
-            }else{
-                for (IRole iRole : roles) {
-                    List<String> perms = new ArrayList<String>();
-                    new ArrayList<Permissions>(iRole.getPermissions()).forEach(permissions -> perms.add(permissions.name()));
-                    final int[] count = {0};
-                    IGuild iGuild = guild.discord();
-                    iGuild.getUsers().stream().filter(u -> u.getPresence().equals(Presences.ONLINE)).filter(u -> u.getRolesForGuild(iGuild).contains(iRole)).forEach(u -> ++count[0]);
-                    CommonMessageHelper.displayList("# " + count[0] + " " + iRole.getName() + "s are online\n# Permisions for role " + iRole.getName(), "", perms, user);
-                }
+                return false;
+            }
+            for (IRole iRole : roles) {
+                List<String> perms = new ArrayList<String>();
+                new ArrayList<Permissions>(iRole.getPermissions()).forEach(permissions -> perms.add(permissions.name()));
+                final int[] count = {0};
+                IGuild iGuild = guild.discord();
+                iGuild.getUsers().stream().filter(u -> u.getPresence().equals(Presences.ONLINE)).filter(u -> u.getRolesForGuild(iGuild).contains(iRole)).forEach(u -> ++count[0]);
+                CommonMessageHelper.displayList("# " + count[0] + " " + iRole.getName() + "s are online\n# Permisions for role " + iRole.getName(), "", perms, user);
             }
         }
+        return true;
     }
     @Register(help = "Displays the language of a previous message")
-    public static void lang(Channel channel){
+    public static Boolean lang(Channel channel){
         MessageList messages = channel.discord().getMessages();
         String content;
         for (IMessage message : messages) {
@@ -95,12 +97,13 @@ public class Inquire {
             if (content.startsWith("```")) {
                 content = content.replace("```", "").split("\n")[0];
                 MessageHelper.send(channel, "The language used is \"" + content + "\"");
-                return;
+                return true;
             }
         }
         MessageHelper.send(channel, "No language detected");
+        return false;
     }
-    @Register
+    @Register(help = "Reads out the activity of the given user on the server for the last week")
     public static Boolean activity(Guild guild, Channel channel, String s, String[] ss){
         User inquired = User.getUser(s);
         if (inquired == null){
@@ -109,7 +112,7 @@ public class Inquire {
         }
         long current = System.currentTimeMillis();
         final int[] count = new int[1];
-        StringHelper.getContentList(inquired.getData("tracking" + "message" + guild, "").split(":")).stream().filter(st -> current - Long.parseLong(st) < 604800000).forEach(st -> ++count[0]);
+        StringHelper.getContentList(inquired.getData("tracking" + "message" + guild.getID(), "").split(":")).stream().filter(st -> current - Long.parseLong(st) < 604800000).forEach(st -> ++count[0]);
         MessageHelper.send(channel, inquired.discord().getName() + " has sent " + count[0] + " messages in the last week");
         return true;
     }
@@ -120,11 +123,15 @@ public class Inquire {
     public static class ActivityMonitor {
         @EventSubscriber
         public void handle(MessageReceivedEvent event){
-            adjustActivity("message", Guild.getGuild(event.getMessage().getGuild().getID()), User.getUserFromID(event.getMessage().getAuthor().getID()));
+            String guildId = "null";
+            if (!event.getMessage().getChannel().isPrivate()){
+                guildId = event.getMessage().getGuild().getID();
+            }
+            adjustActivity("message", guildId, User.getUserFromID(event.getMessage().getAuthor().getID()));
         }
-        public static void adjustActivity(String type, Guild guild, User user){
+        public static void adjustActivity(String type, String guild, User user){
             String id = "tracking" + type + guild;
             user.putData(id, user.getData(id, "") + System.currentTimeMillis() + ":");
         }
-    }//*/
+    }
 }

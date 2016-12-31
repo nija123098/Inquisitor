@@ -22,21 +22,31 @@ public class Nuisance {
     public static void startup(){
         Inquisitor.discordClient().getDispatcher().registerListener(new Monitor());
     }
-    @Register(guild = true, rank = Rank.GUILD_ADMIN)
-    public static void ratelimit(Guild guild, Channel channel, String s){
+    @Register(defaul = true)
+    public static void nuisance(Channel channel){
+        MessageHelper.send(channel, "These commands help in catching ");
+    }
+    @Register(guild = true, rank = Rank.GUILD_ADMIN, help = "Sets the time threshold to alert the guild liaison that a user is spamming in millis or 0 to disable")
+    public static boolean ratelimit(Guild guild, Channel channel, String s){
         s = s.replace("ms", "");
         try{Integer.parseInt(s);
         }catch(Exception e){
             MessageHelper.send(channel, StringHelper.addQuotes(s) + " is not a number");
+            return false;
         }
         guild.putData("ratelimit", s);
-        MessageHelper.send(channel, "This guild now has a " + guild.getData("ratelimit") + "ms message rate limit");
+        if (s.equals("0")){
+            MessageHelper.send(channel, "Rate limiting is now disabled for this guild");
+        }else{
+            MessageHelper.send(channel, "This guild now has a " + guild.getData("ratelimit") + "ms message rate limit");
+        }
+        return true;
     }
     private static final Map<Pair<String, String>, Long> MAP = new ConcurrentHashMap<Pair<String, String>, Long>();
     public static class Monitor {
         @EventSubscriber
         public void handle(MessageReceivedEvent event){
-            if (!event.getMessage().getAuthor().isBot()){
+            if (!event.getMessage().getAuthor().isBot() && !event.getMessage().getChannel().isPrivate()){
                 Pair<String, String> pair = new Pair<String, String>(event.getMessage().getAuthor().getID(), event.getMessage().getGuild().getID());
                 long current = System.currentTimeMillis();
                 if (MAP.get(pair) == null){
@@ -51,8 +61,5 @@ public class Nuisance {
                 }
             }
         }
-    }
-    public static void main(String[] args) {
-        System.out.println(new Pair<String, String>("ONE", "TWO").equals(new Pair<String, String>("ONE", "TWO")));
     }
 }
