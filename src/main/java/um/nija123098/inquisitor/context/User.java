@@ -17,13 +17,17 @@ public class User extends Context {
     public static User getUserFromID(String id){
         try{Long.parseLong(id);
         }catch(Exception e){return null;}
-        for (User user : USERS) {
-            if (user.getID().equals(id)){
-                return user;
+        synchronized (USERS){
+            for (User user : USERS) {
+                if (user.getID().equals(id)){
+                    return user;
+                }
             }
         }
         User user = new User(id);
-        USERS.add(user);
+        synchronized (USERS){
+            USERS.add(user);
+        }
         return user;
     }
     public static User getUser(String s){
@@ -32,9 +36,11 @@ public class User extends Context {
     public static User getUser(String s, Guild guild){
         if (s.contains("<@") && s.contains(">")){
             String id = s.replace("<@", "").replace("!", "").replace(">", "");
-            for (User user : USERS) {
-                if (user.getID().equals(id)){
-                    return user;
+            synchronized (USERS){
+                for (User user : USERS) {
+                    if (user.getID().equals(id)){
+                        return user;
+                    }
                 }
             }
         }

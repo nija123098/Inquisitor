@@ -3,11 +3,13 @@ package um.nija123098.inquisitor.commands;
 import javafx.util.Pair;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
+import sx.blah.discord.handle.obj.IGuild;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.Rank;
+import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.StringHelper;
 
@@ -46,7 +48,8 @@ public class Nuisance {
     public static class Monitor {
         @EventSubscriber
         public void handle(MessageReceivedEvent event){
-            if (!event.getMessage().getAuthor().isBot() && !event.getMessage().getChannel().isPrivate()){
+            IGuild iGuild = event.getMessage().getGuild();
+            if (!event.getMessage().getAuthor().isBot() && !event.getMessage().getChannel().isPrivate() || !Rank.isSufficient(Rank.GUILD_ADMIN, Rank.getRank(User.getUserFromID(event.getMessage().getAuthor().getID()), iGuild == null ? null : Guild.getGuild(iGuild.getID())))){
                 Pair<String, String> pair = new Pair<String, String>(event.getMessage().getAuthor().getID(), event.getMessage().getGuild().getID());
                 long current = System.currentTimeMillis();
                 if (MAP.get(pair) == null){
