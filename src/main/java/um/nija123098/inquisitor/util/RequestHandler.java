@@ -1,6 +1,9 @@
 package um.nija123098.inquisitor.util;
 
-import sx.blah.discord.util.*;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,9 @@ public class RequestHandler {
     public static void request(long millis, Request request){
         REUQEST_TIMER.add(millis, request);
     }
+    public static void schedule(long millis, Request request){
+        REUQEST_TIMER.schedule(millis, request);
+    }
     @FunctionalInterface
     public interface Request{
         void request() throws DiscordException, RateLimitException, MissingPermissionsException;
@@ -39,6 +45,9 @@ public class RequestHandler {
         }
         public void add(long millis, RequestHandler.Request request){
             millis += System.currentTimeMillis();
+            schedule(millis, request);
+        }
+        public void schedule(long millis, RequestHandler.Request request){
             List<RequestHandler.Request> requests = this.requestMap.get(millis);
             if (requests == null){
                 requests = new ArrayList<Request>(1);

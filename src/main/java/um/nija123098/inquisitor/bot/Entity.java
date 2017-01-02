@@ -3,6 +3,7 @@ package um.nija123098.inquisitor.bot;
 import um.nija123098.inquisitor.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -70,10 +71,13 @@ public class Entity {
         strings.addAll(this.stringMap.keySet().stream().map(key -> key + ":" + this.stringMap.get(key)).collect(Collectors.toList()));
         return strings;
     }
+    public void clearData(){
+        this.stringMap.clear();
+    }
     public String name(){
         return this.file.getName();
     }
-    public void save(){
+    public synchronized void save(){
         if (this.stringMap.size() > 0){
             try{
                 if (!Files.exists(Paths.get(this.file.getParent()))){
@@ -84,6 +88,10 @@ public class Entity {
                 }
                 Files.write(Paths.get(this.file.getPath()), this.getStrings());
             }catch(Exception e){Log.error("Can not save " + this.name() + " because of " + e.getMessage());
+            e.printStackTrace();}
+        }else{
+            try{Files.deleteIfExists(Paths.get(this.file.getPath()));
+            }catch(IOException e){Log.error("Can not save " + this.name() + " because of " + e.getMessage());
             e.printStackTrace();}
         }
     }

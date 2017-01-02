@@ -203,7 +203,7 @@ public class Command {
         } catch (IllegalAccessException e){
             return false;
         } catch (InvocationTargetException e) {
-            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + user.discord().getName() + user.discord().getDiscriminator());
+            Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + (user == null ? "the system" : user.discord().getName() + "#" + user.discord().getDiscriminator()));
             e.printStackTrace();
             return false;
         }

@@ -109,6 +109,7 @@ public class Inquisitor {
         try {
             this.botList.forEach(GuildBot::close);
             RequestHandler.request(() -> this.client.logout());
+            Entity.saveEntities();
             Log.info("Shutting down");
         }catch (Exception e){
             e.printStackTrace();
