@@ -30,6 +30,13 @@ public class Entity {
         }
         return new Entity(file);
     }
+    public static synchronized List<Entity> getEntities(String path){
+        List<Entity> entities = new ArrayList<Entity>();
+        for (File file : new File(path).listFiles()) {
+            entities.add(new Entity(file));
+        }
+        return entities;
+    }
     private final Map<String, String> stringMap;
     private final File file;
     private Entity(File file) {

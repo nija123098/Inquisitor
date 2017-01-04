@@ -22,11 +22,11 @@ public class Stat {
         });
     }
     private static void changePlayText(Entity entity){
-        String[] options = entity.getData("play_text", "").split(":");
         RequestHandler.request(60000, () -> {
             if (Inquisitor.getLockdown()){
                 return;
             }
+            String[] options = entity.getData("play_text", "").split(":");
             Inquisitor.discordClient().getShards().forEach(iShard -> iShard.changeStatus(Status.game(options[Rand.integer(options.length - 1)])));
             changePlayText(entity);
         });

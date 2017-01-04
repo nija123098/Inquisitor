@@ -4,13 +4,12 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.PresenceUpdateEvent;
 import sx.blah.discord.handle.obj.Presences;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
+import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.MessageHelper;
-import um.nija123098.inquisitor.util.TimeHelper;
 
 /**
  * Made by nija123098 on 11/13/2016
@@ -40,7 +39,28 @@ public class Uptime {
             s = user.getData("uptime");
         }
         String[] strings = s.split(":");
-        MessageHelper.send(channel, user.discord().getName() + " has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for **" + TimeHelper.format(TimeHelper.between(TimeHelper.currentTime(), strings[1])) + "**");
+        MessageHelper.send(channel, user.discord().getName() + " has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for **" + format(System.currentTimeMillis() - Long.parseLong(strings[1])) + "**");
+    }
+    private static String format(long time){
+        int[] milliLength = {604800000, 86400000, 3600000, 60000, 1000};
+        String[] lenghtSymbol = {"w", "d", "h", "m", "s"};
+        int[] count = new int[milliLength.length];
+        for (int i = 0; i < milliLength.length; i++) {
+            long sub = 0;
+            for (int j = 0; j < i + 1; j++) {
+                if (j != 0){
+                    sub += count[j - 1] * milliLength[j - 1];
+                }
+            }
+            count[i] = (int) ((time - sub) / milliLength[i]);
+        }
+        String form = "";
+        for (int i = 0; i < milliLength.length; i++) {
+            if (count[i] != 0){
+                form += count[i] + lenghtSymbol[i];
+            }
+        }
+        return form;
     }
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){
@@ -57,6 +77,6 @@ public class Uptime {
         }
     }
     private static void setUser(User user, boolean on){
-        user.putData("uptime", on + ":" + TimeHelper.currentTime());
+        user.putData("uptime", on + ":" + System.currentTimeMillis());
     }
 }
