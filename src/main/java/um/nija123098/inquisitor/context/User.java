@@ -84,4 +84,20 @@ public class User extends Context {
     public IUser discord(){
         return Inquisitor.discordClient().getUserByID(this.getID());
     }
+    @Deprecated
+    public String getData(String id) {
+        return super.getData(id);
+    }
+    @Deprecated
+    public String getData(String id, String defaul) {
+        return super.getData(id, defaul);
+    }
+    @Deprecated
+    public void putData(String id, String data) {
+        super.putData(id, data);
+    }
+    @Deprecated
+    public void clearData(String id){
+        super.clearData(id);
+    }
 }

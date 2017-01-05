@@ -29,10 +29,8 @@ public enum Rank {
             if (guild.discord().getOwner().equals(user.discord())){
                 return GUILD_OWNER;
             }
-            for (IRole iRole : guild.discord().getRolesForUser(user.discord())) {
-                if (iRole.getPermissions().contains(Permissions.ADMINISTRATOR)){
-                    return GUILD_ADMIN;
-                }
+            if (user.discord().getPermissionsForGuild(guild.discord()).contains(Permissions.ADMINISTRATOR)){
+                return GUILD_ADMIN;
             }
         }
         if (user.discord().isBot()){

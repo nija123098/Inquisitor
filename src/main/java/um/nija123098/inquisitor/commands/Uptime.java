@@ -3,6 +3,7 @@ package um.nija123098.inquisitor.commands;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.PresenceUpdateEvent;
 import sx.blah.discord.handle.obj.Presences;
+import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
@@ -15,13 +16,15 @@ import um.nija123098.inquisitor.util.MessageHelper;
  * Made by nija123098 on 11/13/2016
  */
 public class Uptime {
+    private static Entity entity;
     @Register(rank = Rank.NONE, startup = true, hidden = true)
-    public static void monitor(){
+    public static void monitor(Entity entity){
+        Uptime.entity = entity;
         Inquisitor.discordClient().getDispatcher().registerListener(new Uptime());
         Inquisitor.discordClient().getUsers().forEach(iUser -> setPresence(User.getUserFromID(iUser.getID()), !iUser.getPresence().equals(Presences.OFFLINE)));
     }
     @Register(defaul = true, help = "Displays the time a user has been off or online")
-    public static void uptime(Channel channel, String s){
+    public static void uptime(Channel channel, String s, Entity entity){
         User user;
         if (s.length() == 0){
             user = User.getUserFromID(Inquisitor.ourUser().getID());
@@ -32,11 +35,11 @@ public class Uptime {
             MessageHelper.send(channel, "There is no user by that name");
             return;
         }
-        s = user.getData("uptime");
+        s = entity.getData(user.getID());
         if (s == null){
             Log.error(user.discord().getName() + " does not have uptime data, setting now");
             setPresence(user, !user.discord().getPresence().equals(Presences.OFFLINE));
-            s = user.getData("uptime");
+            s = entity.getData(user.getID());
         }
         String[] strings = s.split(":");
         MessageHelper.send(channel, user.discord().getName() + " has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for **" + format(System.currentTimeMillis() - Long.parseLong(strings[1])) + "**");
@@ -67,16 +70,10 @@ public class Uptime {
         setPresence(User.getUserFromID(event.getUser().getID()), !event.getNewPresence().equals(Presences.OFFLINE));
     }
     private static void setPresence(User user, boolean on){
-        String s = user.getData("uptime");
-        if (s != null){
-            if (!s.split(":")[0].equals(on + "")){
-                setUser(user, on);
-            }
-        }else{
-            setUser(user, on);
+        String s = entity.getData(user.getID());
+        if (s != null && s.split(":")[0].equals(on + "")) {
+            return;
         }
-    }
-    private static void setUser(User user, boolean on){
-        user.putData("uptime", on + ":" + System.currentTimeMillis());
+        entity.putData(user.getID(), on + ":" + System.currentTimeMillis());
     }
 }

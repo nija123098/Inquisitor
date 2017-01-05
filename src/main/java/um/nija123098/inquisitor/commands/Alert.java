@@ -116,12 +116,10 @@ public class Alert {
         }
         @Override
         protected boolean condition(PresenceUpdateEvent event){
-            System.out.println(millis < System.currentTimeMillis());
             return this.millis < System.currentTimeMillis();
         }
         @Override
         protected boolean condition(StatusChangeEvent event){
-            System.out.println(millis < System.currentTimeMillis());
             return this.millis < System.currentTimeMillis();
         }
         @Override

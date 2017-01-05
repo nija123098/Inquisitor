@@ -26,8 +26,8 @@ import java.util.List;
 public class Inquisitor {
     public static void main(String[] args) {
         Discord4J.disableChannelWarnings();
-        ClassFinder.find("um.nija123098.inquisitor.commands").forEach(Registry::register);
         inquisitor = new Inquisitor(args[0]);
+        ClassFinder.find("um.nija123098.inquisitor.commands").forEach(Registry::register);
         Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook"){
             @Override
             public void run(){
