@@ -49,7 +49,7 @@ public class Nuisance {
         @EventSubscriber
         public void handle(MessageReceivedEvent event){
             IGuild iGuild = event.getMessage().getGuild();
-            if ((!event.getMessage().getAuthor().isBot() && !event.getMessage().getChannel().isPrivate()) || !Rank.isSufficient(Rank.GUILD_ADMIN, Rank.getRank(User.getUserFromID(event.getMessage().getAuthor().getID()), iGuild == null ? null : Guild.getGuild(iGuild.getID())))){
+            if (!(event.getMessage().getAuthor().isBot() || event.getMessage().getChannel().isPrivate() || Rank.isSufficient(Rank.GUILD_ADMIN, Rank.getRank(User.getUserFromID(event.getMessage().getAuthor().getID()), iGuild == null ? null : Guild.getGuild(iGuild.getID()))))){
                 Pair<String, String> pair = new Pair<String, String>(event.getMessage().getAuthor().getID(), event.getMessage().getGuild().getID());
                 long current = System.currentTimeMillis();
                 if (MAP.get(pair) == null){

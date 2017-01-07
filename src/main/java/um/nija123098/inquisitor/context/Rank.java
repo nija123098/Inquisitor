@@ -1,7 +1,8 @@
 package um.nija123098.inquisitor.context;
 
-import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.Permissions;
+import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.bot.Inquisitor;
 
 /**
  * Made by nija123098 on 11/7/2016
@@ -15,14 +16,15 @@ public enum Rank {
     BOT_ADMIN,
     MAKER,
     NONE,;
+    private static Entity ranks = Inquisitor.getEntity("permissions");
     public static Rank getRank(User user, Guild guild){
         if (user.discord().getID().equals("191677220027236352")){
             return MAKER;
         }
-        if ("true".equals(user.getData("banned"))){
+        if ((":" + ranks.getData("banned")).contains(user.getID())){
             return BANNED;
         }
-        if ("true".equals(user.getData("admin"))){
+        if ((":" + ranks.getData("admin")).contains(user.getID())){
             return BOT_ADMIN;
         }
         if (guild != null){

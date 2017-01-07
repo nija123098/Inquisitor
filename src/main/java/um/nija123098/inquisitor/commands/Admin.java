@@ -22,63 +22,68 @@ import java.util.List;
 @Register(rank = Rank.BOT_ADMIN, suspicion = Suspicion.HERETICAL)
 public class Admin {
     @Register(defaul = true, override = true, help = "Lists bot admins")
-    public static void admin(User user, Entity entity){
+    public static void admin(User user){
+        Entity entity = Inquisitor.getEntity("permissions");
         List<String> strings = new ArrayList<String>();
-        String[] strs = entity.getData("admins", "").split(":");
+        String[] strs = entity.getData("admin", "").split(":");
         for (String str : strs) {
+            if (str.length() == 0){
+                continue;
+            }
             User admin = User.getUserFromID(str);
             strings.add(admin.discord().getName() + "#" + admin.discord().getDiscriminator());
         }
         CommonMessageHelper.displayList("# A list of Inquisitor admins", "", strings, user);
     }
     @Register(rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Makes a user a bot admin")
-    public static void authorize(Channel channel, String s, Entity entity){
+    public static void authorize(Channel channel, String s){
+        Entity entity = Inquisitor.getEntity("permissions");
         User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
-        }else if ("true".equals(user.getData("admin"))) {
+        }else if (!(":" + entity.getData("admin")).contains(":" + user.getID() + ":")) {
             MessageHelper.send(channel, user.discord().mention() + " is already a " + Inquisitor.ourUser().mention() + " admin!");
         }else{
-            user.putData("admin", true + "");
-            entity.putData("admins", entity.getData("admins", "") + user.getID() + ":");
+            entity.putData("admin", entity.getData("admin") + user + ":");
             MessageHelper.send(channel, user.discord().mention() + " is now a " + Inquisitor.ourUser().mention() + " admin!");
         }
     }
     @Register(rank = Rank.MAKER, suspicion = Suspicion.HERETICAL, override = true, help = "Removes a user as a bot admin")
-    public static void unauthorize(Channel channel, String s, Entity entity){
+    public static void unauthorize(Channel channel, String s){
+        Entity entity = Inquisitor.getEntity("permissions");
         User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
-        }else if (user.getData("admin") == null){
+        }else if ((":" + entity.getData("admin")).contains(":" + user + ":")){
             MessageHelper.send(channel, user.discord().mention() + " not a " + Inquisitor.ourUser().mention() + " admin!");
         }else{
-            user.clearData("admin");
-            entity.putData("admins", entity.getData("admins").replace(user.getID() + ":", ""));
+            entity.putData("admin", entity.getData("admins").replace(user.getID() + ":", ""));
             MessageHelper.send(channel, user.discord().mention() + " is no longer a " + Inquisitor.ourUser().mention() + " admin!");
         }
     }
     @Register(help = "Bans a user from using the bot")
     public static void ban(Channel channel, String s) {
+        Entity entity = Inquisitor.getEntity("permissions");
         User user = User.getUser(s);
         if (user == null) {
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
-        } else if (user.getData("banned").equals("true")){
+        } else if ((":" + entity.getData("banned", "")).contains(":" + user.getID() + ":")){
             MessageHelper.send(channel, user.discord().mention() + " has already been banned from using " + Inquisitor.ourUser().mention() + "!");
-        }else {
-            user.putData("banned", true + "");
+        } else {
+            entity.putData("banned", entity.getData("banned") + user.getID() + ":");
             MessageHelper.send(channel, user.discord().mention() + " is now banned from using " + Inquisitor.ourUser().mention() + "!");
         }
     }
     @Register(help = "Unbans a user from using the bot")
     public static void unban(Channel channel, String s){
+        Entity entity = Inquisitor.getEntity("permissions");
         User user = User.getUser(s);
         if (user == null){
             MessageHelper.send(channel, "\"" + s + "\" is not a known user");
-        }else if (user.getData("banned") == null){
+        }else if (!(":" + entity.getData("banned")).contains(":" + user.getID() + ":")){
             MessageHelper.send(channel, user.discord().mention() + " was not banned from using " + Inquisitor.ourUser().mention() + "!");
         }else{
-            user.putData("admin", false + "");
-            user.clearData("banned");
+            entity.putData("banned", entity.getData("banned").replace("", user.getID() + ":"));
             MessageHelper.send(channel, user.discord().mention() + " is no longer banned from using " + Inquisitor.ourUser().mention() + "!");
         }
     }

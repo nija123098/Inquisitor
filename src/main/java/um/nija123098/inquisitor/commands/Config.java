@@ -74,6 +74,6 @@ public class Config {
     @Register(help = "Sets the user as the liaison for this bot for the guild")
     public static void liaison(User user, Guild guild){
         guild.putData("liaison", user.getID());
-        MessageHelper.send(user, user.discord().mention() + ", you are now " + Inquisitor.ourUser().mention() + "'s liaison for the guild " + guild.discord().getName());
+        MessageHelper.send(user, user.discord().getName() + ", you are now " + Inquisitor.ourUser().mention() + "'s liaison for the guild " + guild.discord().getName());
     }
 }
