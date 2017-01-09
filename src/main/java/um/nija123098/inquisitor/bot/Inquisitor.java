@@ -27,13 +27,9 @@ public class Inquisitor {
     public static void main(String[] args) {
         Discord4J.disableChannelWarnings();
         inquisitor = new Inquisitor(args[0]);
+        Runtime.getRuntime().addShutdownHook(new Thread(Inquisitor::save, "Shutdown Hook"));
         ClassFinder.find("um.nija123098.inquisitor.commands").forEach(Registry::register);
-        Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook"){
-            @Override
-            public void run(){
-                save();
-            }
-        });
+        Log.info("Command registration complete");
     }
     private static Inquisitor inquisitor;
     public static IDiscordClient discordClient(){
@@ -78,7 +74,7 @@ public class Inquisitor {
     @EventSubscriber
     public void handle(ReadyEvent event){
         Registry.startUp();
-        Log.info("Command registration complete");
+        Log.info("Commands startup complete");
     }
     @EventSubscriber
     public void handle(MessageReceivedEvent event){
@@ -109,9 +105,9 @@ public class Inquisitor {
         try {
             this.botList.forEach(GuildBot::close);
             RequestHandler.request(() -> this.client.logout());
-            Entity.saveEntities();
             Log.info("Shutting down");
         }catch (Exception e){
+            Log.warn("Failed to shut down");
             e.printStackTrace();
         }
     }
