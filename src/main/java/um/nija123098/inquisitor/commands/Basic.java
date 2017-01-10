@@ -115,10 +115,6 @@ public class Basic {
         }
         if (deletes.size() > 1){
             deletes.forEach(iMessage -> RequestHandler.request(iMessage::delete));
-            /*if (channel.isPrivate()){
-            }else{
-                RequestHandler.request(() -> messages.bulkDelete(deletes));
-            }*/// Bulk delete not currently working
         }else{
             RequestHandler.request(() -> deletes.get(0).delete());
         }
@@ -129,5 +125,9 @@ public class Basic {
         if (s.length() != 0){
             MessageHelper.send(channel, s);
         }
+    }
+    @Register(natural = true, help = "Displays the Inquisitor's support server")
+    public static void server(User user){
+        MessageHelper.send(user, "Join the discord server here!\nhttps://discord.gg/xVA9x2H", 300000);
     }
 }

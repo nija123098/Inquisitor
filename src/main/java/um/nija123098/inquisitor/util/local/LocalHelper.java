@@ -1,10 +1,16 @@
-package um.nija123098.inquisitor.util;
+package um.nija123098.inquisitor.util.local;
 
 import com.darkprograms.speech.synthesiser.Synthesiser;
+import sx.blah.discord.handle.obj.IRegion;
 import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
+import um.nija123098.inquisitor.util.FileHelper;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,8 +53,9 @@ public class LocalHelper {
         return to;
     }
     public static Country getCountry(String s){
+        String comp = s.trim().toLowerCase();
         for (Country country : countries) {
-            if (s.equals(country.emoticonChars)){
+            if (s.equals(country.emoticonChars) || s.equals(country.discordCode) || comp.equals(country.compName)){
                 return country;
             }
         }
@@ -59,15 +66,17 @@ public class LocalHelper {
         Entity entity = Inquisitor.getEntity("lang");
         entity.getSaved().forEach(s -> {
             String[] dat = entity.getData(s).split(":");
-            countries.add(new Country(dat[0], dat[1], dat[2]));
+            countries.add(new Country(dat[0], dat[1], dat[2], dat[3]));
         });
     }
     public static class Country {
-        private String discordCode, emoticonChars, langCode;
-        public Country(String discordCode, String emoticonChars, String langCode) {
+        private String discordCode, emoticonChars, langCode, name, compName;
+        public Country(String discordCode, String emoticonChars, String langCode, String name) {
             this.discordCode = discordCode;
             this.emoticonChars = emoticonChars;
             this.langCode = langCode;
+            this.name = name;
+            this.compName = name.trim().toLowerCase();
         }
         public String getDiscordCode(){
             return this.discordCode;
@@ -78,5 +87,14 @@ public class LocalHelper {
         public String getLangCode(){
             return this.langCode;
         }
+        public String getName() {
+            return this.name;
+        }
+    }
+    public static Country getBestGuess(IRegion region){
+        switch (region.getName()){
+
+        }
+        return null;
     }
 }

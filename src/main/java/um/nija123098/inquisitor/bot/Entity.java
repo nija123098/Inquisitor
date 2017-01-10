@@ -17,12 +17,25 @@ import java.util.stream.Collectors;
  */
 public class Entity {
     private static final List<Entity> ENTITIES;
-    static{ENTITIES = new ArrayList<Entity>();}
+    private static final String CONTAINER;
+    static{
+        CONTAINER = new File(Entity.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent() + "\\";
+        ENTITIES = new ArrayList<Entity>();
+    }
     public static synchronized void saveEntities(){
         ENTITIES.forEach(Entity::save);
     }
     public static synchronized Entity getEntity(String path, String name){
         File file = new File(path + "\\" + name);
+        for (Entity ENTITY : ENTITIES) {
+            if (ENTITY.file.equals(file)) {
+                return ENTITY;
+            }
+        }
+        return new Entity(file);
+    }
+    public static synchronized Entity getLocalEntity(String path, String name){
+        File file = new File(CONTAINER + path + "\\" + name);
         for (Entity ENTITY : ENTITIES) {
             if (ENTITY.file.equals(file)) {
                 return ENTITY;

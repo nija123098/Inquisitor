@@ -1,13 +1,10 @@
 package um.nija123098.inquisitor.command;
 
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IVoiceChannel;
 import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
-import um.nija123098.inquisitor.context.Channel;
-import um.nija123098.inquisitor.context.Guild;
-import um.nija123098.inquisitor.context.Rank;
-import um.nija123098.inquisitor.context.Suspicion;
-import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.context.*;
 import um.nija123098.inquisitor.util.FileHelper;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.MessageHelper;
@@ -191,6 +188,17 @@ public class Command {
                 objects[i] = this.entity;
             }else if (parameterTypes[i].equals(IMessage.class)){
                 objects[i] = message;
+            }else if (parameterTypes[i].equals(IVoiceChannel.class)){
+                if (user == null){
+                    objects[i] = null;
+                }else{
+                    for (IVoiceChannel vChannel : user.discord().getConnectedVoiceChannels()) {
+                        if (vChannel.getGuild().equals(guild.discord())){
+                            objects[i] = channel;
+                        }
+                    }
+                    objects[i] = channel;
+                }
             }
         }
         Object ret;
