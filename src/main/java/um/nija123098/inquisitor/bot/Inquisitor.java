@@ -12,10 +12,7 @@ import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IUser;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
-import um.nija123098.inquisitor.util.ClassFinder;
-import um.nija123098.inquisitor.util.FileHelper;
-import um.nija123098.inquisitor.util.Log;
-import um.nija123098.inquisitor.util.RequestHandler;
+import um.nija123098.inquisitor.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +75,9 @@ public class Inquisitor {
     }
     @EventSubscriber
     public void handle(MessageReceivedEvent event){
-        if (event.getMessage().getChannel() instanceof IPrivateChannel){
-            Invoke.invoke(event.getMessage().getAuthor().getID(), null, event.getMessage().getChannel().getID(), event.getMessage().getContent(), event.getMessage());
+        String s = event.getMessage().getContent();
+        if (s != null && event.getMessage().getChannel() instanceof IPrivateChannel){
+            Invoke.invoke(event.getMessage().getAuthor().getID(), null, event.getMessage().getChannel().getID(), s, event.getMessage());
         }
     }
     @EventSubscriber

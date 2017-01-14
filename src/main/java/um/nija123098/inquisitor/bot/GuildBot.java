@@ -22,7 +22,7 @@ public class GuildBot {
     }
     @EventSubscriber
     public void handle(MessageReceivedEvent event){
-        if (!(event.getMessage().getChannel() instanceof IPrivateChannel) && event.getMessage().getChannel().getGuild().getID().equals(this.guildID)){
+        if (event.getMessage().getContent() != null && !(event.getMessage().getChannel() instanceof IPrivateChannel) && event.getMessage().getChannel().getGuild().getID().equals(this.guildID)){
             String s = event.getMessage().getContent();
             s = StringHelper.limitOneSpace(s);
             boolean command = true;

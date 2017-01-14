@@ -39,7 +39,7 @@ public @interface Register {
     boolean shutdown() default false;
     boolean guild() default false;
     boolean hidden() default false;
-    float suspicious() default 0;
+    float suspicious() default -.1f;
     Suspicion suspicion() default Suspicion.RADICAL;
     /**
      * Returns true if it accepts args
