@@ -9,6 +9,7 @@ import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.util.FormatHelper;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.MessageHelper;
 
@@ -42,28 +43,7 @@ public class Uptime {
             s = entity.getData(user.getID());
         }
         String[] strings = s.split(":");
-        MessageHelper.send(channel, user.discord().getName() + " has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for **" + format(System.currentTimeMillis() - Long.parseLong(strings[1])) + "**");
-    }
-    private static String format(long time){
-        int[] milliLength = {604800000, 86400000, 3600000, 60000, 1000};
-        String[] lenghtSymbol = {"w", "d", "h", "m", "s"};
-        int[] count = new int[milliLength.length];
-        for (int i = 0; i < milliLength.length; i++) {
-            long sub = 0;
-            for (int j = 0; j < i + 1; j++) {
-                if (j != 0){
-                    sub += count[j - 1] * milliLength[j - 1];
-                }
-            }
-            count[i] = (int) ((time - sub) / milliLength[i]);
-        }
-        String form = "";
-        for (int i = 0; i < milliLength.length; i++) {
-            if (count[i] != 0){
-                form += count[i] + lenghtSymbol[i];
-            }
-        }
-        return form;
+        MessageHelper.send(channel, user.discord().getName() + " has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for **" + FormatHelper.format(System.currentTimeMillis() - Long.parseLong(strings[1])) + "**");
     }
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){

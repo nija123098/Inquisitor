@@ -3,14 +3,12 @@ package um.nija123098.inquisitor.commands;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.MessageList;
+import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.command.Registry;
-import um.nija123098.inquisitor.context.Channel;
-import um.nija123098.inquisitor.context.Rank;
-import um.nija123098.inquisitor.context.Suspicion;
-import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.context.*;
 import um.nija123098.inquisitor.util.*;
 
 import java.util.ArrayList;
@@ -81,7 +79,9 @@ public class Basic {
     }
     @Register(suspicion = Suspicion.RADICAL, help = "Displays the invite link for Inquisitor")
     public static void invite(Channel channel){
-        MessageHelper.send(channel, "You must have the manage server permission to add this bot to the server\n" +
+        MessageHelper.send(channel, "You must have the manage server permission to add this bot to the server.\n" +
+                "You may mention me at any time as a prefix, but you must give me permission to chat in a channel.\n" +
+                "In order to let me to chat in a channel use <@244634255727132673> chat true\n" +
                 "https://discordapp.com/oauth2/authorize?client_id=244634255727132673&scope=bot");
     }
     @Register(help = "Displays the GitHub link to Inquisitor's repo")
@@ -129,5 +129,12 @@ public class Basic {
     @Register(natural = true, help = "Displays the Inquisitor's support server")
     public static void server(User user){
         MessageHelper.send(user, "Join the discord server here!\nhttps://discord.gg/xVA9x2H", 300000);
+    }
+    @Register(help = "Sets the language for this guild")
+    public static void setLang(Guild guild, Channel channel, String s){
+        if (!LangHelper.isLang(s)){
+            MessageHelper.send(channel, "\"" + s  + "\" is not a supported or valid ISO 639-1 language code, ex: en-au or de-lu");
+        }
+        Entity.getEntity("lang", "lang").putData(guild.getID(), s);
     }
 }

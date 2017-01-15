@@ -7,7 +7,6 @@ import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageHelper;
 
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -49,9 +48,5 @@ public class Time {
         Calendar calendar = Calendar.getInstance(timeZone);
         MessageHelper.send(channel, "UST" + (val >= 0 ? "+" : "") + val + " set as your timezone.  It should be " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + (calendar.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM"));
         return true;
-    }
-
-    public static void main(String[] args) {
-        ZoneId.getAvailableZoneIds().forEach(System.out::println);
     }
 }

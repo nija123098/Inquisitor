@@ -70,6 +70,6 @@ public class MessageHelper {
         EMOTICON_ENTITY = Inquisitor.getEntity("emoticons");
     }
     public static String getEmoticon(String key){
-        return EMOTICON_ENTITY.getData(key, "unknown");
+        return EMOTICON_ENTITY.getData(key, "unknown emoticon");
     }
 }

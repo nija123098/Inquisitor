@@ -3,12 +3,13 @@ package um.nija123098.inquisitor.commands;
 import um.nija123098.inquisitor.bot.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Command;
-import um.nija123098.inquisitor.command.Registry;
-import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.command.Register;
+import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
+import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.util.LangHelper;
 import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.StringHelper;
 
@@ -24,7 +25,7 @@ public class Config {
             if (prefixEntity.getData(guild.getID()) == null){
                 MessageHelper.send(channel, "No prefix has been set for this guild, to add one use configure prefix");
             }else{
-                MessageHelper.send(channel, "The prefix on this server is \"" + guild.getData("prefix") + "\"");
+                MessageHelper.send(channel, "The prefix on this server is \"" + prefixEntity.getData(guild.getID()) + "\"");
             }
         }else if (Rank.isSufficient(Rank.GUILD_ADMIN, rank)){
             prefixEntity.putData(guild.getID(), s[0]);
@@ -75,5 +76,12 @@ public class Config {
     public static void liaison(User user, Guild guild){
         guild.putData("liaison", user.getID());
         MessageHelper.send(user, user.discord().getName() + ", you are now " + Inquisitor.ourUser().mention() + "'s liaison for the guild " + guild.discord().getName());
+    }
+    @Register(help = "Sets the language for this guild")
+    public static void lang(Guild guild, Channel channel, String s){
+        if (!LangHelper.isLang(s)){
+            MessageHelper.send(channel, "\"" + s  + "\" is not a supported or valid ISO 639-1 language code, ex: en-au or de-lu");
+        }
+        Entity.getEntity("lang", "lang").putData(guild.getID(), s);
     }
 }
