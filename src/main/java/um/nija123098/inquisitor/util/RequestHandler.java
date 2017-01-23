@@ -21,7 +21,7 @@ public class RequestHandler {
             } catch (DiscordException e) {
                 Log.error("Error in request due to DiscordException for reason " + e.getMessage());
             } catch (MissingPermissionsException e) {
-                request.missingPermissions();
+                request.missingPermissions(e);
             }
         });
     }
@@ -34,7 +34,7 @@ public class RequestHandler {
     @FunctionalInterface
     public interface Request{
         void request() throws DiscordException, RateLimitException, MissingPermissionsException;
-        default void missingPermissions(){
+        default void missingPermissions(MissingPermissionsException e){
         }
     }
     private static class Timer implements Runnable {

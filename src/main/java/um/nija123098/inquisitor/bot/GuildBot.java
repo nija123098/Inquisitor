@@ -24,6 +24,9 @@ public class GuildBot {
     public void handle(MessageReceivedEvent event){
         if (event.getMessage().getContent() != null && !(event.getMessage().getChannel() instanceof IPrivateChannel) && event.getMessage().getChannel().getGuild().getID().equals(this.guildID)){
             String s = event.getMessage().getContent();
+            if (s.length() == 1){
+                return;
+            }
             s = StringHelper.limitOneSpace(s);
             boolean command = true;
             if (PREFIX_ENTITY.getData(this.guildID()) != null && s.startsWith(PREFIX_ENTITY.getData(this.guildID()))){

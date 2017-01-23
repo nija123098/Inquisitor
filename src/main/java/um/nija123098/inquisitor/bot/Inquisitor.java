@@ -77,7 +77,7 @@ public class Inquisitor {
     public void handle(MessageReceivedEvent event){
         String s = event.getMessage().getContent();
         if (s != null && event.getMessage().getChannel() instanceof IPrivateChannel){
-            Invoke.invoke(event.getMessage().getAuthor().getID(), null, event.getMessage().getChannel().getID(), s, event.getMessage());
+            Invoke.invoke(event.getMessage().getAuthor().getID(), null, event.getMessage().getChannel().getID(), s.equals("?") ? "help" : s, event.getMessage());
         }
     }
     @EventSubscriber
