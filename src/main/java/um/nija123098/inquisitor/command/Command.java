@@ -7,6 +7,7 @@ import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.*;
 import um.nija123098.inquisitor.util.FileHelper;
 import um.nija123098.inquisitor.util.Log;
+import um.nija123098.inquisitor.util.MessageAid;
 import um.nija123098.inquisitor.util.MessageHelper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -165,6 +166,7 @@ public class Command {
                 return false;
             }
         }
+        MessageAid aider = null;
         Class[] parameterTypes = this.method.getParameterTypes();
         Object[] objects = new Object[parameterTypes.length];
         for (int i = 0; i < objects.length; i++) {
@@ -199,6 +201,11 @@ public class Command {
                     }
                     objects[i] = channel;
                 }
+            }else if (parameterTypes[i].equals(MessageAid.class)){
+                if (aider == null){
+                    aider = new MessageAid(user, channel, guild);
+                }
+                objects[i] = aider;
             }
         }
         Object ret;
@@ -214,6 +221,9 @@ public class Command {
             Log.error(this.method.getDeclaringClass().getName() + "#" + this.method.getName() + " ran into a " + e.getClass().getSimpleName() + " and got " + e.getMessage() + " while being invoked by " + (user == null ? "the system" : user.discord().getName() + "#" + user.discord().getDiscriminator()));
             e.printStackTrace();
             return false;
+        }
+        if (aider != null){
+            aider.send();
         }
         if (!this.startup() && !this.shutdown() && user != null && (ret == null || Objects.equals(true, ret))){
             Suspicion.addLevel(user, this.suspicious(), channel, true);

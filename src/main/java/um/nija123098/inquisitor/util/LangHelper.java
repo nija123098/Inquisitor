@@ -34,7 +34,10 @@ public class LangHelper {
         if (s != null){
             return new Pair<String, Boolean>(s, true);
         }
-        return new Pair<String, Boolean>(LANG_ENTITY.getData(guild.getID(), "en-us"), false);
+        if (guild != null){
+            return new Pair<String, Boolean>(LANG_ENTITY.getData(guild.getID(), "en-us"), false);
+        }
+        return new Pair<String, Boolean>("en-us", false);
     }
     public static boolean isLang(String s){
         return LANGS.contains(s);
