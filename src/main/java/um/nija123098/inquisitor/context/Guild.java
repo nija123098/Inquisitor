@@ -12,7 +12,7 @@ import java.util.List;
 public class Guild extends Context {
     private static final List<Guild> GUILDS;
     static {
-        GUILDS = new ArrayList<Guild>();
+        GUILDS = new ArrayList<>();
     }
     public static Guild getGuild(String id){
         for (Guild guild : GUILDS) {

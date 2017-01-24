@@ -34,7 +34,7 @@ public class FileHelper {
         try{
             List<String> strings = Files.readAllLines(Paths.get(path));
             if (strings == null){
-                strings = new ArrayList<String>(0);
+                strings = new ArrayList<>(0);
             }
             return strings;
         }catch(Exception ignored){
@@ -52,13 +52,13 @@ public class FileHelper {
     public static List<File> getFiles(String path){
         ensureFileExistence(path);
         path = getJarContainer() + "\\" + path;
-        List<File> files = new ArrayList<File>();
+        List<File> files = new ArrayList<>();
         try{Collections.addAll(files, new File(path).listFiles());
         }catch(Exception ignored){}
         return files;
     }
     public static List<String> getPaths(String path){
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         ensureFileExistence(path);
         for (File file : new File(getJarContainer() + "\\" + path).listFiles()) {
             strings.add(path + "\\" + file.getName());

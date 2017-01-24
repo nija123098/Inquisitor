@@ -1,4 +1,4 @@
-package um.nija123098.inquisitor.bot;
+package um.nija123098.inquisitor.saving;
 
 import um.nija123098.inquisitor.util.Log;
 
@@ -20,7 +20,7 @@ public class Entity {
     private static final String CONTAINER;
     static{
         CONTAINER = new File(Entity.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent() + "\\";
-        ENTITIES = new ArrayList<Entity>();
+        ENTITIES = new ArrayList<>();
     }
     public static synchronized void saveEntities(){
         ENTITIES.forEach(Entity::save);
@@ -44,7 +44,7 @@ public class Entity {
         return new Entity(file);
     }
     public static synchronized List<Entity> getEntities(String path){
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
         for (File file : new File(path).listFiles()) {
             entities.add(new Entity(file));
         }
@@ -53,13 +53,13 @@ public class Entity {
     private final Map<String, String> stringMap;
     private final File file;
     private Entity(File file) {
-        this.stringMap = new ConcurrentHashMap<String, String>();
+        this.stringMap = new ConcurrentHashMap<>();
         this.file = file;
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         try{strings = Files.readAllLines(Paths.get(this.file.getPath()));
         }catch(Exception ignored){}
         if (strings == null){
-            strings = new ArrayList<String>(0);
+            strings = new ArrayList<>(0);
         }
         strings.forEach(str -> {
             String[] st = str.split(":");
@@ -70,6 +70,9 @@ public class Entity {
     public String getData(String id) {
         return this.stringMap.get(id);
     }
+    public String getData(Unique unique){
+        return getData(unique.getID());
+    }
     public String getData(String id, String defaul) {
         String data = this.stringMap.get(id);
         if (data == null){
@@ -77,17 +80,26 @@ public class Entity {
         }
         return data;
     }
+    public String getData(Unique unique, String defaul){
+        return getData(unique.getID(), defaul);
+    }
     public void putData(String id, String data) {
         this.stringMap.put(id, data);
+    }
+    public void putData(Unique unique, String data) {
+        this.stringMap.put(unique.getID(), data);
     }
     public void clearData(String id){
         this.stringMap.remove(id);
     }
+    public void clearData(Unique unique){
+        this.stringMap.remove(unique.getID());
+    }
     public List<String> getSaved(){
-        return new ArrayList<String>(this.stringMap.keySet());
+        return new ArrayList<>(this.stringMap.keySet());
     }
     private List<String> getStrings() {
-        List<String> strings = new ArrayList<String>(this.stringMap.size());
+        List<String> strings = new ArrayList<>(this.stringMap.size());
         strings.addAll(this.stringMap.keySet().stream().map(key -> key + ":" + this.stringMap.get(key)).collect(Collectors.toList()));
         return strings;
     }

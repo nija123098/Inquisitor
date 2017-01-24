@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class ClassFinder {
     public static Set<Class<?>> find(String scannedPackage) {
-        List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
+        List<ClassLoader> classLoadersList = new LinkedList<>();
         classLoadersList.add(ClasspathHelper.contextClassLoader());
         classLoadersList.add(ClasspathHelper.staticClassLoader());
         return new Reflections(new ConfigurationBuilder()

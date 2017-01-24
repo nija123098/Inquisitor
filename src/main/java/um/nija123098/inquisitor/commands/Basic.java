@@ -3,7 +3,7 @@ package um.nija123098.inquisitor.commands;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.MessageList;
-import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Register;
@@ -47,7 +47,7 @@ public class Basic {
         }
     }
     @Register(hidden = true, help = "Displays all commands of a specific rank")
-    public static void helpatrank(Channel channel, User user, Rank rank, String s){
+    public static void helpAtRank(Channel channel, User user, Rank rank, String s){
         Rank targetRank = null;
         try{targetRank = Rank.valueOf(s.toUpperCase().replace(" ", "_"));
         }catch(Exception ignored){}
@@ -89,7 +89,7 @@ public class Basic {
         MessageHelper.send(channel, "https://github.com/nija123098/Inquisitor");
     }
     @Register(rank = Rank.GUILD_ADMIN, help = "Deletes the bot's previous messages, message count specifiable")
-    public static void takeback(Channel channel, String[] s){
+    public static void takeBack(Channel channel, String[] s){
         int count;
         if (s.length == 0){
             count = 1;
@@ -105,7 +105,7 @@ public class Basic {
         }
         MessageList messages = channel.discord().getMessages();
         IUser user = Inquisitor.ourUser();
-        List<IMessage> deletes = new ArrayList<IMessage>(count);
+        List<IMessage> deletes = new ArrayList<>(count);
         int i = 0;
         while (count != deletes.size()){
             if (messages.get(i).getAuthor().equals(user)){

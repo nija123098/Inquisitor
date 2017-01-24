@@ -44,13 +44,13 @@ public class Nuisance {
         }
         return true;
     }
-    private static final Map<Pair<String, String>, Long> MAP = new ConcurrentHashMap<Pair<String, String>, Long>();
+    private static final Map<Pair<String, String>, Long> MAP = new ConcurrentHashMap<>();
     public static class Monitor {
         @EventSubscriber
         public void handle(MessageReceivedEvent event){
             IGuild iGuild = event.getMessage().getGuild();
             if (!(event.getMessage().getAuthor().isBot() || event.getMessage().getChannel().isPrivate() || Rank.isSufficient(Rank.GUILD_ADMIN, Rank.getRank(User.getUserFromID(event.getMessage().getAuthor().getID()), iGuild == null ? null : Guild.getGuild(iGuild.getID()))))){
-                Pair<String, String> pair = new Pair<String, String>(event.getMessage().getAuthor().getID(), event.getMessage().getGuild().getID());
+                Pair<String, String> pair = new Pair<>(event.getMessage().getAuthor().getID(), event.getMessage().getGuild().getID());
                 long current = System.currentTimeMillis();
                 if (MAP.get(pair) == null){
                     MAP.put(pair, current);

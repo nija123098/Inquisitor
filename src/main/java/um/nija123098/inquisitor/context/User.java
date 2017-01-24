@@ -12,7 +12,7 @@ import java.util.List;
 public class User extends Context {
     private static final List<User> USERS;
     static {
-        USERS = new ArrayList<User>();
+        USERS = new ArrayList<>();
     }
     public static User getUserFromID(String id){
         try{Long.parseLong(id);
@@ -61,7 +61,7 @@ public class User extends Context {
         return user;
     }
     private static User getUserFromList(String discrim, String undiscrim, List<IUser> iUsers){
-        List<IUser> users = new ArrayList<IUser>();
+        List<IUser> users = new ArrayList<>();
         for (IUser user : iUsers) {
             if (user.getName().equals(undiscrim)){
                 users.add(user);
@@ -95,9 +95,5 @@ public class User extends Context {
     @Deprecated
     public void putData(String id, String data) {
         super.putData(id, data);
-    }
-    @Deprecated
-    public void clearData(String id){
-        super.clearData(id);
     }
 }

@@ -2,7 +2,7 @@ package um.nija123098.inquisitor.commands;
 
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Status;
-import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
@@ -24,7 +24,7 @@ public class Admin {
     @Register(defaul = true, override = true, help = "Lists bot admins")
     public static void admin(User user){
         Entity entity = Inquisitor.getEntity("permissions");
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         String[] strs = entity.getData("admin", "").split(":");
         for (String str : strs) {
             if (str.length() == 0){

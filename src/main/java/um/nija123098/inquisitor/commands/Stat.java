@@ -1,7 +1,7 @@
 package um.nija123098.inquisitor.commands;
 
 import sx.blah.discord.handle.obj.Status;
-import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;

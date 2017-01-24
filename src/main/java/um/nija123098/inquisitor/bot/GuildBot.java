@@ -5,12 +5,14 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import um.nija123098.inquisitor.command.Invoke;
+import um.nija123098.inquisitor.saving.Entity;
+import um.nija123098.inquisitor.saving.Unique;
 import um.nija123098.inquisitor.util.StringHelper;
 
 /**
  * Made by nija123098 on 11/5/2016
  */
-public class GuildBot {
+public class GuildBot implements Unique {
     private static final Entity PREFIX_ENTITY;
     static {
         PREFIX_ENTITY = Inquisitor.getEntity("prefixes");
@@ -29,8 +31,8 @@ public class GuildBot {
             }
             s = StringHelper.limitOneSpace(s);
             boolean command = true;
-            if (PREFIX_ENTITY.getData(this.guildID()) != null && s.startsWith(PREFIX_ENTITY.getData(this.guildID()))){
-                s = s.substring(PREFIX_ENTITY.getData(this.guildID()).length());
+            if (PREFIX_ENTITY.getData(this) != null && s.startsWith(PREFIX_ENTITY.getData(this))){
+                s = s.substring(PREFIX_ENTITY.getData(this).length());
             }else if (s.startsWith(Inquisitor.ourUser().mention(false))){
                 s = s.substring(Inquisitor.ourUser().mention(false).length());
             }else if (s.startsWith(Inquisitor.ourUser().mention(true))){
@@ -46,10 +48,10 @@ public class GuildBot {
             }
         }
     }
-    public String guildID() {
+    public String getID() {
         return this.guildID;
     }
-    public void close() {
+    void close() {
         Inquisitor.discordClient().getDispatcher().unregisterListener(this);
     }
 }

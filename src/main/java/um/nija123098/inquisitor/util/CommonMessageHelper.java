@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class CommonMessageHelper {
     public static void displayCommands(String pre, String post, List<Command> commandList, User user){
-        List<String> one = new ArrayList<String>(commandList.size()), two = new ArrayList<String>(commandList.size());
+        List<String> one = new ArrayList<>(commandList.size()), two = new ArrayList<>(commandList.size());
         commandList.forEach(command -> {
             one.add(command.name());
             two.add(command.help());
@@ -27,6 +27,6 @@ public class CommonMessageHelper {
         MessageHelper.send(user, post + "```md\n" + string + "```");
     }
     public static void displayList(String pre, String post, List<String> one, User user){
-        displayLists(pre, post, one, new ArrayList<String>(0), user);
+        displayLists(pre, post, one, new ArrayList<>(0), user);
     }
 }

@@ -67,7 +67,7 @@ public class MessageAid {
             return;
         }
         this.setContent();
-        final AtomicReference<IChannel> channel = new AtomicReference<IChannel>(this.channel.discord());
+        final AtomicReference<IChannel> channel = new AtomicReference<>(this.channel.discord());
         boolean pubAllowed = this.channel.isPrivate();
         final AtomicBoolean channelMade = new AtomicBoolean(true);
         if (!pubAllowed){

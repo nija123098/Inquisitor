@@ -11,6 +11,7 @@ import um.nija123098.inquisitor.context.*;
 import um.nija123098.inquisitor.util.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Made by nija123098 on 11/8/2016
@@ -27,7 +28,7 @@ public class Inquire {
                 return false;
             }
             MessageHelper.react("eye", message);
-            Suspicion.addLevel(user, .1f, channel, false);
+            Suspicion.addLevel(user, .1f, null, false);
             MessageHelper.send(channel, "User " + user.getID() + " goes by the name of " + (guild == null ? user.discord().getName() : user.discord().getDisplayName(guild.discord())) + "\n" +
                     (guild != null && !user.discord().getDisplayName(guild.discord()).equals(user.discord().getName()) ? user.discord().getDisplayName(guild.discord()) + " is actually " + user.discord().getName() + "\n" : "") +
                     user.discord().getName() + " has thus far been " + Suspicion.getLevel(user) + " and is a " + Rank.getRankName(user, guild));
@@ -37,30 +38,13 @@ public class Inquire {
     @Register(suspicious = .125f, guild = true, help = "Lists all roles on a server")
     public static void roles(Guild guild, User user){
         IGuild iGuild = guild.discord();
-        Map<Integer, Pair<String, Integer>> map = new HashMap<Integer, Pair<String, java.lang.Integer>>();
-        iGuild.getRoles().forEach(role -> {
-            final int[] count = {0};
-            iGuild.getUsers().stream().filter(u -> u.getPresence().equals(Presences.ONLINE)).filter(u -> u.getRolesForGuild(iGuild).contains(role)).forEach(u -> ++count[0]);
-            map.put(role.getPosition(), new Pair<String, Integer>(role.getName(), count[0]));
-        });
-        final int[] max = {0};
-        map.forEach((integer, pair) -> {
-            if (integer > max[0]){
-                max[0] = integer;
-            }
-        });
-        Pair<String, Integer>[] pairs = new Pair[max[0] + 1];
-        map.forEach((integer, pair) -> pairs[integer] = pair);
-        List<Pair<String, Integer>> pairList = new ArrayList<Pair<String, Integer>>(pairs.length);
-        Collections.addAll(pairList, pairs);
-        pairList.remove(null);
-        ListHelper.flip(pairList);
-        List<String> names = new ArrayList<String>(pairList.size()), online = new ArrayList<String>(pairList.size());
-        pairList.forEach(pair -> {
-            if (pair != null){
-                names.add(pair.getKey());
-                online.add(pair.getValue() + "");
-            }
+        Map<Integer, Pair<String, Long>> map = new HashMap<>();
+        int size = iGuild.getRoles().size();
+        List<String> names = new ArrayList<>(size), online = new ArrayList<>(size);
+        iGuild.getRoles().forEach(iRole -> map.put(iRole.getPosition(), new Pair<>(iRole.getName(), iGuild.getUsers().stream().filter(iUser -> iUser.getRolesForGuild(iGuild).contains(iRole) && iUser.getPresence().equals(Presences.ONLINE)).count())));
+        map.forEach((integer, stringLongPair) -> {
+            names.add(integer, stringLongPair.getKey());
+            online.add(integer, stringLongPair.getValue() + "");
         });
         CommonMessageHelper.displayLists("# Roles for guild \"" + iGuild.getName() + "\"", "", names, online, user);
     }
@@ -78,8 +62,8 @@ public class Inquire {
                 return false;
             }
             for (IRole iRole : roles) {
-                List<String> perms = new ArrayList<String>();
-                new ArrayList<Permissions>(iRole.getPermissions()).forEach(permissions -> perms.add(permissions.name()));
+                List<String> perms = new ArrayList<>();
+                new ArrayList<>(iRole.getPermissions()).forEach(permissions -> perms.add(permissions.name()));
                 final int[] count = {0};
                 IGuild iGuild = guild.discord();
                 iGuild.getUsers().stream().filter(u -> u.getPresence().equals(Presences.ONLINE)).filter(u -> u.getRolesForGuild(iGuild).contains(iRole)).forEach(u -> ++count[0]);

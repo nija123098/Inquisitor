@@ -2,7 +2,7 @@ package um.nija123098.inquisitor.command;
 
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IVoiceChannel;
-import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.*;
 import um.nija123098.inquisitor.util.FileHelper;

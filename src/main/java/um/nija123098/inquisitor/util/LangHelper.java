@@ -2,7 +2,7 @@ package um.nija123098.inquisitor.util;
 
 import javafx.util.Pair;
 import org.json.JSONArray;
-import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 
@@ -27,24 +27,24 @@ public class LangHelper {
     static {
         LANGS = Arrays.asList("en-us", "en-au");
         LANG_ENTITY = Entity.getEntity("lang", "lang");
-        LANG_CONTENT = new HashMap<String, List<Pair<String,String>>>();
+        LANG_CONTENT = new HashMap<>();
     }
     public static Pair<String, Boolean> getLang(User user, Guild guild){
-        String s = LANG_ENTITY.getData(user.getID());
+        String s = LANG_ENTITY.getData(user);
         if (s != null){
-            return new Pair<String, Boolean>(s, true);
+            return new Pair<>(s, true);
         }
         if (guild != null){
-            return new Pair<String, Boolean>(LANG_ENTITY.getData(guild.getID(), "en-us"), false);
+            return new Pair<>(LANG_ENTITY.getData(guild, "en-us"), false);
         }
-        return new Pair<String, Boolean>("en-us", false);
+        return new Pair<>("en-us", false);
     }
     public static boolean isLang(String s){
         return LANGS.contains(s);
     }
     public static synchronized String getContent(String lang, String content){
         if (!LANG_CONTENT.containsKey(lang)){
-            LANG_CONTENT.put(lang, new ArrayList<Pair<String, String>>());
+            LANG_CONTENT.put(lang, new ArrayList<>());
         }
         List<Pair<String, String>> lan = LANG_CONTENT.get(lang);
         for (Pair<String, String> pair : lan) {
@@ -53,7 +53,7 @@ public class LangHelper {
             }
         }
         String result = translate(lang, content);
-        lan.add(new Pair<String, String>(content, result));
+        lan.add(new Pair<>(content, result));
         return result;
     }
     public static String translate(String isoTo, String content){

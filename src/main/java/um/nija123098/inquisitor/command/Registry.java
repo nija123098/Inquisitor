@@ -14,9 +14,9 @@ public class Registry {
     private static final List<Command> SURFACE;
     private static final List<Command> DEEP;
     static {
-        COMMANDS = new ArrayList<Command>();
-        SURFACE = new ArrayList<Command>();
-        DEEP = new ArrayList<Command>();
+        COMMANDS = new ArrayList<>();
+        SURFACE = new ArrayList<>();
+        DEEP = new ArrayList<>();
     }
     public static synchronized void register(Class clazz){
         for (Method method : clazz.getMethods()) {
@@ -68,7 +68,7 @@ public class Registry {
     }
     @SafeVarargs
     public static List<Command> getCommands(Predicate<Command>...predicates){
-        List<Command> commands = new ArrayList<Command>(COMMANDS.size());
+        List<Command> commands = new ArrayList<>(COMMANDS.size());
         commands.addAll(COMMANDS);
         for (Predicate<Command> predicate : predicates) {
             commands = commands.stream().filter(predicate).collect(Collectors.toList());

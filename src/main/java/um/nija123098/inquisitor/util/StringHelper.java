@@ -29,12 +29,12 @@ public class StringHelper {
         return getEnglishList(getList(list));
     }
     public static List<String> getList(String...list){
-        List<String> strings = new ArrayList<String>(list.length);
+        List<String> strings = new ArrayList<>(list.length);
         Collections.addAll(strings, list);
         return strings;
     }
     public static List<String> getContentList(String...list){
-        List<String> strings = new ArrayList<String>(list.length);
+        List<String> strings = new ArrayList<>(list.length);
         Collections.addAll(strings, list);
         while (strings.contains("")){
             strings.remove("");

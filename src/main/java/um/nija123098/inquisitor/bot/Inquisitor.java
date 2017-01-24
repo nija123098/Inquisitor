@@ -12,6 +12,7 @@ import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IUser;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.util.*;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class Inquisitor {
     private final List<GuildBot> botList;
     private IDiscordClient client;
     private Inquisitor(String token){
-        this.botList = new ArrayList<GuildBot>(1);
+        this.botList = new ArrayList<>(1);
         RequestHandler.request(() -> {
             this.client = new ClientBuilder().withToken(token).build();
             this.client.getDispatcher().registerListener(this);

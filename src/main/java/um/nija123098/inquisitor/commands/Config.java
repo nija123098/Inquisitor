@@ -1,6 +1,6 @@
 package um.nija123098.inquisitor.commands;
 
-import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Register;
@@ -22,14 +22,14 @@ public class Config {
     public static void prefix(String[] s, Guild guild, Channel channel, User user, Rank rank){
         Entity prefixEntity = Inquisitor.getEntity("prefixes");
         if (s.length == 0){
-            if (prefixEntity.getData(guild.getID()) == null){
+            if (prefixEntity.getData(guild) == null){
                 MessageHelper.send(channel, "No prefix has been set for this guild, to add one use configure prefix");
             }else{
-                MessageHelper.send(channel, "The prefix on this server is \"" + prefixEntity.getData(guild.getID()) + "\"");
+                MessageHelper.send(channel, "The prefix on this server is \"" + prefixEntity.getData(guild) + "\"");
             }
         }else if (Rank.isSufficient(Rank.GUILD_ADMIN, rank)){
-            prefixEntity.putData(guild.getID(), s[0]);
-            MessageHelper.sendOverride(channel, "Prefix set to \"" + prefixEntity.getData(guild.getID()) + "\"");
+            prefixEntity.putData(guild, s[0]);
+            MessageHelper.sendOverride(channel, "Prefix set to \"" + prefixEntity.getData(guild) + "\"");
         }else{
             MessageHelper.send(channel, user.discord().mention() + ", you do not have permission to set " + Inquisitor.ourUser().mention() + "'s prefix for " + guild.discord().getName());
         }
@@ -82,6 +82,6 @@ public class Config {
         if (!LangHelper.isLang(s)){
             MessageHelper.send(channel, "\"" + s  + "\" is not a supported or valid ISO 639-1 language code, ex: en-au or de-lu");
         }
-        Entity.getEntity("lang", "lang").putData(guild.getID(), s);
+        Entity.getEntity("lang", "lang").putData(guild, s);
     }
 }

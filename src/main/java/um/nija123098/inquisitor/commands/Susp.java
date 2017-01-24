@@ -47,7 +47,7 @@ public class Susp {
         }else{
             User u = User.getUser(s, guild);
             if (u != null){
-                MessageHelper.send(channel, u.discord().getName() + "#" + u.discord().getDiscriminator() + " has been " + Suspicion.getLevel(u).name() + " (" + Float.parseFloat(u.getData("suspicion", "0")) + ")");
+                MessageHelper.send(channel, u.discord().getName() + "#" + u.discord().getDiscriminator() + " has been " + Suspicion.getLevel(u).name() + " (" + Suspicion.getValue(u) + ")");
             }else{
                 MessageHelper.send(channel, "No user has been found");
             }
@@ -61,7 +61,7 @@ public class Susp {
             MessageHelper.send(channel, "\"" + s + "\" is not a number");
             return;
         }
-        user.putData("suspicion", v + "");
+        Suspicion.setLevel(user, v, true);
         suspicion(user, channel, Suspicion.getLevel(user), null, "");
     }
 }

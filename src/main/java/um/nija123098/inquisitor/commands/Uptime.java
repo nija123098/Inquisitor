@@ -3,7 +3,7 @@ package um.nija123098.inquisitor.commands;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.PresenceUpdateEvent;
 import sx.blah.discord.handle.obj.Presences;
-import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
@@ -36,11 +36,11 @@ public class Uptime {
             MessageHelper.send(channel, "There is no user by that name");
             return;
         }
-        s = entity.getData(user.getID());
+        s = entity.getData(user);
         if (s == null){
             Log.error(user.discord().getName() + " does not have uptime data, setting now");
             setPresence(user, !user.discord().getPresence().equals(Presences.OFFLINE));
-            s = entity.getData(user.getID());
+            s = entity.getData(user);
         }
         String[] strings = s.split(":");
         MessageHelper.send(channel, user.discord().getName() + " has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for **" + FormatHelper.format(System.currentTimeMillis() - Long.parseLong(strings[1])) + "**");
@@ -50,10 +50,10 @@ public class Uptime {
         setPresence(User.getUserFromID(event.getUser().getID()), !event.getNewPresence().equals(Presences.OFFLINE));
     }
     private static void setPresence(User user, boolean on){
-        String s = entity.getData(user.getID());
+        String s = entity.getData(user);
         if (s != null && s.split(":")[0].equals(on + "")) {
             return;
         }
-        entity.putData(user.getID(), on + ":" + System.currentTimeMillis());
+        entity.putData(user, on + ":" + System.currentTimeMillis());
     }
 }

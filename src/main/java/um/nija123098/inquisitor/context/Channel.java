@@ -13,7 +13,7 @@ import java.util.List;
 public class Channel extends Context {
     private static final List<Channel> CHANNELS;
     static {
-        CHANNELS = new ArrayList<Channel>();
+        CHANNELS = new ArrayList<>();
     }
     public static Channel getChannel(String id){
         for (Channel channel : CHANNELS) {

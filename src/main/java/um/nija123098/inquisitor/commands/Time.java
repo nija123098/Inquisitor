@@ -1,6 +1,6 @@
 package um.nija123098.inquisitor.commands;
 
-import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
@@ -21,12 +21,12 @@ public class Time {
             MessageHelper.send(channel, "No such user \"" + in + "\"");
             return false;
         }
-        String da = entity.getData(other.getID());
+        String da = entity.getData(other);
         if (da == null){
             MessageHelper.send(channel, other.discord().getDisplayName(guild.discord()) + " has not set his or her UTC offset.");
             return false;
         }
-        float val = Float.parseFloat(entity.getData(other.getID()));
+        float val = Float.parseFloat(entity.getData(other));
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
         Calendar.getInstance(timeZone).add(Calendar.HOUR_OF_DAY, ((int) val));
         Calendar.getInstance(timeZone).add(Calendar.MINUTE, (int) ((val % 1) * 60));
@@ -41,7 +41,7 @@ public class Time {
         }catch(Exception e){
             return false;
         }
-        entity.putData(user.getID(), s);
+        entity.putData(user, s);
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
         Calendar.getInstance(timeZone).add(Calendar.HOUR_OF_DAY, ((int) val));
         Calendar.getInstance(timeZone).add(Calendar.MINUTE, (int) ((val % 1) * 60));

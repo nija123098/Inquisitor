@@ -5,7 +5,7 @@ import sx.blah.discord.handle.impl.events.PresenceUpdateEvent;
 import sx.blah.discord.handle.impl.events.StatusChangeEvent;
 import sx.blah.discord.handle.obj.Presences;
 import sx.blah.discord.handle.obj.Status;
-import um.nija123098.inquisitor.bot.Entity;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Made by nija123098 on 12/10/2016
  */
 public class Alert {
-    private static final List<AlertWatch> WATCHES = new CopyOnWriteArrayList<AlertWatch>(), REMOVES = new ArrayList<AlertWatch>();
+    private static final List<AlertWatch> WATCHES = new CopyOnWriteArrayList<>(), REMOVES = new ArrayList<>();
     @EventSubscriber
     public void handle(StatusChangeEvent event){
         synchronized (WATCHES){
