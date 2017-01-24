@@ -1,8 +1,8 @@
 package um.nija123098.inquisitor.commands;
 
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.PresenceUpdateEvent;
-import sx.blah.discord.handle.impl.events.StatusChangeEvent;
+import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
+import sx.blah.discord.handle.impl.events.user.StatusChangeEvent;
 import sx.blah.discord.handle.obj.Presences;
 import sx.blah.discord.handle.obj.Status;
 import um.nija123098.inquisitor.saving.Entity;
@@ -96,8 +96,9 @@ public class Alert {
         return true;
     }
     public static class TimeWatch extends AlertWatch{
-        private long millis;
-        private String userId, todo;
+        private final long millis;
+        private final String userId;
+        private final String todo;
         public TimeWatch(String s){
             String[] strings = s.split(":");
             this.millis = Long.parseLong(strings[0]);
@@ -156,8 +157,9 @@ public class Alert {
         return true;
     }
     public static class PresenceWatch extends AlertWatch{
-        private User user, target;
-        private Presences presence;
+        private final User user;
+        private final User target;
+        private final Presences presence;
         public PresenceWatch(String s){
             String[] strings = s.split(":");
             this.user = User.getUserFromID(strings[0]);
@@ -205,7 +207,8 @@ public class Alert {
     }
     public static class GameWatch extends AlertWatch{
         private String status;
-        private User user, target;
+        private final User user;
+        private final User target;
         private Status.StatusType type;
         public GameWatch(String game, User user, User target) {
             this.status = game;
@@ -253,7 +256,8 @@ public class Alert {
         return true;
     }
     public static class NoStatusWatch extends AlertWatch{
-        private User user, target;
+        private final User user;
+        private final User target;
         public NoStatusWatch(User user, User target) {
             this.user = user;
             this.target = target;

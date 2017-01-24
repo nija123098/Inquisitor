@@ -16,7 +16,7 @@ public enum Rank {
     BOT_ADMIN,
     MAKER,
     NONE,;
-    private static Entity ranks = Inquisitor.getEntity("permissions");
+    private static final Entity ranks = Inquisitor.getEntity("permissions");
     public static Rank getRank(User user, Guild guild){
         if (user.discord().getID().equals("191677220027236352")){
             return MAKER;

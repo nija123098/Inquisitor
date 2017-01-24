@@ -16,10 +16,10 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class MessageAid {
     private User user;
-    private Channel channel;
+    private final Channel channel;
     private Guild guild;
     private String content;
-    private MessageBuilder internal;
+    private final MessageBuilder internal;
     private boolean checkMessages, priv, edited;
     private int delete;
     public MessageAid(User user, Channel channel, Guild guild){

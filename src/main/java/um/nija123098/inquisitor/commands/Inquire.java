@@ -2,16 +2,27 @@ package um.nija123098.inquisitor.commands;
 
 import javafx.util.Pair;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
-import sx.blah.discord.handle.obj.*;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IRole;
+import sx.blah.discord.handle.obj.Presences;
 import sx.blah.discord.util.MessageList;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
-import um.nija123098.inquisitor.context.*;
-import um.nija123098.inquisitor.util.*;
+import um.nija123098.inquisitor.context.Channel;
+import um.nija123098.inquisitor.context.Guild;
+import um.nija123098.inquisitor.context.Rank;
+import um.nija123098.inquisitor.context.Suspicion;
+import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.util.CommonMessageHelper;
+import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.StringHelper;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Made by nija123098 on 11/8/2016

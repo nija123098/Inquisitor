@@ -2,7 +2,7 @@ package um.nija123098.inquisitor.bot;
 
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.saving.Entity;

@@ -43,7 +43,7 @@ public class RequestHandler {
         }
     }
     private static class Timer implements Runnable {
-        private Map<Long, List<Request>> requestMap;
+        private final Map<Long, List<Request>> requestMap;
         private Timer() {
             this.requestMap = new ConcurrentHashMap<>();
             new Thread(this).start();
