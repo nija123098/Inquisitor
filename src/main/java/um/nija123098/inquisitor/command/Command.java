@@ -12,6 +12,7 @@ import um.nija123098.inquisitor.util.MessageHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,10 +28,21 @@ public class Command {
     private final Method method;
     private final Register register, clazz;
     private final Entity entity;
-    public Command(Method method) {
+    public Command(Method method, List<Method> others) {
         this.method = method;
         this.register = method.getAnnotation(Register.class);
-        this.clazz = !method.getDeclaringClass().isAnnotationPresent(Register.class) || this.register.override() ? DEFAULT : method.getDeclaringClass().getAnnotation(Register.class);
+        if (this.register.supercommand().length() == 0){
+            this.clazz = !method.getDeclaringClass().isAnnotationPresent(Register.class) || this.register.override() ? DEFAULT : method.getDeclaringClass().getAnnotation(Register.class);
+        }else{
+            Register reg = null;
+            for (Method m : others){
+                if ((m.getClass().getSimpleName() + "#" + m.getName()).toLowerCase().equals(this.register.supercommand())){
+                    reg = m.getDeclaredAnnotation(Register.class);
+                    break;
+                }
+            }
+            this.clazz = reg;
+        }
         String name = this.register.name().toLowerCase();
         if (name.equals("")){
             if (this.natural()){

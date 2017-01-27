@@ -2,6 +2,7 @@ package um.nija123098.inquisitor.command;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -19,16 +20,16 @@ public class Registry {
         DEEP = new ArrayList<>();
     }
     public static synchronized void register(List<Class> clazzes){
-        clazzes.forEach(clazz -> {
-            for (Method method : clazz.getMethods()) {
-                if (method.isAnnotationPresent(Register.class)){
-                    Command command = new Command(method);
-                    COMMANDS.add(command);
-                    if (command.surface()){
-                        SURFACE.add(command);
-                    }else{
-                        DEEP.add(command);
-                    }
+        final List<Method> methods = new ArrayList<>();
+        clazzes.forEach(clazz -> Collections.addAll(methods, clazz.getMethods()));
+        methods.forEach(method -> {
+            if (method.isAnnotationPresent(Register.class)){
+                Command command = new Command(method, methods);
+                COMMANDS.add(command);
+                if (command.surface()){
+                    SURFACE.add(command);
+                }else{
+                    DEEP.add(command);
                 }
             }
         });

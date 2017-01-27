@@ -47,4 +47,5 @@ public @interface Register {
      */
     boolean args() default true;
     boolean override() default false;
+    String supercommand() default "";
 }
