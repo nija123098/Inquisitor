@@ -20,6 +20,7 @@ import um.nija123098.inquisitor.util.RequestHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 11/5/2016
@@ -29,7 +30,7 @@ public class Inquisitor {
         Discord4J.disableChannelWarnings();
         inquisitor = new Inquisitor(args[0]);
         Runtime.getRuntime().addShutdownHook(new Thread(Inquisitor::save, "Shutdown Hook"));
-        ClassFinder.find("um.nija123098.inquisitor.commands").forEach(Registry::register);
+        Registry.register(ClassFinder.find("um.nija123098.inquisitor.commands").stream().collect(Collectors.toList()));
         Log.info("Command registration complete");
     }
     private static Inquisitor inquisitor;

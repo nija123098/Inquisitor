@@ -18,18 +18,20 @@ public class Registry {
         SURFACE = new ArrayList<>();
         DEEP = new ArrayList<>();
     }
-    public static synchronized void register(Class clazz){
-        for (Method method : clazz.getMethods()) {
-            if (method.isAnnotationPresent(Register.class)){
-                Command command = new Command(method);
-                COMMANDS.add(command);
-                if (command.surface()){
-                    SURFACE.add(command);
-                }else{
-                    DEEP.add(command);
+    public static synchronized void register(List<Class> clazzes){
+        clazzes.forEach(clazz -> {
+            for (Method method : clazz.getMethods()) {
+                if (method.isAnnotationPresent(Register.class)){
+                    Command command = new Command(method);
+                    COMMANDS.add(command);
+                    if (command.surface()){
+                        SURFACE.add(command);
+                    }else{
+                        DEEP.add(command);
+                    }
                 }
             }
-        }
+        });
     }
     public static void startUp(){
         COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null, null));
@@ -57,11 +59,8 @@ public class Registry {
             return false;
         }
         for (int i = 0; i < commandStrings.length; i++) {
-            if (!commandStrings[i].equals(msg[i])){
-                if (!command.args() && commandStrings.length != msg.length){
-                    continue;
-                }
-                return false;
+            if (!commandStrings[i].equals(msg[i])) {
+                return command.args() && commandStrings.length > msg.length;
             }
         }
         return true;

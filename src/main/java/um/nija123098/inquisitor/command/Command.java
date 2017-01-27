@@ -74,9 +74,6 @@ public class Command {
         return this.natural() || this.defaul();
     }
     public boolean defaul(){
-        if (DEFAULT.defaul() != this.clazz.defaul()){
-            return this.clazz.defaul();
-        }
         return this.register.defaul();
     }
     public Rank rank(){
@@ -131,9 +128,6 @@ public class Command {
         return this.register.args();
     }
     public boolean override(){
-        if (DEFAULT.override() != this.clazz.override()){
-            return this.clazz.override();
-        }
         return this.register.override();
     }
     public boolean invoke(User user, Guild guild, Channel channel, String s, IMessage message){
