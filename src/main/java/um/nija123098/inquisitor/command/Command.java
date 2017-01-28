@@ -5,13 +5,12 @@ import sx.blah.discord.handle.obj.IVoiceChannel;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.*;
-import um.nija123098.inquisitor.util.FileHelper;
-import um.nija123098.inquisitor.util.Log;
-import um.nija123098.inquisitor.util.MessageAid;
-import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,11 +23,12 @@ public class Command {
     static {
         DEFAULT = Command.class.getAnnotation(Register.class);
     }
+    private final List<String> aliases, reactionAliases;
     private final String name;
     private final Method method;
     private final Register register, clazz;
     private final Entity entity;
-    public Command(Method method, List<Method> others) {
+    Command(Method method, List<Method> others) {
         this.method = method;
         this.register = method.getAnnotation(Register.class);
         if (this.register.supercommand().length() == 0){
@@ -43,15 +43,32 @@ public class Command {
             }
             this.clazz = reg;
         }
+        String className = this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName() : this.clazz.name();
         String name = this.register.name().toLowerCase();
+        ArrayList<String> absoluteAliases = new ArrayList<>();
+        Collections.addAll(absoluteAliases, this.register.absoluteAliases().toLowerCase().split(", "));
+        this.reactionAliases = new ArrayList<>();
+        ArrayList<String> rea = new ArrayList<>();
+        Collections.addAll(rea, this.register.emoticonAliases().split(", "));
+        rea.forEach(s -> this.reactionAliases.add(EmoticonHelper.getEmoticon(s)));
+        this.aliases = new ArrayList<>();
         if (name.equals("")){
             if (this.natural()){
                 name = this.method.getName();
             }else if (this.defaul()) {
-                name = this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName() : this.clazz.name();
+                name = className;
             }else{
-                name = (this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName() : this.clazz.name()) + " " + this.method.getName();
+                name = (className) + " " + this.method.getName();
+                ArrayList<String> unadjustedAliases = new ArrayList<>();
+                Collections.addAll(unadjustedAliases, this.register.aliases().split(", "));
+                unadjustedAliases.stream().filter(s -> s.length() != 0).forEach(s -> this.aliases.add((className + " " + s).toLowerCase()));
             }
+            if (this.aliases.size() == 0 && this.register.aliases().length() != 0){
+                Collections.addAll(this.aliases, this.register.aliases().toLowerCase().split(", "));
+            }
+        }
+        if (absoluteAliases.get(0).length() != 0){
+            this.aliases.addAll(absoluteAliases);
         }
         this.name = name.toLowerCase();
         Entity ent = null;
@@ -75,6 +92,12 @@ public class Command {
     }
     public String name(){
         return this.name;
+    }
+    public List<String> aliases(){
+        return this.aliases;
+    }
+    public List<String> reactionAliases(){
+        return this.reactionAliases;
     }
     public boolean natural(){
         if (DEFAULT.natural() != this.clazz.natural()){
@@ -133,42 +156,46 @@ public class Command {
         }
         return this.register.suspicion();
     }
-    public boolean args() {
-        if (DEFAULT.args() != this.clazz.args()){
-            return this.clazz.args();
-        }
-        return this.register.args();
-    }
     public boolean override(){
         return this.register.override();
     }
-    public boolean invoke(User user, Guild guild, Channel channel, String s, IMessage message){
+    public boolean invoke(User user, Guild guild, Channel channel, String s, IMessage message, Boolean warn){
         Rank rank = null;
         Suspicion suspicion = null;
         if (!this.startup() && !this.shutdown() && user != null){
             rank = Rank.getRank(user, guild);
             if (Inquisitor.getLockdown() && !Rank.isSufficient(Rank.BOT_ADMIN, rank)){
-                MessageHelper.send(channel, Inquisitor.ourUser().mention() + " is currently on lockdown");
+                if (warn){
+                    MessageHelper.send(channel, Inquisitor.ourUser().mention() + " is currently on lockdown");
+                }
                 return false;
             }
             if (!this.rankSufficient(rank)){
-                MessageHelper.send(user, "That command is above your rank");
+                if (warn){
+                    MessageHelper.send(user, "That command is above your rank");
+                }
                 return false;
             }
             if (guild == null){
                 if (this.guild()){
-                    MessageHelper.send(user, "That command can not be used in a private channel");
+                    if (warn){
+                        MessageHelper.send(user, "That command can not be used in a private channel");
+                    }
                     return false;
                 }
             }else{
                 if (guild.getData("blacklist", "").contains(this.name())){
-                    MessageHelper.send(user, "That command has been blacklisted for " + guild.discord().getName());
+                    if (warn){
+                        MessageHelper.send(user, "That command has been blacklisted for " + guild.discord().getName());
+                    }
                     return false;
                 }
             }
             suspicion = Suspicion.getLevel(user);
             if (Suspicion.isSufficient(this.suspicion(), suspicion)){
-                MessageHelper.send(channel, user.discord().mention() + " you are " + Suspicion.getLevel(user).name() + ", you can not use that command");
+                if (warn){
+                    MessageHelper.send(channel, user.discord().mention() + " you are " + Suspicion.getLevel(user).name() + ", you can not use that command");
+                }
                 return false;
             }
         }
@@ -202,7 +229,7 @@ public class Command {
                 }else{
                     for (IVoiceChannel vChannel : user.discord().getConnectedVoiceChannels()) {
                         if (vChannel.getGuild().equals(guild.discord())){
-                            objects[i] = channel;
+                            objects[i] = vChannel;
                         }
                     }
                     objects[i] = channel;

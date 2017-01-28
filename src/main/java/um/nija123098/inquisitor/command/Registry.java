@@ -1,5 +1,9 @@
 package um.nija123098.inquisitor.command;
 
+import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,36 +39,86 @@ public class Registry {
         });
     }
     public static void startUp(){
-        COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null, null));
+        COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null, null, false));
     }
     public static void shutDown(){
-        COMMANDS.stream().filter(Command::shutdown).forEach(command -> command.invoke(null, null, null, null, null));
+        COMMANDS.stream().filter(Command::shutdown).forEach(command -> command.invoke(null, null, null, null, null, false));
     }
-    public static synchronized Command getCommand(String msg){
-        String[] strings = msg.toLowerCase().split(" ");
+    public static synchronized Triple<Command, Boolean, String> getCommand(String msg){
+        Triple<Boolean, Boolean, String> pair;
         for (Command command : DEEP) {
-            if (match(strings, command)){
-                return command;
+            pair = match(msg, command);
+            if (pair.getLeft()){
+                return new ImmutableTriple<>(command, pair.getMiddle(), pair.getRight());
             }
         }
         for (Command command : SURFACE) {
-            if (match(strings, command)){
-                return command;
+            pair = match(msg, command);
+            if (pair.getLeft()){
+                return new ImmutableTriple<>(command, pair.getMiddle(), pair.getRight());
             }
         }
-        return null;
+        return new ImmutableTriple<>(null, false, null);
     }
-    private static boolean match(String[] msg, Command command){
+    private static Triple<Boolean, Boolean, String> match(String msg, Command command){
+        for (String code : command.reactionAliases()){
+            if (msg.startsWith(code)){
+                return new ImmutableTriple<>(true, false, reduce(code, msg));
+            }
+        }
+        for (String code : command.aliases()){
+            if (msg.startsWith(code)){
+                return new ImmutableTriple<>(true, false, reduce(code, msg));
+            }
+        }
+        if (msg.startsWith(command.name())){
+            return new ImmutableTriple<>(true, false, reduce(command.name(), msg));
+        }
+        return new ImmutableTriple<>(false, false, null);
+    }
+    private static String reduce(String code, String content){
+        content = content.substring(code.length());
+        if (content.startsWith(" ")){
+            content = content.substring(1);
+        }
+        return content;
+    }
+    private static Pair<Boolean, Boolean> match(String[] msg, Command command){
+        List<String> strings = command.reactionAliases();
+        for (String string : strings) {
+            if (msg[0].equals(string)) {
+                return new Pair<>(true, false);
+            }
+        }
+        for (String alias : command.aliases()){
+            ArrayList<String[]> ref = new ArrayList<>();// these lines are a work around
+            Collections.addAll(ref, alias.split(" "));// because the Intellij compiler is complaining
+            for (String commandStrings[] : ref){
+                System.out.println(alias);
+                if (commandStrings.length > msg.length){
+                    break;
+                }
+                for (int i = 0; i < commandStrings.length; i++) {
+                    if (!commandStrings[i].equals(msg[i])) {
+                        if (commandStrings.length > msg.length){
+                            return new Pair<>(true, true);
+                        }else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         String[] commandStrings = command.name().split(" ");
         if (commandStrings.length > msg.length){
-            return false;
+            return new Pair<>(false, false);
         }
         for (int i = 0; i < commandStrings.length; i++) {
             if (!commandStrings[i].equals(msg[i])) {
-                return command.args() && commandStrings.length > msg.length;
+                return new Pair<>(commandStrings.length > msg.length, true);
             }
         }
-        return true;
+        return new Pair<>(true, true);
     }
     @SafeVarargs
     public static List<Command> getCommands(Predicate<Command>...predicates){

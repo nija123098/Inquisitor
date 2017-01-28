@@ -41,11 +41,9 @@ public @interface Register {
     boolean hidden() default false;
     float suspicious() default -.1f;
     Suspicion suspicion() default Suspicion.RADICAL;
-    /**
-     * Returns true if it accepts args
-     * @return If the command is invoked if there are args
-     */
-    boolean args() default true;
     boolean override() default false;
     String supercommand() default "";
+    String aliases() default "";
+    String absoluteAliases() default "";
+    String emoticonAliases() default "";
 }

@@ -1,5 +1,7 @@
 package um.nija123098.inquisitor.commands;
 
+import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Command;
@@ -48,28 +50,28 @@ public class Config {
     }
     @Register(help = "Disables the following command")
     public static void blacklist(Channel channel, Guild guild, String s){
-        Command command = Registry.getCommand(s);
-        if (command == null){
+        Triple<Command, Boolean, String> triple = Registry.getCommand(s);
+        if (triple.getLeft() == null){
             MessageHelper.sendOverride(channel, StringHelper.addQuotes(s) + " is not a recognized command");
-        }else if (guild.getData("blacklist").contains(command.name())){
+        }else if (guild.getData("blacklist").contains(triple.getLeft().name())){
             MessageHelper.sendOverride(channel, "That command has already been blacklisted");
-        }else if (command.name().contains("blacklist")){
+        }else if (triple.getLeft().name().contains("blacklist")){
             MessageHelper.sendOverride(channel, "You can not blacklist a blacklist command");
         }else{
-            guild.putData("blacklist", guild.getData("blacklist", "") + ":" + command.name());
-            MessageHelper.sendOverride(channel, "```md\n# Now blocking\n[" + command.name() + "](" + command.help() + ")\n# on server " + guild.discord().getName() + "```");
+            guild.putData("blacklist", guild.getData("blacklist", "") + ":" + triple.getLeft().name());
+            MessageHelper.sendOverride(channel, "```md\n# Now blocking\n[" + triple.getLeft().name() + "](" + triple.getLeft().help() + ")\n# on server " + guild.discord().getName() + "```");
         }
     }
     @Register(help = "Enables the following command")
     public static void unblacklist(Channel channel, Guild guild, String s) {
-        Command command = Registry.getCommand(s);
-        if (command == null){
+        Triple<Command, Boolean, String> triple = Registry.getCommand(s);
+        if (triple.getLeft() == null){
             MessageHelper.sendOverride(channel, StringHelper.addQuotes(s) + " is not a recognized command");
-        }else if (!guild.getData("blacklist").contains(command.name())){
+        }else if (!guild.getData("blacklist").contains(triple.getLeft().name())){
             MessageHelper.sendOverride(channel, "That command is not blacklisted");
         }else{
-            guild.putData("blacklist", guild.getData("blacklist", "").replace(":" + command.name(), ""));
-            MessageHelper.sendOverride(channel, "```md\n# No longer blocking\n[" + command.name() + "](" + command.help() + ")\n# on server " + guild.discord().getName() + "```");
+            guild.putData("blacklist", guild.getData("blacklist", "").replace(":" + triple.getLeft().name(), ""));
+            MessageHelper.sendOverride(channel, "```md\n# No longer blocking\n[" + triple.getLeft().name() + "](" + triple.getLeft().help() + ")\n# on server " + guild.discord().getName() + "```");
         }
     }
     @Register(help = "Sets the user as the liaison for this bot for the guild")

@@ -1,5 +1,6 @@
 package um.nija123098.inquisitor.command;
 
+import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.obj.IMessage;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
@@ -19,14 +20,9 @@ public class Invoke {
         }
     }
     public static boolean invoke(User user, Guild guild, Channel channel, String msg, IMessage iMessage){
-        msg = StringHelper.limitOneSpace(msg);
-        Command method = Registry.getCommand(msg);
-        if (method != null){
-            msg = msg.substring(method.name().length());
-            if (msg.length() > 0){
-                msg = msg.substring(1);
-            }
-            return method.invoke(user, guild, channel, msg, iMessage);
+        Triple<Command, Boolean, String> pair = Registry.getCommand(StringHelper.limitOneSpace(msg));
+        if (pair.getLeft() != null){
+            return pair.getLeft().invoke(user, guild, channel, pair.getRight(), iMessage, pair.getMiddle());
         }else{
             MessageHelper.react("question", iMessage);
             if (guild == null){

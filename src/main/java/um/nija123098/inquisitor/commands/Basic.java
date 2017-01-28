@@ -1,5 +1,7 @@
 package um.nija123098.inquisitor.commands;
 
+import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.MessageList;
@@ -19,7 +21,7 @@ import java.util.List;
  */
 @Register(natural = true, suspicion = Suspicion.HERETICAL)
 public class Basic {
-    @Register(hidden = true)
+    @Register(hidden = true, aliases = "pong")
     public static void ping(Channel channel, IMessage message){
         MessageHelper.react("ping_pong", message);
         Log.info("pong");
@@ -38,9 +40,9 @@ public class Basic {
             final Rank finalRank = rank;
             CommonMessageHelper.displayCommands("# Help at rank " + rank.name().replace("_", " "), "", Registry.getCommands(command -> command.rankSufficient(finalRank), Command::surface, command -> !command.hidden()), user);
         }else{
-            Command command = Registry.getCommand(s);
-            if (command != null){
-                MessageHelper.send(channel, command.help());
+            Triple<Command, Boolean, String> triple = Registry.getCommand(s);
+            if (triple.getLeft() != null){
+                MessageHelper.send(channel, triple.getLeft().help());
             }else{
                 MessageHelper.send(channel, "No such command");
             }
@@ -64,16 +66,16 @@ public class Basic {
         if (s.length() == 0){
             help(channel, user, rank, s);
         }else{
-            Command command = Registry.getCommand(s);
-            if (command == null) {
+            Triple<Command, Boolean, String> triple = Registry.getCommand(s);
+            if (triple.getLeft() == null) {
                 MessageHelper.send(channel, "No such command " + StringHelper.addQuotes(s));
-            }else if (command.hidden()){
+            }else if (triple.getLeft().hidden()){
                 MessageHelper.send(channel, "We don't talk about that command");
-            }else if (!command.defaul()){
+            }else if (!triple.getLeft().defaul()){
                 MessageHelper.send(channel, "That command is not a default command");
             }else{
                 MessageHelper.checkYourDMs(channel, user);
-                CommonMessageHelper.displayCommands("# All extension commands for " + command.name().split(" ")[0] + "\n[" + command.name() + "](" + command.help() + ")", "", Registry.getCommands(c -> c.name().split(" ")[0].equals(command.name().split(" ")[0]), c -> !c.defaul(), c -> c.rankSufficient(rank)), user);
+                CommonMessageHelper.displayCommands("# All extension commands for " + triple.getLeft().name().split(" ")[0] + "\n[" + triple.getLeft().name() + "](" + triple.getLeft().help() + ")", "", Registry.getCommands(c -> c.name().split(" ")[0].equals(triple.getLeft().name().split(" ")[0]), c -> !c.defaul(), c -> c.rankSufficient(rank)), user);
             }
         }
     }

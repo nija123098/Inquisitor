@@ -98,6 +98,9 @@ public class Entity {
     public List<String> getSaved(){
         return new ArrayList<>(this.stringMap.keySet());
     }
+    public List<String> getValues(){
+        return new ArrayList<>(this.stringMap.values());
+    }
     private List<String> getStrings() {
         List<String> strings = new ArrayList<>(this.stringMap.size());
         strings.addAll(this.stringMap.keySet().stream().map(key -> key + ":" + this.stringMap.get(key)).collect(Collectors.toList()));
