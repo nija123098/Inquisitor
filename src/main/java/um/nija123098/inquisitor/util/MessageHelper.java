@@ -3,7 +3,6 @@ package um.nija123098.inquisitor.util;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.MessageBuilder;
-import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
@@ -56,7 +55,7 @@ public class MessageHelper {
         }
     }
     public static boolean react(String s, IMessage message){
-        String val = getEmoticon(s);
+        String val = EmoticonHelper.getEmoticon(s);
         if (val != null){
             RequestHandler.request(() -> message.addReaction(val));
             return true;
@@ -64,12 +63,5 @@ public class MessageHelper {
             Log.warn("No emoticon " + StringHelper.addQuotes(s));
             return false;
         }
-    }
-    private static final Entity EMOTICON_ENTITY;
-    static {
-        EMOTICON_ENTITY = Inquisitor.getEntity("emoticons");
-    }
-    public static String getEmoticon(String key){
-        return EMOTICON_ENTITY.getData(key, "unknown emoticon");
     }
 }
