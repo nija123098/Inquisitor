@@ -61,17 +61,18 @@ public class Registry {
         return new ImmutableTriple<>(null, false, null);
     }
     private static Triple<Boolean, Boolean, String> match(String msg, Command command){
+        String low = msg.toLowerCase();
         for (String code : command.reactionAliases()){
             if (msg.startsWith(code)){
                 return new ImmutableTriple<>(true, false, reduce(code, msg));
             }
         }
         for (String code : command.aliases()){
-            if (msg.startsWith(code)){
+            if (low.startsWith(code)){
                 return new ImmutableTriple<>(true, false, reduce(code, msg));
             }
         }
-        if (msg.startsWith(command.name())){
+        if (low.startsWith(command.name())){
             return new ImmutableTriple<>(true, false, reduce(command.name(), msg));
         }
         return new ImmutableTriple<>(false, false, null);
@@ -82,43 +83,6 @@ public class Registry {
             content = content.substring(1);
         }
         return content;
-    }
-    private static Pair<Boolean, Boolean> match(String[] msg, Command command){
-        List<String> strings = command.reactionAliases();
-        for (String string : strings) {
-            if (msg[0].equals(string)) {
-                return new Pair<>(true, false);
-            }
-        }
-        for (String alias : command.aliases()){
-            ArrayList<String[]> ref = new ArrayList<>();// these lines are a work around
-            Collections.addAll(ref, alias.split(" "));// because the Intellij compiler is complaining
-            for (String commandStrings[] : ref){
-                System.out.println(alias);
-                if (commandStrings.length > msg.length){
-                    break;
-                }
-                for (int i = 0; i < commandStrings.length; i++) {
-                    if (!commandStrings[i].equals(msg[i])) {
-                        if (commandStrings.length > msg.length){
-                            return new Pair<>(true, true);
-                        }else{
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        String[] commandStrings = command.name().split(" ");
-        if (commandStrings.length > msg.length){
-            return new Pair<>(false, false);
-        }
-        for (int i = 0; i < commandStrings.length; i++) {
-            if (!commandStrings[i].equals(msg[i])) {
-                return new Pair<>(commandStrings.length > msg.length, true);
-            }
-        }
-        return new Pair<>(true, true);
     }
     @SafeVarargs
     public static List<Command> getCommands(Predicate<Command>...predicates){
