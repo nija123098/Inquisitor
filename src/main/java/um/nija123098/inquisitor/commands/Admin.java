@@ -118,4 +118,8 @@ public class Admin {
         Log.warn(user.discord().getName() + " is closing Inquisitor");
         Inquisitor.close();
     }
+    @Register(hidden = true)
+    public static void exit(String s){
+        System.exit(Integer.parseInt(s));
+    }
 }
