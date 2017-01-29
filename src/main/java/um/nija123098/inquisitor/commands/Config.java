@@ -1,6 +1,5 @@
 package um.nija123098.inquisitor.commands;
 
-import javafx.util.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;

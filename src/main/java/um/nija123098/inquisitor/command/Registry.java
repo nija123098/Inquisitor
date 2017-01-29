@@ -1,6 +1,5 @@
 package um.nija123098.inquisitor.command;
 
-import javafx.util.Pair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -63,19 +62,22 @@ public class Registry {
     private static Triple<Boolean, Boolean, String> match(String msg, Command command){
         String low = msg.toLowerCase();
         for (String code : command.reactionAliases()){
-            if (msg.startsWith(code)){
+            if (match(code, msg)){
                 return new ImmutableTriple<>(true, false, reduce(code, msg));
             }
         }
         for (String code : command.aliases()){
-            if (low.startsWith(code)){
+            if (match(low, msg)){
                 return new ImmutableTriple<>(true, false, reduce(code, msg));
             }
         }
-        if (low.startsWith(command.name())){
+        if (match(command.name(), low)){
             return new ImmutableTriple<>(true, false, reduce(command.name(), msg));
         }
         return new ImmutableTriple<>(false, false, null);
+    }
+    private static boolean match(String code, String msg){
+        return msg.startsWith(code) && (msg.length() >= code.length());
     }
     private static String reduce(String code, String content){
         content = content.substring(code.length());
