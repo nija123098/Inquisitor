@@ -77,7 +77,7 @@ public class Registry {
         return new ImmutableTriple<>(false, false, null);
     }
     private static boolean match(String code, String msg){
-        return msg.startsWith(code) && (msg.length() >= code.length());
+        return msg.startsWith(code) && (msg.length() == code.length() || msg.charAt(code.length()) == ' ');
     }
     private static String reduce(String code, String content){
         content = content.substring(code.length());
