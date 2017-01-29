@@ -101,8 +101,19 @@ public class Admin {
         MessageHelper.react("floppy_disk", message);
     }
     @Register(help = "Shuts down the bot without restart")
-    public static void close(User user, IMessage message){
+    public static void close(User user, IMessage message, String s){
         Inquisitor.lockdown();
+        switch (s){
+            case "":
+            case "update":
+                Inquisitor.setExitCode(1);
+                break;
+            case "down":
+                Inquisitor.setExitCode(0);
+            default:
+                MessageHelper.react("question", message);
+                return;
+        }
         MessageHelper.react("closed_lock_with_key", message);
         Log.warn(user.discord().getName() + " is closing Inquisitor");
         Inquisitor.close();

@@ -40,6 +40,10 @@ public class Inquisitor {
     public static IUser ourUser(){
         return inquisitor.getClient().getOurUser();
     }
+    private static int exitCode;
+    public static void setExitCode(int code){
+        exitCode = code;
+    }
     public static boolean getLockdown(){
         return inquisitor.lockdown;
     }
@@ -90,7 +94,7 @@ public class Inquisitor {
         if (event.getReason().equals(DisconnectedEvent.Reason.LOGGED_OUT)){
             try{Thread.sleep(1000);
             }catch(InterruptedException e){e.printStackTrace();}
-            System.exit(11);
+            System.exit(exitCode);
         }
     }
     public Entity getEnt(String name){
