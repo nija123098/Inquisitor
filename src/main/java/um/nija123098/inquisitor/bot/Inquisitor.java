@@ -4,12 +4,14 @@ import sx.blah.discord.Discord4J;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.impl.events.shard.DisconnectedEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IUser;
+import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.saving.Entity;
@@ -88,6 +90,10 @@ public class Inquisitor {
         if (s != null && event.getMessage().getChannel() instanceof IPrivateChannel){
             Invoke.invoke(event.getMessage().getAuthor().getID(), null, event.getMessage().getChannel().getID(), s.equals("?") ? "help" : s, event.getMessage());
         }
+    }
+    @EventSubscriber
+    public void handle(ReactionAddEvent event){
+        Invoke.invoke(event.getUser().getID(), event.getGuild() == null ? null : event.getGuild().getID(), event.getChannel().getID(), event.getMessage().getContent(), event.getReaction());
     }
     @EventSubscriber
     public void handle(DisconnectedEvent event){

@@ -2,6 +2,8 @@ package um.nija123098.inquisitor.command;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import sx.blah.discord.handle.impl.obj.Reaction;
+import um.nija123098.inquisitor.util.EmoticonHelper;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -38,10 +40,10 @@ public class Registry {
         });
     }
     public static void startUp(){
-        COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null, null, false));
+        COMMANDS.stream().filter(Command::startup).forEach(command -> command.invoke(null, null, null, null, null, null, false));
     }
     public static void shutDown(){
-        COMMANDS.stream().filter(Command::shutdown).forEach(command -> command.invoke(null, null, null, null, null, false));
+        COMMANDS.stream().filter(Command::shutdown).forEach(command -> command.invoke(null, null, null, null, null, null, false));
     }
     public static synchronized Triple<Command, Boolean, String> getCommand(String msg){
         Triple<Boolean, Boolean, String> pair;
@@ -58,6 +60,17 @@ public class Registry {
             }
         }
         return new ImmutableTriple<>(null, false, null);
+    }
+    public static synchronized Command getReactionCommand(String code){
+        if (!EmoticonHelper.isReaction(code)){
+            return null;
+        }
+        for (Command command : COMMANDS){
+            if (command.reactionAliases().contains(code)){
+                return command;
+            }
+        }
+        return null;
     }
     private static Triple<Boolean, Boolean, String> match(String msg, Command command){
         String low = msg.toLowerCase();

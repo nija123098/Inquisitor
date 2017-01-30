@@ -95,7 +95,7 @@ public class Admin {
         MessageHelper.react("lock", message);
         Log.warn(user.discord().getName() + " put Inquisitor in lockdown");
     }
-    @Register(help = "Saves all bot configuration files")
+    @Register(emoticonAliases = "floppy_disk", help = "Saves all bot configuration files")
     public static void save(IMessage message){
         Inquisitor.save();
         MessageHelper.react("floppy_disk", message);

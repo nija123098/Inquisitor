@@ -1,6 +1,7 @@
 package um.nija123098.inquisitor.command;
 
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IReaction;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
@@ -159,7 +160,7 @@ public class Command {
     public boolean override(){
         return this.register.override();
     }
-    public boolean invoke(User user, Guild guild, Channel channel, String s, IMessage message, Boolean warn){
+    public boolean invoke(User user, Guild guild, Channel channel, String s, IMessage message, IReaction reaction, Boolean warn){
         Rank rank = null;
         Suspicion suspicion = null;
         if (!this.startup() && !this.shutdown() && user != null){
@@ -239,6 +240,8 @@ public class Command {
                     aider = new MessageAid(user, channel, guild);
                 }
                 objects[i] = aider;
+            }else if (parameterTypes[i].equals(IReaction.class)){
+                objects[i] = reaction;
             }
         }
         Object ret;
