@@ -24,7 +24,7 @@ public class Command {
     static {
         DEFAULT = Command.class.getAnnotation(Register.class);
     }
-    private final List<String> aliases, reactionAliases;
+    private final List<String> aliases, reactionAliases, names;
     private final String name;
     private final Method method;
     private final Register register, clazz;
@@ -45,7 +45,7 @@ public class Command {
             this.clazz = reg;
         }
         String className = this.clazz.name().length() == 0 ? this.method.getDeclaringClass().getSimpleName() : this.clazz.name();
-        String name = this.register.name().toLowerCase();
+        String name = this.register.name();
         ArrayList<String> absoluteAliases = new ArrayList<>();
         Collections.addAll(absoluteAliases, this.register.absoluteAliases().toLowerCase().split(", "));
         this.reactionAliases = new ArrayList<>();
@@ -72,6 +72,9 @@ public class Command {
             this.aliases.addAll(absoluteAliases);
         }
         this.name = name.toLowerCase();
+        this.names = new ArrayList<>();
+        this.names.add(this.name);
+        this.names.addAll(this.aliases);
         Entity ent = null;
         for (Class clazz : this.method.getParameterTypes()) {
             if (clazz.equals(Entity.class)){
@@ -99,6 +102,9 @@ public class Command {
     }
     public List<String> reactionAliases(){
         return this.reactionAliases;
+    }
+    public List<String> names(){
+        return this.names;
     }
     public boolean natural(){
         if (DEFAULT.natural() != this.clazz.natural()){

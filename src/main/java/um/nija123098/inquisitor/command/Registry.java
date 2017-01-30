@@ -3,6 +3,7 @@ package um.nija123098.inquisitor.command;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.impl.obj.Reaction;
+import um.nija123098.inquisitor.util.ClassFinder;
 import um.nija123098.inquisitor.util.EmoticonHelper;
 
 import java.lang.reflect.Method;
@@ -16,13 +17,14 @@ import java.util.stream.Collectors;
  * Made by nija123098 on 11/7/2016
  */
 public class Registry {
+    private static final List<List<Triple<String, String[], Command>>> COMMAND_TRIPLE;
     private static final List<Command> COMMANDS;
-    private static final List<Command> SURFACE;
-    private static final List<Command> DEEP;
     static {
+        COMMAND_TRIPLE = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            COMMAND_TRIPLE.add(new ArrayList<>());
+        }
         COMMANDS = new ArrayList<>();
-        SURFACE = new ArrayList<>();
-        DEEP = new ArrayList<>();
     }
     public static synchronized void register(List<Class> clazzes){
         final List<Method> methods = new ArrayList<>();
@@ -30,12 +32,14 @@ public class Registry {
         methods.forEach(method -> {
             if (method.isAnnotationPresent(Register.class)){
                 Command command = new Command(method, methods);
-                COMMANDS.add(command);
-                if (command.surface()){
-                    SURFACE.add(command);
-                }else{
-                    DEEP.add(command);
-                }
+                command.names().forEach(s -> {
+                    System.out.println(s);
+                    String[] strings = s.split(" ");
+                    if (COMMAND_TRIPLE.get(strings.length) == null){
+                        COMMAND_TRIPLE.add(strings.length, new ArrayList<>());
+                    }
+                    COMMAND_TRIPLE.get(strings.length).add(new ImmutableTriple<>(s, s.split(" "), command));
+                });
             }
         });
     }
@@ -45,18 +49,51 @@ public class Registry {
     public static void shutDown(){
         COMMANDS.stream().filter(Command::shutdown).forEach(command -> command.invoke(null, null, null, null, null, null, false));
     }
-    public static synchronized Triple<Command, Boolean, String> getCommand(String msg){
-        Triple<Boolean, Boolean, String> pair;
-        for (Command command : DEEP) {
-            pair = match(msg, command);
-            if (pair.getLeft()){
-                return new ImmutableTriple<>(command, pair.getMiddle(), pair.getRight());
+    public static synchronized Triple<Command, Boolean, String> getCommandd(String msg){
+        String low = msg.toLowerCase();
+        String[] lows = low.toLowerCase().split(" ");
+        for (List<Triple<String, String[], Command>> list : COMMAND_TRIPLE){
+            for (Triple<String, String[], Command> trip : list){
+                if (low.startsWith(trip.getLeft()) && lows.length >= trip.getMiddle().length){
+                    boolean warn = true;
+                    for (String pr : trip.getRight().reactionAliases()){
+                        if (trip.getLeft().equals(pr)){
+                            warn = false;
+                            break;
+                        }
+                    }
+                    String s = msg.substring(trip.getLeft().length());
+                    if (s.startsWith(" ")){
+                        s = s.substring(1);
+                    }
+                    return new ImmutableTriple<>(trip.getRight(), warn, s);
+                }
             }
         }
-        for (Command command : SURFACE) {
-            pair = match(msg, command);
-            if (pair.getLeft()){
-                return new ImmutableTriple<>(command, pair.getMiddle(), pair.getRight());
+        return new ImmutableTriple<>(null, false, null);
+    }
+    public static synchronized Triple<Command, Boolean, String> getCommand(String msg){
+        String[] lows = msg.toLowerCase().toLowerCase().split(" ");
+        for (List<Triple<String, String[], Command>> list : COMMAND_TRIPLE){
+            for (Triple<String, String[], Command> trip : list){
+                System.out.println(msg + " + " + trip.getLeft());
+                if (trip.getMiddle().length > lows.length){
+                    continue;
+                }
+                boolean matches = true;
+                for (int i = 0; i < trip.getMiddle().length; i++) {
+                    if (!trip.getMiddle()[i].equals(lows[i])){
+                        matches = false;
+                        break;
+                    }
+                }
+                if (matches){
+                    String s = msg.substring(trip.getLeft().length());
+                    if (s.startsWith(" ")){
+                        s = s.substring(1);
+                    }
+                    return new ImmutableTriple<>(trip.getRight(), !trip.getRight().reactionAliases().contains(trip.getLeft()), s);
+                }
             }
         }
         return new ImmutableTriple<>(null, false, null);
@@ -73,24 +110,27 @@ public class Registry {
         return null;
     }
     private static Triple<Boolean, Boolean, String> match(String msg, Command command){
+        System.out.println(msg + " + " + command.name());
         String low = msg.toLowerCase();
         for (String code : command.reactionAliases()){
             if (match(code, msg)){
-                return new ImmutableTriple<>(true, false, reduce(code, msg));
+                return new ImmutableTriple<>(true, true, reduce(code, msg));
             }
         }
         for (String code : command.aliases()){
             if (match(low, msg)){
-                return new ImmutableTriple<>(true, false, reduce(code, msg));
+                return new ImmutableTriple<>(true, true, reduce(code, msg));
             }
         }
         if (match(command.name(), low)){
-            return new ImmutableTriple<>(true, false, reduce(command.name(), msg));
+            return new ImmutableTriple<>(true, true, reduce(command.name(), msg));
         }
         return new ImmutableTriple<>(false, false, null);
     }
     private static boolean match(String code, String msg){
-        return msg.startsWith(code) && (msg.length() == code.length() || msg.charAt(code.length()) == ' ');
+        int mss = msg.split(" ").length;
+        int clds = msg.split(" ").length;
+        return msg.startsWith(code) && ((msg.length() == code.length() && mss == clds) || (msg.charAt(code.length()) == ' ') && mss > clds);
     }
     private static String reduce(String code, String content){
         content = content.substring(code.length());
@@ -107,5 +147,10 @@ public class Registry {
             commands = commands.stream().filter(predicate).collect(Collectors.toList());
         }
         return commands;
+    }
+
+    public static void main(String[] args) {
+        register(ClassFinder.find("um.nija123098.inquisitor.commands").stream().collect(Collectors.toList()));
+        System.out.println(getCommand("say !").getLeft().name());
     }
 }
