@@ -32,6 +32,7 @@ public class Registry {
         methods.forEach(method -> {
             if (method.isAnnotationPresent(Register.class)){
                 Command command = new Command(method, methods);
+                COMMANDS.add(command);
                 command.names().forEach(s -> {
                     String[] strings = s.split(" ");
                     if (COMMAND_TRIPLE.get(strings.length) == null){

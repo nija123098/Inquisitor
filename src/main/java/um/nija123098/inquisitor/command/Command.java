@@ -77,6 +77,7 @@ public class Command {
         this.names = new ArrayList<>();
         this.names.add(this.name);
         this.names.addAll(this.aliases);
+        this.names.addAll(this.reactionAliases);
         Entity ent = null;
         for (Class clazz : this.method.getParameterTypes()) {
             if (clazz.equals(Entity.class)){

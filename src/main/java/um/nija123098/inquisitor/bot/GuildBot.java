@@ -4,9 +4,12 @@ import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IPrivateChannel;
+import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Invoke;
+import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.saving.Unique;
+import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.StringHelper;
 
 /**
@@ -18,7 +21,7 @@ public class GuildBot implements Unique {
         PREFIX_ENTITY = Inquisitor.getEntity("prefixes");
     }
     private String guildID;
-    public GuildBot(IDiscordClient client, String guildID) {
+    GuildBot(IDiscordClient client, String guildID) {
         this.guildID = guildID;
         client.getDispatcher().registerListener(this);
     }
@@ -26,24 +29,26 @@ public class GuildBot implements Unique {
     public void handle(MessageReceivedEvent event){
         if (event.getMessage().getContent() != null && !(event.getMessage().getChannel() instanceof IPrivateChannel) && event.getMessage().getChannel().getGuild().getID().equals(this.guildID)){
             String s = event.getMessage().getContent();
-            if (s.length() == 1){
+            s = StringHelper.limitOneSpace(s);
+            if (s.equals("?")){
                 return;
             }
-            s = StringHelper.limitOneSpace(s);
             boolean command = true;
-            if (PREFIX_ENTITY.getData(this) != null && s.startsWith(PREFIX_ENTITY.getData(this))){
-                s = s.substring(PREFIX_ENTITY.getData(this).length());
-            }else if (s.startsWith(Inquisitor.ourUser().mention(false))){
-                s = s.substring(Inquisitor.ourUser().mention(false).length());
-            }else if (s.startsWith(Inquisitor.ourUser().mention(true))){
-                s = s.substring(Inquisitor.ourUser().mention(true).length());
-            }else{
-                command = false;
-            }
-            if (command && s.startsWith(" ")){
-                s = s.substring(1);
+            if (Registry.getReactionCommand(s.split(" ")[0]) == null){
+                if (PREFIX_ENTITY.getData(this) != null && s.startsWith(PREFIX_ENTITY.getData(this))){
+                    s = s.substring(PREFIX_ENTITY.getData(this).length());
+                }else if (s.startsWith(Inquisitor.ourUser().mention(false))){
+                    s = s.substring(Inquisitor.ourUser().mention(false).length());
+                }else if (s.startsWith(Inquisitor.ourUser().mention(true))){
+                    s = s.substring(Inquisitor.ourUser().mention(true).length());
+                }else{
+                    command = false;
+                }
             }
             if (command){
+                if (s.startsWith(" ")){
+                    s = s.substring(1);
+                }
                 Invoke.invoke(event.getMessage().getAuthor().getID(), this.guildID, event.getMessage().getChannel().getID(), s, event.getMessage());
             }
         }
