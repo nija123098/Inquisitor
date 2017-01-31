@@ -51,7 +51,9 @@ public class Command {
         this.reactionAliases = new ArrayList<>();
         ArrayList<String> rea = new ArrayList<>();
         Collections.addAll(rea, this.register.emoticonAliases().split(", "));
-        rea.forEach(s -> this.reactionAliases.add(EmoticonHelper.getEmoticon(s)));
+        if (!rea.get(0).equals("")){
+            rea.forEach(s -> this.reactionAliases.add(EmoticonHelper.getEmoticon(s)));
+        }
         this.aliases = new ArrayList<>();
         if (name.equals("")){
             if (this.natural()){

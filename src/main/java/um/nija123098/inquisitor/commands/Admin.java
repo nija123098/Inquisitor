@@ -12,6 +12,7 @@ import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.CommonMessageHelper;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.StringHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,11 @@ public class Admin {
                 continue;
             }
             User admin = User.getUserFromID(str);
-            strings.add(admin.discord().getName() + "#" + admin.discord().getDiscriminator());
+            if (admin != null){
+                strings.add(admin.discord().getName() + "#" + admin.discord().getDiscriminator());
+            }else{
+                Log.warn("No admin: " + str);
+            }
         }
         CommonMessageHelper.displayList("# A list of Inquisitor admins", "", strings, user);
     }
@@ -110,6 +115,7 @@ public class Admin {
                 break;
             case "down":
                 Inquisitor.setExitCode(0);
+                break;
             default:
                 MessageHelper.react("question", message);
                 return;
