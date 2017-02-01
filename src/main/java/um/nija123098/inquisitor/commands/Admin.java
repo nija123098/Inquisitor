@@ -131,4 +131,12 @@ public class Admin {
         EmoticonHelper.addReaction(strings[1], strings[0]);
         MessageHelper.react(strings[1], message);
     }
+    @Register(help = "Adds a supported translation language, name code")
+    public static void addLang(String s, IMessage message){
+        String[] strings = s.split(" ");
+        if (strings.length == 2){
+            LangHelper.addLanguage(strings[0], strings[1]);
+            MessageHelper.react("+1", message);
+        }
+    }
 }

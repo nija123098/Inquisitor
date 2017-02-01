@@ -2,6 +2,8 @@ package um.nija123098.inquisitor.util;
 
 import javafx.util.Pair;
 import org.json.JSONArray;
+import um.nija123098.inquisitor.context.Channel;
+import um.nija123098.inquisitor.context.Context;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
@@ -12,7 +14,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +22,12 @@ import java.util.Map;
  * Made by nija123098 on 1/13/2017
  */
 public class LangHelper {
-    private static final List<String> LANGS;
+    public static final Entity LANGS;
     private static final Entity LANG_ENTITY;
     private static final Map<String, List<Pair<String, String>>> LANG_CONTENT;
     static {
-        LANGS = Arrays.asList("en-us", "en-au");
         LANG_ENTITY = Entity.getEntity("lang", "lang");
+        LANGS = Entity.getEntity("lang", "langcodes");
         LANG_CONTENT = new HashMap<>();
     }
     public static Pair<String, Boolean> getLang(User user, Guild guild){
@@ -35,12 +36,26 @@ public class LangHelper {
             return new Pair<>(s, true);
         }
         if (guild != null){
-            return new Pair<>(LANG_ENTITY.getData(guild, "en-us"), false);
+            return new Pair<>(LANG_ENTITY.getData(guild, "en"), false);
         }
-        return new Pair<>("en-us", false);
+        return new Pair<>("en", false);
     }
-    public static boolean isLang(String s){
-        return LANGS.contains(s);
+    public static boolean setLang(Context context, String code){
+        code = code.toLowerCase();
+        if (context instanceof Channel){// not supported, yet
+            return false;
+        }
+        if (LANGS.getSaved().contains(code)){
+            code = LANGS.getData(code);
+        }
+        boolean isLang = LANGS.getValues().contains(code);
+        if (isLang){
+            LANG_ENTITY.putData(context, code);
+        }
+        return isLang;
+    }
+    public static void addLanguage(String name, String code) {
+        LANGS.putData(name.toLowerCase(), code.toLowerCase());
     }
     public static synchronized String getContent(String lang, String content){
         if (!LANG_CONTENT.containsKey(lang)){
@@ -56,7 +71,7 @@ public class LangHelper {
         lan.add(new Pair<>(content, result));
         return result;
     }
-    public static String translate(String isoTo, String content){
+    private static String translate(String isoTo, String content){
         try {
             return get(isoTo, content);
         } catch (Exception e){

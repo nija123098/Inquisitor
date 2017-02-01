@@ -137,11 +137,10 @@ public class Basic {
     }
     @Register(help = "Sets the language for this user")
     public static void setLang(User user, String s, MessageAid aid){
-        if (!LangHelper.isLang(s)){
-            aid.withContent("\"" + s  + "\" is not a supported or valid ISO 639-1 language code, ex: en-au or de-lu");
-            return;
+        if (LangHelper.setLang(user, s)){
+            aid.withContent("Your language has been set to " + s);
+        }else{
+            aid.withContent("\"" + s  + "\" is not a supported or valid language");
         }
-        Entity.getEntity("lang", "lang").putData(user, s);
-        aid.withContent("Your language has been set to " + s);
     }
 }

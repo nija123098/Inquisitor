@@ -71,7 +71,11 @@ public class MessageAid {
         if (!this.edited){
             return;
         }
-        this.setContent();
+        Pair<String, Boolean> langPair = LangHelper.getLang(this.user, this.guild);
+        if (this.translate || !langPair.getKey().equals("en")){
+            this.content += "\nYou can set your language of preference with @Inquisitor setlang <language name>";
+            this.content = LangHelper.getContent(langPair.getKey(), this.content);
+        }
         final AtomicReference<IChannel> channel = new AtomicReference<>(this.channel.discord());
         boolean pubAllowed = this.channel.isPrivate();
         final AtomicBoolean channelMade = new AtomicBoolean(true);
@@ -125,12 +129,5 @@ public class MessageAid {
                 t.printStackTrace();
             }
         });
-    }
-    private void setContent(){
-        Pair<String, Boolean> pair = LangHelper.getLang(this.user, this.guild);
-        if (this.translate || !pair.getKey().startsWith("en")){
-            this.content += "You can set your language of preference with @Inquisitor setlang <ISO 639-1 language code>";
-            this.content = LangHelper.getContent(pair.getKey(), this.content);
-        }
     }
 }

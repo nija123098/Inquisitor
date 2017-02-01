@@ -11,6 +11,7 @@ import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.LangHelper;
+import um.nija123098.inquisitor.util.MessageAid;
 import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.StringHelper;
 
@@ -79,10 +80,11 @@ public class Config {
         MessageHelper.send(user, user.discord().getName() + ", you are now " + Inquisitor.ourUser().mention() + "'s liaison for the guild " + guild.discord().getName());
     }
     @Register(help = "Sets the language for this guild")
-    public static void lang(Guild guild, Channel channel, String s){
-        if (!LangHelper.isLang(s)){
-            MessageHelper.send(channel, "\"" + s  + "\" is not a supported or valid ISO 639-1 language code, ex: en-au or de-lu");
+    public static void setLang(Guild guild, String s, MessageAid aid){
+        if (LangHelper.setLang(guild, s)){
+            aid.withContent("Your language has been set to " + s);
+        }else{
+            aid.withContent("\"" + s  + "\" is not a supported or valid language");
         }
-        Entity.getEntity("lang", "lang").putData(guild, s);
     }
 }
