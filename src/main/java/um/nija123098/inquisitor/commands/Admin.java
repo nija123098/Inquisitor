@@ -9,10 +9,7 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.Suspicion;
 import um.nija123098.inquisitor.context.User;
-import um.nija123098.inquisitor.util.CommonMessageHelper;
-import um.nija123098.inquisitor.util.Log;
-import um.nija123098.inquisitor.util.MessageHelper;
-import um.nija123098.inquisitor.util.StringHelper;
+import um.nija123098.inquisitor.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,5 +124,11 @@ public class Admin {
     @Register(hidden = true)
     public static void exit(String s){
         System.exit(Integer.parseInt(s));
+    }
+    @Register(help = "Adds a reaction character, :chars: code")
+    public static void addReaction(String s, IMessage message){
+        String[] strings = s.split(" ");
+        EmoticonHelper.addReaction(strings[1], strings[0]);
+        MessageHelper.react(strings[1], message);
     }
 }
