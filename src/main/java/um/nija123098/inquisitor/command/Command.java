@@ -53,6 +53,7 @@ public class Command {
         Collections.addAll(rea, this.register.emoticonAliases().split(", "));
         if (!rea.get(0).equals("")){
             rea.forEach(s -> this.reactionAliases.add(EmoticonHelper.getEmoticon(s)));
+            this.reactionAliases.forEach(System.out::println);
         }
         this.aliases = new ArrayList<>();
         if (name.equals("")){
@@ -81,7 +82,7 @@ public class Command {
         Entity ent = null;
         for (Class clazz : this.method.getParameterTypes()) {
             if (clazz.equals(Entity.class)){
-                ent = Entity.getEntity(FileHelper.getJarContainer() + "\\" + "command", this.name.split(" ")[0]);
+                ent = Entity.getEntity("command", this.name.split(" ")[0]);
                 break;
             }
         }

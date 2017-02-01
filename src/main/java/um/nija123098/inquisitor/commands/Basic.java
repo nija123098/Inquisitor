@@ -14,12 +14,7 @@ import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.command.Registry;
-import um.nija123098.inquisitor.util.CommonMessageHelper;
-import um.nija123098.inquisitor.util.LangHelper;
-import um.nija123098.inquisitor.util.Log;
-import um.nija123098.inquisitor.util.MessageHelper;
-import um.nija123098.inquisitor.util.RequestHandler;
-import um.nija123098.inquisitor.util.StringHelper;
+import um.nija123098.inquisitor.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,11 +135,13 @@ public class Basic {
     public static void server(User user){
         MessageHelper.send(user, "Join the discord server here!\nhttps://discord.gg/xVA9x2H", 300000);
     }
-    @Register(help = "Sets the language for this guild")
-    public static void setLang(Guild guild, Channel channel, String s){
+    @Register(help = "Sets the language for this user")
+    public static void setLang(User user, String s, MessageAid aid){
         if (!LangHelper.isLang(s)){
-            MessageHelper.send(channel, "\"" + s  + "\" is not a supported or valid ISO 639-1 language code, ex: en-au or de-lu");
+            aid.withContent("\"" + s  + "\" is not a supported or valid ISO 639-1 language code, ex: en-au or de-lu");
+            return;
         }
-        Entity.getEntity("lang", "lang").putData(guild.getID(), s);
+        Entity.getEntity("lang", "lang").putData(user, s);
+        aid.withContent("Your language has been set to " + s);
     }
 }

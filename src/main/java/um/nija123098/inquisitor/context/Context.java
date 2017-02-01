@@ -11,7 +11,7 @@ public class Context implements Unique {
     private final String id;
     private final Entity entity;
     Context(String contextName, String id) {
-        this.entity = Entity.getEntity(FileHelper.getJarContainer() + "\\" + contextName, id);
+        this.entity = Entity.getEntity(contextName, id);
         this.id = id;
     }
     public String getData(String id) {

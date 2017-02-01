@@ -104,7 +104,7 @@ public class Inquisitor {
         }
     }
     public Entity getEnt(String name){
-        return Entity.getEntity(FileHelper.getJarContainer() + "\\system", name);
+        return Entity.getEntity("system", name);
     }
     public IDiscordClient getClient(){
         return this.client;

@@ -1,5 +1,6 @@
 package um.nija123098.inquisitor.util;
 
+import javafx.util.Pair;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.*;
@@ -20,7 +21,7 @@ public class MessageAid {
     private Guild guild;
     private String content;
     private final MessageBuilder internal;
-    private boolean checkMessages, priv, edited;
+    private boolean checkMessages, priv, edited, translate;
     private int delete;
     public MessageAid(User user, Channel channel, Guild guild){
         this.user = user;
@@ -60,6 +61,10 @@ public class MessageAid {
     }
     public MessageAid withDelete(int delay){
         this.delete = delay;
+        return this;
+    }
+    public MessageAid withTranslate(){
+        this.translate = true;
         return this;
     }
     public void send(){
@@ -122,6 +127,10 @@ public class MessageAid {
         });
     }
     private void setContent(){
-        //this.content = LangHelper.getContent(LangHelper.getLang(this.user, this.guild).getKey(), this.content);
+        Pair<String, Boolean> pair = LangHelper.getLang(this.user, this.guild);
+        if (this.translate || !pair.getKey().startsWith("en")){
+            this.content += "You can set your language of preference with @Inquisitor setlang <ISO 639-1 language code>";
+            this.content = LangHelper.getContent(pair.getKey(), this.content);
+        }
     }
 }

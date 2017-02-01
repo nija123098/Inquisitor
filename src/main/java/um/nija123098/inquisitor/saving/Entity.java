@@ -1,5 +1,6 @@
 package um.nija123098.inquisitor.saving;
 
+import um.nija123098.inquisitor.util.FileHelper;
 import um.nija123098.inquisitor.util.Log;
 
 import java.io.File;
@@ -26,16 +27,7 @@ public class Entity {
         ENTITIES.forEach(Entity::save);
     }
     public static synchronized Entity getEntity(String path, String name){
-        File file = new File(path + "\\" + name);
-        for (Entity ENTITY : ENTITIES) {
-            if (ENTITY.file.equals(file)) {
-                return ENTITY;
-            }
-        }
-        return new Entity(file);
-    }
-    public static synchronized Entity getLocalEntity(String path, String name){
-        File file = new File(CONTAINER + path + "\\" + name);
+        File file = new File(FileHelper.getJarContainer() + "\\" + path + "\\" + name);
         for (Entity ENTITY : ENTITIES) {
             if (ENTITY.file.equals(file)) {
                 return ENTITY;
