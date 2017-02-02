@@ -1,12 +1,18 @@
 package um.nija123098.inquisitor.util;
 
+import sx.blah.discord.handle.impl.obj.Reaction;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IReaction;
 import sx.blah.discord.util.MessageBuilder;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 11/6/2016
@@ -56,8 +62,22 @@ public class MessageHelper {
     }
     public static boolean react(String s, IMessage message){
         String val = EmoticonHelper.getEmoticon(s);
+        final AtomicReference<IReaction> reference = new AtomicReference<>();
         if (val != null){
-            RequestHandler.request(() -> message.addReaction(val));
+            List<IReaction> reactions = message.getReactions();
+            for (IReaction reaction : reactions) {
+                if (reaction.toString().equals(val) && reaction.getUserReacted(Inquisitor.ourUser())) {
+                    reference.set(reaction);
+                    break;
+                }
+            }
+            RequestHandler.request(() -> {
+                if (reference.get() == null){
+                    message.addReaction(val);
+                }else{
+                    message.removeReaction(reference.get());
+                }
+            });
             return true;
         }else{
             Log.warn("No emoticon " + StringHelper.addQuotes(s));

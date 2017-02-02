@@ -3,7 +3,11 @@ package um.nija123098.inquisitor.util;
 import javafx.util.Pair;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.*;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MessageBuilder;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
@@ -21,7 +25,7 @@ public class MessageAid {
     private Guild guild;
     private String content;
     private final MessageBuilder internal;
-    private boolean checkMessages, priv, edited, translate;
+    private boolean checkMessages, priv, edited, translate, noSpace;
     private int delete;
     public MessageAid(User user, Channel channel, Guild guild){
         this.user = user;
@@ -33,6 +37,7 @@ public class MessageAid {
         }
         this.content = "";
         this.internal = new MessageBuilder(Inquisitor.discordClient());
+        this.noSpace = true;
     }
     public MessageAid withTTS(){
         this.internal.withTTS();
@@ -67,6 +72,10 @@ public class MessageAid {
         this.translate = true;
         return this;
     }
+    public MessageAid withoutNoSpace(){
+        this.noSpace = false;
+        return this;
+    }
     public void send(){
         if (!this.edited){
             return;
@@ -87,7 +96,7 @@ public class MessageAid {
             if (pubAllowed){
                 RequestBuffer.request(() -> {
                     try {
-                        IMessage message = new MessageBuilder(Inquisitor.discordClient()).withChannel(this.channel.getID()).withContent("<@" + this.user.getID() + "> check you messages!").send();
+                        IMessage message = new MessageBuilder(Inquisitor.discordClient()).withChannel(this.channel.getID()).withContent("\u200B<@" + this.user.getID() + "> check you messages!").send();
                         RequestHandler.request(20000, message::delete);
                     } catch (MissingPermissionsException e) {
                         this.priv = false;
@@ -114,10 +123,10 @@ public class MessageAid {
         }
         RequestBuffer.request(() -> {
             if (!channelMade.get()){
-                throw new RateLimitException("Channel Made MessageAid dodge", 100, "red", false);
+                throw new RateLimitException("Channel making MessageAid dodge", 100, "red", false);
             }
             try {
-                IMessage message = this.internal.withChannel(channel.get()).withContent(this.content).send();
+                IMessage message = this.internal.withChannel(channel.get()).withContent((this.noSpace ? "\u200B" : "") + this.content).send();
                 if (this.delete != 0){
                     RequestHandler.request(this.delete, message::delete);
                 }

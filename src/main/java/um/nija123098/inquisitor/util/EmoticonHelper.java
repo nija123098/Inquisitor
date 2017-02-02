@@ -12,7 +12,7 @@ public class EmoticonHelper {
         EMOTICON_ENTITY = Inquisitor.getEntity("emoticons");
     }
     public static String getEmoticon(String key){
-        return EMOTICON_ENTITY.getData(key, "unknown emoticon");
+        return EMOTICON_ENTITY.getData(key);
     }
     public static boolean isReaction(String s){
         return EMOTICON_ENTITY.getValues().contains(s);

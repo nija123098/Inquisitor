@@ -11,6 +11,6 @@ public class Rand {
         if (max == 0){
             return 0;
         }
-        return RANDOM.nextInt(max);
+        return RANDOM.nextInt(max + 1);
     }
 }
