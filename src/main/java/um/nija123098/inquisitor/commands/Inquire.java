@@ -16,14 +16,10 @@ import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.Suspicion;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.CommonMessageHelper;
-import um.nija123098.inquisitor.util.ListHelper;
 import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.StringHelper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Made by nija123098 on 11/8/2016
@@ -58,7 +54,9 @@ public class Inquire {
             names.add(integer, stringLongPair.getKey());
             online.add(integer, stringLongPair.getValue() + "");
         });
-        CommonMessageHelper.displayLists("# Roles for guild \"" + iGuild.getName() + "\"", "", ListHelper.flip(names), ListHelper.flip(online), user);
+        Collections.reverse(names);
+        Collections.reverse(online);
+        CommonMessageHelper.displayLists("# Roles for guild \"" + iGuild.getName() + "\"", "", names, online, user);
     }
     @Register(suspicious = .5f, guild = true, help = "Lists the permissions of a role on a server, use everyone instead of @everyone")
     public static Boolean role(Guild guild, User user, String s){
