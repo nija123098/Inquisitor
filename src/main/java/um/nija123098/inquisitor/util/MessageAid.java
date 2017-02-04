@@ -2,6 +2,7 @@ package um.nija123098.inquisitor.util;
 
 import javafx.util.Pair;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
@@ -38,6 +39,7 @@ public class MessageAid {
         this.content = "";
         this.internal = new MessageBuilder(Inquisitor.discordClient());
         this.noSpace = true;
+        this.translate = false;
     }
     public MessageAid withTTS(){
         this.internal.withTTS();
@@ -82,7 +84,9 @@ public class MessageAid {
         }
         Pair<String, Boolean> langPair = LangHelper.getLang(this.user, this.guild);
         if (this.translate || !langPair.getKey().equals("en")){
-            this.content += "\nYou can set your language of preference with @Inquisitor setlang <language name>";
+            if (!langPair.getValue()){
+                this.content += "\nYou can set your language of preference with @Inquisitor setlang <language name>";
+            }
             this.content = LangHelper.getContent(langPair.getKey(), this.content);
         }
         final AtomicReference<IChannel> channel = new AtomicReference<>(this.channel.discord());
