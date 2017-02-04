@@ -57,11 +57,28 @@ public class LangHelper {
     public static void addLanguage(String name, String code) {
         LANGS.putData(name.toLowerCase(), code.toLowerCase());
     }
+    public static synchronized String getContent(String lang, Pair<String, Boolean>...translationPairs){
+        String building = "";
+        for (Pair<String, Boolean> translationPair : translationPairs) {
+            String space = "";
+            String key = translationPair.getKey();
+            while (true){
+                if (key.startsWith(" ")){
+                    space += " ";
+                    key = key.substring(1);
+                }else{
+                    break;
+                }
+            }
+            building += translationPair.getValue() ? space + getContent(lang, translationPair.getKey()) : translationPair.getKey();
+        }
+        return building;
+    }
     public static synchronized String getContent(String lang, String content){
         String[] contents = content.split("\n");
         content = "";
         for (String c : contents) {
-            content += getSingleContent(lang, c);
+            content += getSingleContent(lang, c) + "\n";
         }
         return content;
     }

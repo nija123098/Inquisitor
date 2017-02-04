@@ -11,12 +11,10 @@ import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IUser;
-import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.util.ClassFinder;
-import um.nija123098.inquisitor.util.FileHelper;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.RequestHandler;
 
@@ -77,6 +75,10 @@ public class Inquisitor {
     }
     @EventSubscriber
     public void handle(GuildCreateEvent event){
+        int botCount = event.getGuild().getUsers().stream().filter(IUser::isBot).collect(Collectors.toList()).size();
+        if (botCount > event.getGuild().getUsers().size() / 2){
+            event.getGuild().leave();
+        }
         this.botList.add(new GuildBot(this.client, event.getGuild().getID()));
     }
     @EventSubscriber

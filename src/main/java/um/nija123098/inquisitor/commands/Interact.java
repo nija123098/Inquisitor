@@ -40,7 +40,7 @@ public class Interact {
         if (!require(Bot.EMILY, channel)){
             return false;
         }
-        aid.withoutNoSpace().withContent("<@" + Bot.EMILY.id + "> 2048");
+        aid.withoutNoSpace().withoutTranslateContent("<@" + Bot.EMILY.id + "> 2048");
         RESPONSES.add(new TwentyFortyEightInitResponse(channel));
         return true;
     }

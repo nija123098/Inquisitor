@@ -2,7 +2,6 @@ package um.nija123098.inquisitor.util;
 
 import javafx.util.Pair;
 import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
@@ -14,6 +13,8 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -24,10 +25,10 @@ public class MessageAid {
     private User user;
     private final Channel channel;
     private Guild guild;
-    private String content;
     private final MessageBuilder internal;
-    private boolean checkMessages, priv, edited, translate, noSpace;
+    private boolean checkMessages, priv, translate, noSpace;
     private int delete;
+    private List<Pair<String, Boolean>> contents;
     public MessageAid(User user, Channel channel, Guild guild){
         this.user = user;
         this.channel = channel;
@@ -36,10 +37,10 @@ public class MessageAid {
         }else{
             this.guild = guild;
         }
-        this.content = "";
         this.internal = new MessageBuilder(Inquisitor.discordClient());
         this.noSpace = true;
         this.translate = false;
+        this.contents = new ArrayList<>();
     }
     public MessageAid withTTS(){
         this.internal.withTTS();
@@ -62,8 +63,11 @@ public class MessageAid {
         return this;
     }
     public MessageAid withContent(String s){
-        this.content += s;
-        this.edited = true;
+        this.contents.add(new Pair<>(s, true));
+        return this;
+    }
+    public MessageAid withoutTranslateContent(String s){
+        this.contents.add(new Pair<>(s, false));
         return this;
     }
     public MessageAid withDelete(int delay){
@@ -79,15 +83,21 @@ public class MessageAid {
         return this;
     }
     public void send(){
-        if (!this.edited){
+        if (this.contents.size() == 0){
             return;
         }
+        String content = "";
+        this.contents.forEach(pair -> System.out.println(pair.getKey()));
         Pair<String, Boolean> langPair = LangHelper.getLang(this.user, this.guild);
         if (this.translate || !langPair.getKey().equals("en")){
             if (!langPair.getValue()){
-                this.content += "\nYou can set your language of preference with @Inquisitor setlang <language name>";
+                this.withContent("\nYou can set your language of preference with ").withoutTranslateContent("@Inquisitor setlang").withContent(" <language name>");
             }
-            this.content = LangHelper.getContent(langPair.getKey(), this.content);
+            content = LangHelper.getContent(langPair.getKey(), this.contents.toArray(new Pair[this.contents.size()]));
+        }else{
+            for (Pair<String, Boolean> c : this.contents) {
+                content += c.getKey();
+            }
         }
         final AtomicReference<IChannel> channel = new AtomicReference<>(this.channel.discord());
         boolean pubAllowed = this.channel.isPrivate();
@@ -125,12 +135,14 @@ public class MessageAid {
                 }
             });
         }
+        final String finalContent = (this.noSpace ? "\u200B" : "") + content;
+        System.out.println(StringHelper.addQuotes(finalContent));
         RequestBuffer.request(() -> {
             if (!channelMade.get()){
                 throw new RateLimitException("Channel making MessageAid dodge", 100, "red", false);
             }
             try {
-                IMessage message = this.internal.withChannel(channel.get()).withContent((this.noSpace ? "\u200B" : "") + this.content).send();
+                IMessage message = this.internal.withChannel(channel.get()).withContent(finalContent).send();
                 if (this.delete != 0){
                     RequestHandler.request(this.delete, message::delete);
                 }
