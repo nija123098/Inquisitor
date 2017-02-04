@@ -58,6 +58,14 @@ public class LangHelper {
         LANGS.putData(name.toLowerCase(), code.toLowerCase());
     }
     public static synchronized String getContent(String lang, String content){
+        String[] contents = content.split("\n");
+        content = "";
+        for (String c : contents) {
+            content += getSingleContent(lang, c);
+        }
+        return content;
+    }
+    private static synchronized String getSingleContent(String lang, String content){
         if (!LANG_CONTENT.containsKey(lang)){
             LANG_CONTENT.put(lang, new ArrayList<>());
         }
