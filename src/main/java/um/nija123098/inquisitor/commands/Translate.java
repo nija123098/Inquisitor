@@ -3,8 +3,10 @@ package um.nija123098.inquisitor.commands;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IReaction;
 import um.nija123098.inquisitor.command.Register;
+import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.saving.Entity;
+import um.nija123098.inquisitor.util.LangHelper;
 import um.nija123098.inquisitor.util.MessageAid;
 
 /**
@@ -19,11 +21,13 @@ public class Translate {
         }
         String lang = Entity.getEntity("lang", "lang").getData(user);
         if (lang == null){
-            aid.withContent("Please set your language based on the ISO 639-1 language code");
+            aid.withContent("Please set your language using @Inquisitor setlang");
             return false;
         }
+
+
         IMessage message = reaction.getMessage();
-        aid.withDM().withTranslate().withContent(message.getAuthor().getName() + " said:\n```md\n" + message.getContent() + "\n```");
+        aid.withDM().withContent(message.getAuthor().getName() + " said:\n```md\n" + LangHelper.getContent(LangHelper.getLang(User.getUserFromID(user.getID()), Guild.getGuild(reaction.getMessage().getGuild().getID())).getKey(), message.getContent()) + "\n```");
         return true;
     }
 }
