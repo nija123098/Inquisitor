@@ -6,9 +6,9 @@ import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelEvent
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelJoinEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
-import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.IVoiceChannel;
+import sx.blah.discord.handle.obj.Permissions;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Guild;
@@ -18,6 +18,7 @@ import um.nija123098.inquisitor.util.LangHelper;
 import um.nija123098.inquisitor.util.MessageAid;
 import um.nija123098.inquisitor.util.RequestHandler;
 
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,6 +36,15 @@ public class Harold {
         }
         if (VOICE_CHANNELS.keySet().contains(channel)){
             aid.withContent("That channel is already being harolded, use harold disband to stop the announcements");
+            return false;
+        }
+        EnumSet<Permissions> perms = channel.getModifiedPermissions(Inquisitor.ourUser());
+        if (perms.contains(Permissions.VOICE_CONNECT)){
+            aid.withContent("I do not have permission to connect to that channel");
+            return false;
+        }
+        if (perms.contains(Permissions.VOICE_SPEAK)){
+            aid.withContent("I do not have permission to speak in that channel");
             return false;
         }
         for (IVoiceChannel chan : VOICE_CHANNELS.keySet()){

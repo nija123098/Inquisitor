@@ -21,6 +21,7 @@ import um.nija123098.inquisitor.util.RequestHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -74,8 +75,8 @@ public class Inquisitor {
     private final List<Object> listeners;
     private IDiscordClient client;
     private Inquisitor(String token){
-        this.botList = new ArrayList<>();
-        this.listeners = new ArrayList<>();
+        this.botList = new CopyOnWriteArrayList<>();
+        this.listeners = new CopyOnWriteArrayList<>();
         RequestHandler.request(() -> {
             this.client = new ClientBuilder().withToken(token).build();
             registerListener(this);
@@ -152,6 +153,7 @@ public class Inquisitor {
     }
     public void closeInner(){
         Registry.shutDown();
+        saveInner();
         try {
             this.botList.forEach(GuildBot::close);
             this.listeners.forEach(this::innerUnregisterListener);
