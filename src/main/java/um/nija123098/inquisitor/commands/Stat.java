@@ -1,6 +1,8 @@
 package um.nija123098.inquisitor.commands;
 
+import javafx.util.Pair;
 import sx.blah.discord.handle.obj.Status;
+import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -8,6 +10,11 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 12/10/2016
@@ -77,5 +84,34 @@ public class Stat {
     @Register(help = "Lists all play text messages")
     public static void list(User user, Entity entity){
         CommonMessageHelper.displayList("# A list of play text displays", "", StringHelper.getList(entity.getData("play_text", "").split(":")), user);
+    }
+    private static final List<Pair<String, Function<String, String>>> PAIRS;
+    static {
+        PAIRS = new ArrayList<>();
+        PAIRS.add(new Pair<>("rand", s -> {
+            try{return Rand.integer(Integer.parseInt(s)) + "";
+            }catch(Exception e){return "rand";}
+        }));
+        PAIRS.add(new Pair<>("shards", s -> Inquisitor.discordClient().getShardCount() + ""));
+        PAIRS.add(new Pair<>("guilds", s -> Inquisitor.discordClient().getGuilds().size() + ""));
+        PAIRS.add(new Pair<>("users", s -> Inquisitor.discordClient().getUsers().size() + ""));
+        PAIRS.add(new Pair<>("commands", s -> Registry.getCommands().size() + ""));
+    }
+    private static String format(String string){
+        String s = "";
+        String[] strings = string.split(" ");
+        for (int i = 0; i < strings.length; i++) {
+            if (string.endsWith(">")){
+                for (Pair<String, Function<String, String>> pair : PAIRS){
+                    if (strings[i].startsWith(pair.getKey() + "<") && strings[i].endsWith(">")){
+                        s += pair.getValue().apply(strings[i].replace(pair.getKey() + "<", "").replace(">", ""));
+                        break;
+                    }
+                }
+            }else{
+                s += strings[i];
+            }
+        }
+        return s;
     }
 }

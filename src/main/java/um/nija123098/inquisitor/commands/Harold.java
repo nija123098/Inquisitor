@@ -48,7 +48,7 @@ public class Harold {
             return false;
         }
         for (IVoiceChannel chan : VOICE_CHANNELS.keySet()){
-            if (chan.getGuild().equals(chan.getGuild()) && !chan.equals(channel)){
+            if (channel.getGuild().equals(chan.getGuild())){
                 aid.withContent("A channel in this guild is already being harolded");
                 return false;
             }
