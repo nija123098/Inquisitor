@@ -33,7 +33,7 @@ public class Interact {
     private static final List<Response<? extends Event>> RESPONSES = new CopyOnWriteArrayList<>();
     @Register(rank = Rank.NONE, startup = true)
     public static void startup(){
-        Inquisitor.discordClient().getDispatcher().registerListener(new ResponseListener());
+        Inquisitor.registerListener(new ResponseListener());
     }
     @Register(name = "interact 2048", absoluteAliases = "play 2048")
     public static Boolean twentyFortyEight(Channel channel, MessageAid aid){

@@ -112,7 +112,7 @@ public class Inquire {
     }
     @Register(startup = true, rank = Rank.NONE)
     public static void startup(){
-        Inquisitor.discordClient().getDispatcher().registerListener(new ActivityMonitor());
+        Inquisitor.registerListener(new ActivityMonitor());
     }
     public static class ActivityMonitor {
         @EventSubscriber

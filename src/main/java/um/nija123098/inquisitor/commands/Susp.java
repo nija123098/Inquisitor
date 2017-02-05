@@ -17,7 +17,7 @@ import um.nija123098.inquisitor.util.MessageHelper;
 public class Susp {
     @Register(startup = true, rank = Rank.NONE)
     public static void setUp(){
-        Inquisitor.discordClient().getDispatcher().registerListener(new Susp());
+        Inquisitor.registerListener(new Susp());
     }
     @EventSubscriber
     public void hande(MessageReceivedEvent event){

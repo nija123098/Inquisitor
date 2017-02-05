@@ -23,7 +23,7 @@ public class GuildBot implements Unique {
     private String guildID;
     GuildBot(IDiscordClient client, String guildID) {
         this.guildID = guildID;
-        client.getDispatcher().registerListener(this);
+        Inquisitor.registerListener(this);
     }
     @EventSubscriber
     public void handle(MessageReceivedEvent event){
@@ -57,6 +57,6 @@ public class GuildBot implements Unique {
         return this.guildID;
     }
     void close() {
-        Inquisitor.discordClient().getDispatcher().unregisterListener(this);
+        Inquisitor.unregisterListener(this);
     }
 }

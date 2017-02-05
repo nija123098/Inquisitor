@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Nuisance {
     @Register(startup = true)
     public static void startup(){
-        Inquisitor.discordClient().getDispatcher().registerListener(new Monitor());
+        Inquisitor.registerListener(new Monitor());
     }
     @Register(defaul = true)
     public static void nuisance(Channel channel){

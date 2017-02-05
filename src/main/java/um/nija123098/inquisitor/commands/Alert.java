@@ -44,7 +44,6 @@ public class Alert {
             }
         });
     }
-    private static final Alert ALERT = new Alert();
     @Register(startup = true, rank = Rank.NONE)
     public static void startup(Entity entity){
         for (String saved : entity.getSaved()) {
@@ -65,11 +64,10 @@ public class Alert {
                     WATCHES.add(new NoStatusWatch(data));
             }
         }
-        Inquisitor.discordClient().getDispatcher().registerListener(ALERT);
+        Inquisitor.registerListener(new Alert());
     }
     @Register(shutdown = true, rank = Rank.NONE)
     public static void shutdown(Entity entity){
-        Inquisitor.discordClient().getDispatcher().unregisterListener(ALERT);
         entity.clearData();
         for (int i = 0; i < WATCHES.size(); i++) {
             entity.putData(i + "", WATCHES.get(i).getClass().getSimpleName() + ":" + WATCHES.get(i).save());

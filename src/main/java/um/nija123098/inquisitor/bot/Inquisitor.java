@@ -4,6 +4,7 @@ import sx.blah.discord.Discord4J;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.api.events.IListener;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.impl.events.shard.DisconnectedEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
@@ -53,6 +54,12 @@ public class Inquisitor {
     public static Entity getEntity(String name){
         return inquisitor.getEnt(name);
     }
+    public static void registerListener(Object o){
+        inquisitor.innerRegisterListener(o);
+    }
+    public static void unregisterListener(Object o){
+        inquisitor.innerUnregisterListener(o);
+    }
     public static void close(){
         inquisitor.closeInner();
     }
@@ -64,12 +71,14 @@ public class Inquisitor {
     }
     private volatile boolean lockdown;
     private final List<GuildBot> botList;
+    private final List<Object> listeners;
     private IDiscordClient client;
     private Inquisitor(String token){
-        this.botList = new ArrayList<>(1);
+        this.botList = new ArrayList<>();
+        this.listeners = new ArrayList<>();
         RequestHandler.request(() -> {
             this.client = new ClientBuilder().withToken(token).build();
-            this.client.getDispatcher().registerListener(this);
+            registerListener(this);
             RequestHandler.request(() -> this.client.login());
         });
     }
@@ -105,6 +114,32 @@ public class Inquisitor {
             System.exit(exitCode);
         }
     }
+    public void innerRegisterListener(Object o){
+        if (o instanceof Class<?>){
+            this.client.getDispatcher().registerListener(((Class<?>) o));
+        }else if (o instanceof IListener<?>){
+            this.client.getDispatcher().registerListener(((IListener<?>) o));
+        }else{
+            this.client.getDispatcher().registerListener(o);
+        }
+        synchronized (this.listeners){
+            this.listeners.add(o);
+        }
+    }
+    public void innerUnregisterListener(Object o){
+        synchronized (this.listeners){
+            if (!this.listeners.remove(o)){
+                return;
+            }
+        }
+        if (o instanceof Class<?>){
+            this.client.getDispatcher().unregisterListener(((Class<?>) o));
+        }else if (o instanceof IListener<?>){
+            this.client.getDispatcher().unregisterListener(((IListener<?>) o));
+        }else{
+            this.client.getDispatcher().unregisterListener(o);
+        }
+    }
     public Entity getEnt(String name){
         return Entity.getEntity("system", name);
     }
@@ -119,6 +154,7 @@ public class Inquisitor {
         Registry.shutDown();
         try {
             this.botList.forEach(GuildBot::close);
+            this.listeners.forEach(this::innerUnregisterListener);
             RequestHandler.request(() -> this.client.logout());
             Log.info("Shutting down");
         }catch (Exception e){
