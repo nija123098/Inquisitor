@@ -2,7 +2,7 @@ package um.nija123098.inquisitor.commands;
 
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
-import sx.blah.discord.handle.obj.Presences;
+import sx.blah.discord.handle.obj.StatusType;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -22,7 +22,7 @@ public class Uptime {
     public static void monitor(Entity entity){
         Uptime.entity = entity;
         Inquisitor.registerListener(new Uptime());
-        Inquisitor.discordClient().getUsers().forEach(iUser -> setPresence(User.getUserFromID(iUser.getID()), !iUser.getPresence().equals(Presences.OFFLINE)));
+        Inquisitor.discordClient().getUsers().forEach(user -> setPresence(User.getUserFromID(user.getID()), !user.getPresence().getStatus().equals(StatusType.OFFLINE)));
     }
     @Register(defaul = true, help = "Displays the time a user has been off or online")
     public static void uptime(Channel channel, String s, Entity entity){
@@ -39,7 +39,7 @@ public class Uptime {
         s = entity.getData(user);
         if (s == null){
             Log.error(user.discord().getName() + " does not have uptime data, setting now");
-            setPresence(user, !user.discord().getPresence().equals(Presences.OFFLINE));
+            setPresence(user, !user.discord().getPresence().getStatus().equals(StatusType.OFFLINE));
             s = entity.getData(user);
         }
         String[] strings = s.split(":");
@@ -47,7 +47,7 @@ public class Uptime {
     }
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){
-        setPresence(User.getUserFromID(event.getUser().getID()), !event.getNewPresence().equals(Presences.OFFLINE));
+        setPresence(User.getUserFromID(event.getUser().getID()), !event.getNewPresence().getStatus().equals(StatusType.OFFLINE));
     }
     private static void setPresence(User user, boolean on){
         String s = entity.getData(user);

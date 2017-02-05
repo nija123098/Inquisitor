@@ -37,8 +37,11 @@ public class Entity {
     }
     public static synchronized List<Entity> getEntities(String path){
         List<Entity> entities = new ArrayList<>();
-        for (File file : new File(path).listFiles()) {
-            entities.add(new Entity(file));
+        File[] files = new File(path).listFiles();
+        if (files != null){
+            for (File file : files) {
+                entities.add(new Entity(file));
+            }
         }
         return entities;
     }

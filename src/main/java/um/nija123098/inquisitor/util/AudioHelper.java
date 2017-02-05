@@ -22,6 +22,7 @@ public class AudioHelper {
     private static final Map<String, Map<String, File>> MAP = new ConcurrentHashMap<>();
     private static final Synthesiser SYNTHESISER = new Synthesiser();
     private static final Map<IGuild, AudioPlayer> PLAYER_MAP = new ConcurrentHashMap<>();
+    @SafeVarargs
     public static synchronized boolean say(String targetLang, IVoiceChannel channel, Pair<String, Boolean>...translationPairs){
         if (!channel.isConnected()){
             return false;
@@ -37,6 +38,7 @@ public class AudioHelper {
         }
         return false;
     }
+    @SafeVarargs
     public static synchronized File synth(String targetLang, Pair<String, Boolean>...translationPairs){
         return synth(targetLang, LangHelper.getContent(targetLang, translationPairs).replace("```", ""));
     }

@@ -2,12 +2,16 @@ package um.nija123098.inquisitor.commands;
 
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
-import sx.blah.discord.handle.impl.events.guild.member.NickNameChangeEvent;
+import sx.blah.discord.handle.impl.events.guild.member.NicknameChangedEvent;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
-import sx.blah.discord.handle.obj.Presences;
+import sx.blah.discord.handle.obj.StatusType;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
-import um.nija123098.inquisitor.context.*;
+import um.nija123098.inquisitor.context.Channel;
+import um.nija123098.inquisitor.context.Guild;
+import um.nija123098.inquisitor.context.Rank;
+import um.nija123098.inquisitor.context.Suspicion;
+import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageHelper;
 
 /**
@@ -21,20 +25,20 @@ public class Susp {
     }
     @EventSubscriber
     public void hande(MessageReceivedEvent event){
-        if (event.getMessage().getAuthor().getPresence() == Presences.OFFLINE){
+        if (event.getMessage().getAuthor().getPresence().getStatus() == StatusType.OFFLINE){
             Suspicion.addLevel(User.getUserFromID(event.getMessage().getAuthor().getID()), .3f, null, false);
         }
     }
     @EventSubscriber
-    public void handle(NickNameChangeEvent event){
+    public void handle(NicknameChangedEvent event){
         Suspicion.addLevel(User.getUserFromID(event.getUser().getID()), .25f, null, false);
     }
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){
         User user = User.getUserFromID(event.getUser().getID());
-        if (event.getNewPresence().equals(Presences.DND)){
+        if (event.getNewPresence().getStatus().equals(StatusType.DND)){
             Suspicion.addLevel(user, .3f, null, false);
-        }else if (event.getNewPresence().equals(Presences.ONLINE)){
+        }else if (event.getNewPresence().getStatus().equals(StatusType.ONLINE)){
             if (!Suspicion.isSufficient(Suspicion.LOYAL, Suspicion.getLevel(user))){
                 Suspicion.addLevel(user, -.25f, null, false);
             }

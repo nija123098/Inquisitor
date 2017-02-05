@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Made by nija123098 on 10/10/2016
  */
 public class RequestHandler {
-    private static final Timer REUQEST_TIMER = new Timer();
+    private static final Timer REQUEST_TIMER = new Timer();
     private static final AtomicBoolean OFF = new AtomicBoolean(false);
     public static void request(Request request){
         RequestBuffer.request(() -> {
@@ -28,10 +28,10 @@ public class RequestHandler {
         });
     }
     public static void request(long millis, Request request){
-        REUQEST_TIMER.add(millis, request);
+        REQUEST_TIMER.add(millis, request);
     }
     public static void schedule(long millis, Request request){
-        REUQEST_TIMER.schedule(millis, request);
+        REQUEST_TIMER.schedule(millis, request);
     }
     public static void turnOff(){
         OFF.set(true);

@@ -2,9 +2,7 @@ package um.nija123098.inquisitor.commands;
 
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
-import sx.blah.discord.handle.impl.events.user.StatusChangeEvent;
-import sx.blah.discord.handle.obj.Presences;
-import sx.blah.discord.handle.obj.Status;
+import sx.blah.discord.handle.obj.StatusType;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -23,18 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Made by nija123098 on 12/10/2016
  */
 public class Alert {
-    private static final List<AlertWatch> WATCHES = new CopyOnWriteArrayList<>(), REMOVES = new ArrayList<>();
-    @EventSubscriber
-    public void handle(StatusChangeEvent event){
-        synchronized (WATCHES){
-            WATCHES.forEach(alertWatch -> {
-                if (alertWatch.condition(event)){
-                    alertWatch.satisfied();
-                    WATCHES.remove(alertWatch);
-                }
-            });
-        }
-    }
+    private static final List<AlertWatch> WATCHES = new CopyOnWriteArrayList<>();
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){
         WATCHES.forEach(alertWatch -> {
@@ -118,10 +105,6 @@ public class Alert {
             return this.millis < System.currentTimeMillis();
         }
         @Override
-        protected boolean condition(StatusChangeEvent event){
-            return this.millis < System.currentTimeMillis();
-        }
-        @Override
         protected void satisfied() {// never checked
             WATCHES.remove(this);
         }
@@ -133,16 +116,16 @@ public class Alert {
     @Register(help = "Notifies if a specified user changes their presence, it defaults to online")
     public static Boolean presence(Channel channel, User user, String[] s){
         User target = User.getUser(s[0]);
-        final Presences[] presence = {Presences.ONLINE};
+        final StatusType[] presence = {StatusType.ONLINE};
         if (s.length > 1){
-            try{presence[0] = Presences.get(s[1].toUpperCase());
+            try{presence[0] = StatusType.valueOf(s[1].toUpperCase());
             }catch(Exception e){
                 MessageHelper.send(channel, "No such presence " + StringHelper.addQuotes(s[1]));
                 return false;
             }
         }
         if (target != null){
-            if (user.equals(target) && user.discord().getPresence() == presence[0]){
+            if (user.equals(target) && user.discord().getPresence().getStatus() == presence[0]){
                 MessageHelper.send(channel, user.discord().getName() + " is already " + presence[0].name().toLowerCase());
                 return false;
             }
@@ -150,28 +133,28 @@ public class Alert {
             MessageHelper.send(channel, "No such user " + StringHelper.addQuotes(s[0]));
             return false;
         }
-        MessageHelper.send(channel, Inquisitor.ourUser().mention() + " will alert you when " + target.discord().getName() + (presence[0] == Presences.ONLINE ? " comes " : " goes ") + presence[0].name().toLowerCase());
+        MessageHelper.send(channel, Inquisitor.ourUser().mention() + " will alert you when " + target.discord().getName() + (presence[0] == StatusType.ONLINE ? " comes " : " goes ") + presence[0].name().toLowerCase());
         WATCHES.add(new PresenceWatch(user, target, presence[0]));
         return true;
     }
     public static class PresenceWatch extends AlertWatch{
         private final User user;
         private final User target;
-        private final Presences presence;
+        private final StatusType presence;
         public PresenceWatch(String s){
             String[] strings = s.split(":");
             this.user = User.getUserFromID(strings[0]);
             this.target = User.getUserFromID(strings[1]);
-            this.presence = Presences.valueOf(strings[2]);
+            this.presence = StatusType.valueOf(strings[2]);
         }
-        public PresenceWatch(User user, User target, Presences presence) {
+        public PresenceWatch(User user, User target, StatusType presence) {
             this.user = user;
             this.target = target;
             this.presence = presence;
         }
         @Override
         protected boolean condition(PresenceUpdateEvent event) {
-            return event.getUser().equals(this.target.discord()) && event.getNewPresence() == this.presence;
+            return event.getUser().equals(this.target.discord()) && event.getNewPresence().getStatus() == this.presence;
         }
         @Override
         protected void satisfied(){
@@ -191,8 +174,8 @@ public class Alert {
         User target = User.getUser(strings[0]);
         String statusName = s.substring((strings[0] + " ").length());
         if (target != null){
-            if (user.discord().equals(target.discord()) && (user.discord().getStatus().getType() == Status.StatusType.GAME || user.discord().getStatus().getType() == Status.StatusType.STREAM) && statusName.startsWith(user.discord().getStatus().getStatusMessage())){
-                MessageHelper.send(channel, target.discord().getName() + " is already  " + (user.discord().getStatus().getType() == Status.StatusType.GAME ? "playing " : "streaming ") + user.discord().getStatus().getStatusMessage());
+            if (user.discord().equals(target.discord()) && (user.discord().getPresence().getStatus() == StatusType.ONLINE || user.discord().getPresence().getStatus() == StatusType.STREAMING) && user.discord().getPresence().getPlayingText().isPresent() && statusName.startsWith(user.discord().getPresence().getPlayingText().get())){
+                MessageHelper.send(channel, target.discord().getName() + " is already  " + (user.discord().getPresence().getStatus() == StatusType.ONLINE ? "playing " : "streaming ") + user.discord().getPresence().getPlayingText().orElse(""));
                 return false;
             }
             WATCHES.add(new GameWatch(statusName, user, target));
@@ -207,7 +190,7 @@ public class Alert {
         private String status;
         private final User user;
         private final User target;
-        private Status.StatusType type;
+        private StatusType type;
         public GameWatch(String game, User user, User target) {
             this.status = game;
             this.user = user;
@@ -220,17 +203,17 @@ public class Alert {
             this.status = s.substring(strings[0].length() + strings[1].length() + 2);
         }
         @Override
-        protected boolean condition(StatusChangeEvent event) {
-            if (event.getUser().equals(this.target.discord()) && (event.getNewStatus().getType() == Status.StatusType.GAME || event.getNewStatus().getType() == Status.StatusType.STREAM) && this.status.startsWith(event.getNewStatus().getStatusMessage())){
-                this.status = event.getNewStatus().getStatusMessage();
-                this.type = event.getNewStatus().getType();
+        protected boolean condition(PresenceUpdateEvent event) {
+            if (event.getUser().equals(this.target.discord()) && (event.getNewPresence().getStatus() == StatusType.ONLINE || event.getNewPresence().getStatus() == StatusType.STREAMING) && event.getNewPresence().getPlayingText().isPresent() && this.status.startsWith(event.getNewPresence().getPlayingText().get())){
+                this.status = event.getNewPresence().getPlayingText().orElse("");
+                this.type = event.getNewPresence().getStatus();
                 return true;
             }
             return false;
         }
         @Override
         protected void satisfied(){
-            MessageHelper.send(this.user, this.target.discord().getName() + " is now " + (this.type == Status.StatusType.GAME ? "playing " : "streaming ") + this.status);
+            MessageHelper.send(this.user, this.target.discord().getName() + " is now " + (this.type == StatusType.ONLINE ? "playing " : "streaming ") + this.status);
         }
         @Override
         protected String save() {
@@ -241,7 +224,7 @@ public class Alert {
     public static Boolean noStatus(Channel channel, User user, String[] strings, String s){
         User target = User.getUser(strings[0]);
         if (target != null){
-            if (user.equals(target) && user.discord().getStatus().getType() == Status.StatusType.NONE){
+            if (user.equals(target) && user.discord().getPresence().getStatus() == StatusType.ONLINE){
                 MessageHelper.send(channel, target.discord().getName() + " is not playing a game already");
                 return false;
             }
@@ -266,8 +249,8 @@ public class Alert {
             this.target = User.getUserFromID(strings[1]);
         }
         @Override
-        protected boolean condition(StatusChangeEvent event) {
-            return event.getUser().equals(this.target.discord()) && event.getNewStatus().getType() == Status.StatusType.NONE;
+        protected boolean condition(PresenceUpdateEvent event) {
+            return event.getUser().equals(this.target.discord()) && event.getNewPresence().getStatus() == StatusType.ONLINE;
         }
         @Override
         protected void satisfied(){
@@ -281,9 +264,6 @@ public class Alert {
     private abstract static class AlertWatch{
         protected abstract void satisfied();
         protected boolean condition(PresenceUpdateEvent event){
-            return false;
-        }
-        protected boolean condition(StatusChangeEvent event){
             return false;
         }
         protected abstract String save();

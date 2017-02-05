@@ -2,8 +2,12 @@ package um.nija123098.inquisitor.commands;
 
 import javafx.util.Pair;
 import sx.blah.discord.api.events.IListener;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelJoinEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -63,22 +67,35 @@ public class Harold {
     @Register(startup = true)
     public static void startup(){
         Inquisitor.registerListener((IListener<UserVoiceChannelJoinEvent>) join -> {
-            String lang = VOICE_CHANNELS.get(join.getVoiceChannel());
-            if (lang != null){
-                AudioHelper.say(lang, join.getVoiceChannel(), new Pair<>(join.getUser().getDisplayName(join.getGuild()), false), new Pair<>(" has joined the channel", true));
-            }
+            move(true, join.getUser(), join.getVoiceChannel());
         });
         Inquisitor.unregisterListener((IListener<UserVoiceChannelLeaveEvent>) leave -> {
-            String lang = VOICE_CHANNELS.get(leave.getVoiceChannel());
-            if (lang != null){
+            if (VOICE_CHANNELS.keySet().contains(leave.getVoiceChannel())){
                 if (leave.getVoiceChannel().getConnectedUsers().size() == 0){
                     VOICE_CHANNELS.remove(leave.getVoiceChannel());
                     leave.getVoiceChannel().leave();
                 }else{
-                    AudioHelper.say(lang, leave.getVoiceChannel(), new Pair<>(leave.getUser().getDisplayName(leave.getGuild()), false), new Pair<>(" has left the channel", true));
+                    move(false, leave.getUser(), leave.getVoiceChannel());
                 }
             }
         });
+        Inquisitor.unregisterListener((IListener<UserVoiceChannelMoveEvent>) move -> {
+            move(true, move.getUser(), move.getNewChannel());
+            if (VOICE_CHANNELS.keySet().contains(move.getOldChannel())){
+                if (move.getVoiceChannel().getConnectedUsers().size() == 0){
+                    VOICE_CHANNELS.remove(move.getOldChannel());
+                    move.getVoiceChannel().leave();
+                }else{
+                    move(false, move.getUser(), move.getOldChannel());
+                }
+            }
+        });
+    }
+    private static void move(boolean join, IUser user, IVoiceChannel channel){
+        String lang = VOICE_CHANNELS.get(channel);
+        if (lang != null){
+            AudioHelper.say(lang, channel, new Pair<>(user.getDisplayName(channel.getGuild()), false), new Pair<>(" has " + (join ? "joined" : "left") + " the channel", true));
+        }
     }
     @Register(shutdown = true)
     public static void shutdown(){

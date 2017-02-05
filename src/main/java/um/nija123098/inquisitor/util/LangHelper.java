@@ -57,6 +57,7 @@ public class LangHelper {
     public static void addLanguage(String name, String code) {
         LANGS.putData(name.toLowerCase(), code.toLowerCase());
     }
+    @SafeVarargs
     public static synchronized String getContent(String lang, Pair<String, Boolean>...translationPairs){
         String building = "";
         for (Pair<String, Boolean> translationPair : translationPairs) {
