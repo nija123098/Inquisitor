@@ -6,6 +6,8 @@ import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.api.events.IListener;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelJoinEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
 import sx.blah.discord.handle.impl.events.shard.DisconnectedEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
@@ -19,9 +21,9 @@ import um.nija123098.inquisitor.util.ClassFinder;
 import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.RequestHandler;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -130,6 +132,7 @@ public class Inquisitor {
     public void innerUnregisterListener(Object o){
         synchronized (this.listeners){
             if (!this.listeners.remove(o)){
+                Log.warn("Attempted to unregister not registered Object: " + o.toString());
                 return;
             }
         }

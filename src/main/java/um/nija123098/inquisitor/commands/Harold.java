@@ -2,6 +2,7 @@ package um.nija123098.inquisitor.commands;
 
 import javafx.util.Pair;
 import sx.blah.discord.api.events.IListener;
+import sx.blah.discord.handle.impl.events.guild.voice.VoiceChannelDeleteEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelJoinEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
@@ -76,12 +77,13 @@ public class Harold {
     }
     @Register(startup = true)
     public static void startup(){
-        Inquisitor.registerListener((IListener<UserVoiceChannelJoinEvent>) join -> {
-            move(true, join.getUser(), join.getVoiceChannel());
-        });
-        Inquisitor.unregisterListener((IListener<UserVoiceChannelLeaveEvent>) leave -> {
+        Inquisitor.registerListener((IListener<UserVoiceChannelJoinEvent>) join -> move(true, join.getUser(), join.getVoiceChannel()));
+        Inquisitor.registerListener((IListener<UserVoiceChannelLeaveEvent>) leave -> {
+            if (leave.getUser().equals(Inquisitor.ourUser())){
+                return;
+            }
             if (VOICE_CHANNELS.keySet().contains(leave.getVoiceChannel())){
-                if (leave.getVoiceChannel().getConnectedUsers().size() == 0){
+                if (leave.getVoiceChannel().getConnectedUsers().size() == 1){
                     VOICE_CHANNELS.remove(leave.getVoiceChannel());
                     leave.getVoiceChannel().leave();
                 }else{
@@ -89,17 +91,21 @@ public class Harold {
                 }
             }
         });
-        Inquisitor.unregisterListener((IListener<UserVoiceChannelMoveEvent>) move -> {
+        Inquisitor.registerListener((IListener<UserVoiceChannelMoveEvent>) move -> {
+            if (move.getUser().equals(Inquisitor.ourUser())){
+                return;
+            }
             move(true, move.getUser(), move.getNewChannel());
             if (VOICE_CHANNELS.keySet().contains(move.getOldChannel())){
-                if (move.getVoiceChannel().getConnectedUsers().size() == 0){
+                if (move.getOldChannel().getConnectedUsers().size() == 1){
                     VOICE_CHANNELS.remove(move.getOldChannel());
-                    move.getVoiceChannel().leave();
+                    move.getOldChannel().leave();
                 }else{
                     move(false, move.getUser(), move.getOldChannel());
                 }
             }
         });
+        Inquisitor.registerListener((IListener<VoiceChannelDeleteEvent>) del -> VOICE_CHANNELS.remove(del.getVoiceChannel()));
     }
     private static void move(boolean join, IUser user, IVoiceChannel channel){
         String lang = VOICE_CHANNELS.get(channel);
