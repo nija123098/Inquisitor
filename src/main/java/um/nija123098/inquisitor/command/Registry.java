@@ -52,6 +52,9 @@ public class Registry {
     public static synchronized Triple<Command, Boolean, String> getCommand(String msg){
         String[] lows = msg.toLowerCase().toLowerCase().split(" ");
         for (int k = lows.length; k > 0; k--) {
+            if (k > COMMAND_TRIPLE.size()){
+                k = COMMAND_TRIPLE.size() - 1;
+            }
             for (Triple<String, String[], Command> trip : COMMAND_TRIPLE.get(k)){
                 boolean matches = true;
                 for (int i = 0; i < trip.getMiddle().length; i++) {

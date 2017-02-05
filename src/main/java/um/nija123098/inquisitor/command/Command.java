@@ -238,11 +238,11 @@ public class Command {
                     objects[i] = null;
                 }else{
                     for (IVoiceChannel vChannel : user.discord().getConnectedVoiceChannels()) {
-                        if (vChannel.getGuild().equals(guild.discord())){
+                        if (vChannel.getGuild().getID().equals(guild.getID())){
                             objects[i] = vChannel;
+                            break;
                         }
                     }
-                    objects[i] = channel;
                 }
             }else if (parameterTypes[i].equals(MessageAid.class)){
                 if (aider == null){

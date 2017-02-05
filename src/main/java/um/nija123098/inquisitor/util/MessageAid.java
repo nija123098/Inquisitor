@@ -26,7 +26,7 @@ public class MessageAid {
     private final Channel channel;
     private Guild guild;
     private final MessageBuilder internal;
-    private boolean checkMessages, priv, translate, noSpace;
+    private boolean checkMessages, priv, translate, noSpace, override;
     private int delete;
     private List<Pair<String, Boolean>> contents;
     public MessageAid(User user, Channel channel, Guild guild){
@@ -82,12 +82,15 @@ public class MessageAid {
         this.noSpace = false;
         return this;
     }
+    public MessageAid withOverride(){
+        this.override = true;
+        return this;
+    }
     public void send(){
         if (this.contents.size() == 0){
             return;
         }
         String content = "";
-        this.contents.forEach(pair -> System.out.println(pair.getKey()));
         Pair<String, Boolean> langPair = LangHelper.getLang(this.user, this.guild);
         if (this.translate || !langPair.getKey().equals("en")){
             if (!langPair.getValue()){
@@ -100,7 +103,7 @@ public class MessageAid {
             }
         }
         final AtomicReference<IChannel> channel = new AtomicReference<>(this.channel.discord());
-        boolean pubAllowed = this.channel.isPrivate();
+        boolean pubAllowed = this.channel.isPrivate() || this.override;
         final AtomicBoolean channelMade = new AtomicBoolean(true);
         if (!pubAllowed){
             pubAllowed = "true".equals(this.channel.getData("chat_approved", "false"));
@@ -120,7 +123,7 @@ public class MessageAid {
                 });
             }
         }
-        if (!this.priv && !pubAllowed){
+        if (!this.priv && (!pubAllowed)){
             this.priv = true;
             this.withContent("\nI have not been granted permission to speak in that channel, so I have DMed you instead.");
         }
@@ -136,7 +139,6 @@ public class MessageAid {
             });
         }
         final String finalContent = (this.noSpace ? "\u200B" : "") + content;
-        System.out.println(StringHelper.addQuotes(finalContent));
         RequestBuffer.request(() -> {
             if (!channelMade.get()){
                 throw new RateLimitException("Channel making MessageAid dodge", 100, "red", false);

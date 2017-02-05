@@ -3,7 +3,9 @@ package um.nija123098.inquisitor.commands;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.util.MessageList;
+import sx.blah.discord.util.audio.AudioPlayer;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.Rank;
@@ -16,6 +18,8 @@ import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.util.*;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +34,10 @@ public class Basic {
         Log.info("pong");
     }
     @Register(help = "Lists information on Inquisitor")
-    public static void info(Channel channel){
-        MessageHelper.send(channel, "" +
-                "This is " + Inquisitor.ourUser().mention(false) + ", a Discord info bot.\n" +
+    public static void info(Channel channel, MessageAid aid){
+        aid.withContent("This is ").withoutTranslateContent(Inquisitor.mention()).withContent(", a Discord info bot.\n" +
                 "It collects and displays information on servers, users, and bots for a benevolent purpose.\n" +
+                "To set a prefix other than mentioning me do `@Inquisitor prefix ?` to set the prefix to `?`" +
                 Inquisitor.ourUser().mention() + " is made by nija123098#7242");
     }
     @Register(help = "Displays all commands or help on a specific command")
@@ -83,10 +87,10 @@ public class Basic {
         }
     }
     @Register(suspicion = Suspicion.RADICAL, help = "Displays the invite link for Inquisitor")
-    public static void invite(Channel channel){
-        MessageHelper.send(channel, "You must have the manage server permission to add this bot to the server.\n" +
-                "You may mention me at any time as a prefix, but you must give me permission to chat in a channel.\n" +
-                "In order to let me to chat in a channel use <@244634255727132673> chat true\n" +
+    public static void invite(Channel channel, MessageAid aid){
+        aid.withContent("You must have the manage server permission to add this bot to the server.\n" +
+                "You may mention me at any time as a prefix,\n" +
+                "In order to let me to chat in a channel use ").withoutTranslateContent(Inquisitor.mention()).withContent(" chat true\n" +
                 "https://discordapp.com/oauth2/authorize?client_id=244634255727132673&scope=bot");
     }
     @Register(help = "Displays the GitHub link to Inquisitor's repo")
@@ -119,11 +123,12 @@ public class Basic {
             ++i;
         }
         if (deletes.size() > 1){
-            deletes.forEach(iMessage -> RequestHandler.request(iMessage::delete));
+            int[] k = {0};
+            deletes.forEach(message -> RequestHandler.request(++k[0] * 500, message::delete));
         }else{
             RequestHandler.request(() -> deletes.get(0).delete());
         }
-        MessageHelper.send(channel, "Deleted " + deletes.size() + " message" + (deletes.size() > 1 ? "s" : ""), 3000);
+        MessageHelper.send(channel, "Deleted " + deletes.size() + " message" + (deletes.size() > 1 ? "s" : ""), 5000);
     }
     @Register(rank = Rank.BOT_ADMIN, help = "Inquisitor repeats the text")
     public static void say(Channel channel, String s){
@@ -131,7 +136,7 @@ public class Basic {
             MessageHelper.send(channel, s);
         }
     }
-    @Register(natural = true, help = "Displays the Inquisitor's support server")
+    @Register(help = "Displays the Inquisitor's support server")
     public static void server(User user){
         MessageHelper.send(user, "Join the discord server here!\nhttps://discord.gg/xVA9x2H", 300000);
     }
