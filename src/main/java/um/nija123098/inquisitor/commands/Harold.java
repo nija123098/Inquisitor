@@ -39,11 +39,11 @@ public class Harold {
             return false;
         }
         EnumSet<Permissions> perms = channel.getModifiedPermissions(Inquisitor.ourUser());
-        if (perms.contains(Permissions.VOICE_CONNECT)){
+        if (!perms.contains(Permissions.VOICE_CONNECT)){
             aid.withContent("I do not have permission to connect to that channel");
             return false;
         }
-        if (perms.contains(Permissions.VOICE_SPEAK)){
+        if (!perms.contains(Permissions.VOICE_SPEAK)){
             aid.withContent("I do not have permission to speak in that channel");
             return false;
         }
