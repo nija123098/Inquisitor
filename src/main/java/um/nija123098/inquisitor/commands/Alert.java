@@ -3,18 +3,23 @@ package um.nija123098.inquisitor.commands;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 import sx.blah.discord.handle.obj.StatusType;
+import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.util.MessageAid;
 import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.RequestHandler;
 import um.nija123098.inquisitor.util.StringHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -22,6 +27,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Alert {
     private static final List<AlertWatch> WATCHES = new CopyOnWriteArrayList<>();
+    private static final Map<String, List<String>> BOT_WATCHES = new ConcurrentHashMap<>();
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){
         WATCHES.forEach(alertWatch -> {
@@ -30,6 +36,9 @@ public class Alert {
                 WATCHES.remove(alertWatch);
             }
         });
+        if (event.getUser().isBot() && event.getOldPresence().getStatus() != event.getNewPresence().getStatus() && BOT_WATCHES.containsKey(event.getUser().getID())){
+            BOT_WATCHES.get(event.getUser().getID()).forEach(s -> MessageHelper.send(User.getUserFromID(s), event.getUser().mention() + " has gone " + event.getNewPresence().getStatus().name().toLowerCase()));
+        }
     }
     @Register(startup = true, rank = Rank.NONE)
     public static void startup(Entity entity){
@@ -49,6 +58,11 @@ public class Alert {
                     break;
                 case "NoStatusWatch":
                     WATCHES.add(new NoStatusWatch(data));
+                    break;
+                default:
+                    List<String> strings = new ArrayList<>();
+                    Collections.addAll(strings, dat);
+                    BOT_WATCHES.put(saved.split("-")[1], strings);
             }
         }
         Inquisitor.registerListener(new Alert());
@@ -58,6 +72,13 @@ public class Alert {
         entity.clearData();
         for (int i = 0; i < WATCHES.size(); i++) {
             entity.putData(i + "", WATCHES.get(i).getClass().getSimpleName() + ":" + WATCHES.get(i).save());
+        }
+        for (int i = 0; i < BOT_WATCHES.size(); i++) {
+            BOT_WATCHES.forEach((s, strings) -> {
+                final String[] str = {""};
+                strings.forEach(st -> str[0] += st + ":");
+                entity.putData("BotWatch-" + s, str[0]);
+            });
         }
     }
     @Register(defaul = true, help = "Specify a time in hours to be reminded of something")
@@ -259,6 +280,47 @@ public class Alert {
         @Override
         protected String save() {
             return this.user.getID() + this.target.getID();
+        }
+    }
+    @Register(help = "Sets a status alert for a bot, to disable do @Inquisitor botwatch @MyBot false")
+    public static boolean botWatch(User user, Guild guild, String string, MessageAid aid){
+        String[] strings = string.split(" ");
+        User bot = User.getUser(strings[0], guild);
+        if (bot == null){
+            aid.withoutTranslateContent(StringHelper.addQuotes(strings[0])).withContent(" is not a recognized user");
+            return false;
+        }
+        if (!bot.discord().isBot()){
+            aid.withoutTranslateContent(StringHelper.addQuotes(strings[0])).withContent(" is not a bot");
+            return false;
+        }
+        BOT_WATCHES.putIfAbsent(bot.getID(), new ArrayList<>());
+        boolean watch = true;
+        if (strings.length > 1){
+            try{watch = Boolean.parseBoolean(strings[1]);
+            }catch(Exception e){
+                aid.withoutTranslateContent(StringHelper.addQuotes(strings[1])).withContent(" is not true or false");
+                return false;
+            }
+        }
+        if (watch){
+            if (BOT_WATCHES.get(bot.getID()).contains(user.getID())){
+                aid.withContent("You are already watching ").withoutTranslateContent(bot.discord().getDisplayName(guild.discord()));
+                return false;
+            }else{
+                BOT_WATCHES.get(bot.getID()).add(user.getID());
+                aid.withContent("You are now watching ").withoutTranslateContent(bot.discord().getDisplayName(guild.discord()));
+                return true;
+            }
+        }else{
+            if (BOT_WATCHES.get(bot.getID()).contains(user.getID())){
+                BOT_WATCHES.get(bot.getID()).remove(user.getID());
+                aid.withContent("You are no longer watching ").withoutTranslateContent(bot.discord().getDisplayName(guild.discord()));
+                return true;
+            }else{
+                aid.withContent("You are not watching ").withoutTranslateContent(bot.discord().getDisplayName(guild.discord()));
+                return false;
+            }
         }
     }
     private abstract static class AlertWatch{

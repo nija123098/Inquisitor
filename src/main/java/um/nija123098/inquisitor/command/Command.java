@@ -1,8 +1,6 @@
 package um.nija123098.inquisitor.command;
 
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IReaction;
-import sx.blah.discord.handle.obj.IVoiceChannel;
+import sx.blah.discord.handle.obj.*;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.context.*;
@@ -250,6 +248,10 @@ public class Command {
                 }
                 objects[i] = aider;
             }else if (parameterTypes[i].equals(IReaction.class)){
+                objects[i] = reaction;
+            }else if (parameterTypes[i].equals(IGuild.class)){
+                objects[i] = reaction;
+            }else if (parameterTypes[i].equals(IUser.class)){
                 objects[i] = reaction;
             }
         }
