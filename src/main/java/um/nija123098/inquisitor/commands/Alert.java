@@ -10,10 +10,7 @@ import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
-import um.nija123098.inquisitor.util.MessageAid;
-import um.nija123098.inquisitor.util.MessageHelper;
-import um.nija123098.inquisitor.util.RequestHandler;
-import um.nija123098.inquisitor.util.StringHelper;
+import um.nija123098.inquisitor.util.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,25 +78,22 @@ public class Alert {
             });
         }
     }
-    @Register(defaul = true, help = "Specify a time in hours to be reminded of something")
+    @Register(defaul = true, help = "Specify a time to be reminded of something, ex: alert 2w1d4h5m7s do some work")
     public static Boolean alert(Channel channel, User user, String string, String[] strings){
-        float hours;
-        try{hours = Float.parseFloat(strings[0]);
-        }catch(Exception e){
+        Long timeVal = FormatHelper.toMillis(strings[0]);
+        if (timeVal == null){
             MessageHelper.send(channel, strings[0] + " is not a time");
-            return false;
-        }
-        if (hours == 0){
+        }else if (timeVal == 0){
             MessageHelper.send(channel, "You should go do that now then.");
-            return false;
-        }else if (hours < 0){
+        }else if (timeVal < 0){
             MessageHelper.send(channel, "You already should have done that.");
-            return false;
+        }else{
+            string = string.substring(strings[0].length() + 1);
+            MessageHelper.send(channel, "I will remind you to " + string.replace(".", "") + " in " + FormatHelper.format(timeVal));
+            WATCHES.add(new TimeWatch(timeVal, user, string));
+            return true;
         }
-        string = string.substring(strings[0].length() + 1);
-        MessageHelper.send(channel, "I will remind you to " + string + " in " + hours + " hour" + (hours == 1 ? "" : "s"));
-        WATCHES.add(new TimeWatch((long) (hours * 60 * 60 * 1000), user, string));
-        return true;
+        return false;
     }
     public static class TimeWatch extends AlertWatch{
         private final long millis;

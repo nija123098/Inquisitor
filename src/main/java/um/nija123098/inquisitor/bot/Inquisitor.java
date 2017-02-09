@@ -6,8 +6,6 @@ import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.api.events.IListener;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
-import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelJoinEvent;
-import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
 import sx.blah.discord.handle.impl.events.shard.DisconnectedEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
@@ -23,7 +21,6 @@ import um.nija123098.inquisitor.util.RequestHandler;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -112,6 +109,10 @@ public class Inquisitor {
     @EventSubscriber
     public void handle(DisconnectedEvent event){
         if (event.getReason().equals(DisconnectedEvent.Reason.LOGGED_OUT)){
+            this.listeners.forEach(this::innerUnregisterListener);
+            if (exitCode == 0){
+                RequestHandler.turnOff();
+            }
             try{Thread.sleep(1000);
             }catch(InterruptedException e){e.printStackTrace();}
             System.exit(exitCode);
@@ -159,7 +160,7 @@ public class Inquisitor {
         saveInner();
         try {
             this.botList.forEach(GuildBot::close);
-            this.listeners.forEach(this::innerUnregisterListener);
+            RequestHandler.turnOff();
             RequestHandler.request(() -> this.client.logout());
             Log.info("Shutting down");
         }catch (Exception e){
