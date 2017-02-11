@@ -2,8 +2,6 @@ package um.nija123098.inquisitor.command;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import sx.blah.discord.handle.impl.obj.Reaction;
-import um.nija123098.inquisitor.util.ClassFinder;
 import um.nija123098.inquisitor.util.EmoticonHelper;
 
 import java.lang.reflect.Method;

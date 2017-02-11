@@ -3,23 +3,17 @@ package um.nija123098.inquisitor.commands;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.util.MessageList;
-import sx.blah.discord.util.audio.AudioPlayer;
 import um.nija123098.inquisitor.context.Channel;
-import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.Suspicion;
 import um.nija123098.inquisitor.context.User;
-import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.util.*;
 
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

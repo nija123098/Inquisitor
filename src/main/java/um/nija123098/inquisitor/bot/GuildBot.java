@@ -1,15 +1,12 @@
 package um.nija123098.inquisitor.bot;
 
-import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IPrivateChannel;
-import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Invoke;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.saving.Unique;
-import um.nija123098.inquisitor.util.Log;
 import um.nija123098.inquisitor.util.StringHelper;
 
 /**
@@ -21,7 +18,7 @@ public class GuildBot implements Unique {
         PREFIX_ENTITY = Inquisitor.getEntity("prefixes");
     }
     private String guildID;
-    GuildBot(IDiscordClient client, String guildID) {
+    GuildBot(String guildID) {
         this.guildID = guildID;
         Inquisitor.registerListener(this);
     }

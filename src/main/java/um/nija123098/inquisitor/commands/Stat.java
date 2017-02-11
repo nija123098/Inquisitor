@@ -1,7 +1,6 @@
 package um.nija123098.inquisitor.commands;
 
 import javafx.util.Pair;
-import sx.blah.discord.handle.obj.Status;
 import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
@@ -9,12 +8,15 @@ import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
-import um.nija123098.inquisitor.util.*;
+import um.nija123098.inquisitor.util.CommonMessageHelper;
+import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.Rand;
+import um.nija123098.inquisitor.util.RequestHandler;
+import um.nija123098.inquisitor.util.StringHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 12/10/2016
@@ -24,7 +26,7 @@ public class Stat {
     @Register(override = true, name = "status startup", startup = true, rank = Rank.NONE, help = "Starts status message cycling")
     public static void startup(Entity entity){
         RequestHandler.request(() -> {
-            Inquisitor.discordClient().changeStatus(Status.game("with the login screen"));
+            Inquisitor.discordClient().online("with the login screen");
             changePlayText(entity);
         });
     }
@@ -34,7 +36,7 @@ public class Stat {
                 return;
             }
             String[] options = entity.getData("play_text", "").split(":");
-            Inquisitor.discordClient().getShards().forEach(iShard -> iShard.changeStatus(Status.game(options[Rand.integer(options.length - 1)])));
+            Inquisitor.discordClient().getShards().forEach(iShard -> iShard.online(options[Rand.integer(options.length - 1)]));
             changePlayText(entity);
         });
     }
@@ -100,16 +102,16 @@ public class Stat {
     private static String format(String string){
         String s = "";
         String[] strings = string.split(" ");
-        for (int i = 0; i < strings.length; i++) {
-            if (string.endsWith(">")){
-                for (Pair<String, Function<String, String>> pair : PAIRS){
-                    if (strings[i].startsWith(pair.getKey() + "<") && strings[i].endsWith(">")){
-                        s += pair.getValue().apply(strings[i].replace(pair.getKey() + "<", "").replace(">", ""));
+        for (String str : strings) {
+            if (string.endsWith(">")) {
+                for (Pair<String, Function<String, String>> pair : PAIRS) {
+                    if (str.startsWith(pair.getKey() + "<") && str.endsWith(">")) {
+                        s += pair.getValue().apply(str.replace(pair.getKey() + "<", "").replace(">", ""));
                         break;
                     }
                 }
-            }else{
-                s += strings[i];
+            } else {
+                s += str;
             }
         }
         return s;

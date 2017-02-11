@@ -88,7 +88,7 @@ public class Inquisitor {
         if (botCount > event.getGuild().getUsers().size() / 2){
             event.getGuild().leave();
         }
-        this.botList.add(new GuildBot(this.client, event.getGuild().getID()));
+        this.botList.add(new GuildBot(event.getGuild().getID()));
     }
     @EventSubscriber
     public void handle(ReadyEvent event){

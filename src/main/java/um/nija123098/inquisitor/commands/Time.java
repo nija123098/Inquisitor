@@ -5,7 +5,9 @@ import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.util.MessageAid;
 import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.StringHelper;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -35,10 +37,11 @@ public class Time {
         return true;
     }
     @Register(help = "Sets the UTC relation, ex: living in MST would mean setting the value to -7")
-    public static boolean set(User user, Channel channel, String s, Entity entity){
+    public static boolean set(User user, String s, Entity entity, MessageAid aid){
         float val;
         try{val = Float.parseFloat(s);
         }catch(Exception e){
+            aid.withoutTranslateContent(StringHelper.addQuotes(s) + " is not number");
             return false;
         }
         entity.putData(user, s);
@@ -46,7 +49,7 @@ public class Time {
         Calendar.getInstance(timeZone).add(Calendar.HOUR_OF_DAY, ((int) val));
         Calendar.getInstance(timeZone).add(Calendar.MINUTE, (int) ((val % 1) * 60));
         Calendar calendar = Calendar.getInstance(timeZone);
-        MessageHelper.send(channel, "UST" + (val >= 0 ? "+" : "") + val + " set as your timezone.  It should be " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + (calendar.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM"));
+        aid.withoutTranslateContent("UST" + (val >= 0 ? "+" : "") + val).withContent(" set as your timezone.  It should be ").withoutTranslateContent(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + (calendar.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM"));
         return true;
     }
 }

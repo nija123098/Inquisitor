@@ -28,7 +28,7 @@ public class MessageAid {
     private final MessageBuilder internal;
     private boolean checkMessages, priv, translate, noSpace, override;
     private int delete;
-    private List<Pair<String, Boolean>> contents;
+    private final List<Pair<String, Boolean>> contents;
     public MessageAid(User user, Channel channel, Guild guild){
         this.user = user;
         this.channel = channel;

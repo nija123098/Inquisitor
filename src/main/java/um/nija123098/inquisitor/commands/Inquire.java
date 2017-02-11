@@ -3,10 +3,7 @@ package um.nija123098.inquisitor.commands;
 import javafx.util.Pair;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IRole;
-import sx.blah.discord.handle.obj.Presences;
+import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.MessageList;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -49,7 +46,7 @@ public class Inquire {
         Map<Integer, Pair<String, Long>> map = new HashMap<>();
         int size = iGuild.getRoles().size();
         List<String> names = new ArrayList<>(size), online = new ArrayList<>(size);
-        iGuild.getRoles().forEach(iRole -> map.put(iRole.getPosition(), new Pair<>(iRole.getName(), iGuild.getUsers().stream().filter(iUser -> iUser.getRolesForGuild(iGuild).contains(iRole) && iUser.getPresence().equals(Presences.ONLINE)).count())));
+        iGuild.getRoles().forEach(iRole -> map.put(iRole.getPosition(), new Pair<>(iRole.getName(), iGuild.getUsers().stream().filter(iUser -> iUser.getRolesForGuild(iGuild).contains(iRole) && iUser.getPresence().getStatus() == StatusType.ONLINE).count())));
         map.forEach((integer, stringLongPair) -> {
             names.add(integer, stringLongPair.getKey());
             online.add(integer, stringLongPair.getValue() + "");
@@ -76,7 +73,7 @@ public class Inquire {
                 new ArrayList<>(iRole.getPermissions()).forEach(permissions -> perms.add(permissions.name()));
                 final int[] count = {0};
                 IGuild iGuild = guild.discord();
-                iGuild.getUsers().stream().filter(u -> u.getPresence().equals(Presences.ONLINE)).filter(u -> u.getRolesForGuild(iGuild).contains(iRole)).forEach(u -> ++count[0]);
+                iGuild.getUsers().stream().filter(u -> u.getPresence().getStatus() == StatusType.ONLINE).filter(u -> u.getRolesForGuild(iGuild).contains(iRole)).forEach(u -> ++count[0]);
                 CommonMessageHelper.displayList("# " + count[0] + " " + iRole.getName() + "s are online\n# Permisions for role " + iRole.getName(), "", perms, user);
             }
         }

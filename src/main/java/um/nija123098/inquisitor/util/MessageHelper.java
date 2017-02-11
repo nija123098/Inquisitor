@@ -1,6 +1,5 @@
 package um.nija123098.inquisitor.util;
 
-import sx.blah.discord.handle.impl.obj.Reaction;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IReaction;
@@ -11,7 +10,6 @@ import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**

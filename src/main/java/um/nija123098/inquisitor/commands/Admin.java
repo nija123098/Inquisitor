@@ -1,7 +1,6 @@
 package um.nija123098.inquisitor.commands;
 
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.Status;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -9,7 +8,11 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.Suspicion;
 import um.nija123098.inquisitor.context.User;
-import um.nija123098.inquisitor.util.*;
+import um.nija123098.inquisitor.util.CommonMessageHelper;
+import um.nija123098.inquisitor.util.EmoticonHelper;
+import um.nija123098.inquisitor.util.LangHelper;
+import um.nija123098.inquisitor.util.Log;
+import um.nija123098.inquisitor.util.MessageHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,8 +95,7 @@ public class Admin {
     @Register
     public static void lockdown(User user, IMessage message){
         Inquisitor.lockdown();
-        Inquisitor.discordClient().getShards().forEach(iShard -> iShard.changePresence(true));
-        Inquisitor.discordClient().getShards().forEach(iShard -> iShard.changeStatus(Status.game("with locks")));
+        Inquisitor.discordClient().idle("with locks");
         MessageHelper.react("lock", message);
         Log.warn(user.discord().getName() + " put Inquisitor in lockdown");
     }

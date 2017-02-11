@@ -1,7 +1,6 @@
 package um.nija123098.inquisitor.command;
 
 import org.apache.commons.lang3.tuple.Triple;
-import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IReaction;
 import um.nija123098.inquisitor.context.Channel;

@@ -3,7 +3,6 @@ package um.nija123098.inquisitor.commands;
 import javafx.util.Pair;
 import sx.blah.discord.api.events.IListener;
 import sx.blah.discord.handle.impl.events.guild.voice.VoiceChannelDeleteEvent;
-import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelJoinEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;

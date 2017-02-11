@@ -92,12 +92,12 @@ public class Interact {
         Bot(String id){
             this.id = id;
         }
-        String id;
+        final String id;
     }
     private static class Response<E> {
         Predicate<E> check;
         Consumer<E> execute;
-        Class<E> clazz;
+        final Class<E> clazz;
         Response(Predicate<E> check, Consumer<E> execute, Class<E> clazz) {
             this.check = check;
             this.execute = execute;
