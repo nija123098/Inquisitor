@@ -22,6 +22,9 @@ public class Invoke {
     }
     public static boolean invoke(User user, Guild guild, Channel channel, String msg, IMessage iMessage){
         Triple<Command, Boolean, String> pair = Registry.getCommand(StringHelper.limitOneSpace(msg));
+        if (!pair.getMiddle() && user.discord().isBot()){
+            return false;
+        }
         if (pair.getLeft() != null){
             return pair.getLeft().invoke(user, guild, channel, pair.getRight(), iMessage, null, pair.getMiddle());
         }else{
@@ -40,6 +43,9 @@ public class Invoke {
         }
     }
     public static boolean invoke(User user, Guild guild, Channel channel, String msg, IReaction iReaction) {
+        if (user.discord().isBot()){
+            return false;
+        }
         Command command = Registry.getReactionCommand(iReaction.toString());
         return command != null && command.invoke(user, guild, channel, msg, iReaction.getMessage(), iReaction, false);
     }

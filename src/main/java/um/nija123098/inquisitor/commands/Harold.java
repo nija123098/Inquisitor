@@ -34,7 +34,7 @@ public class Harold {
             aid.withContent("You are not in a voice channel in this guild");
             return false;
         }
-        if (VOICE_CHANNELS.keySet().contains(channel)){
+        if (VOICE_CHANNELS.keySet().contains(channel) && Inquisitor.discordClient().getVoiceChannels().contains(channel)){
             aid.withContent("That channel is already being harolded, use harold disband to stop the announcements");
             return false;
         }
