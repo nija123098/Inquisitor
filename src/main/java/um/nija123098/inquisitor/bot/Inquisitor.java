@@ -41,7 +41,7 @@ public class Inquisitor {
     public static IUser ourUser(){
         return inquisitor.getClient().getOurUser();
     }
-    private static int exitCode;
+    private static transient int exitCode;
     public static void setExitCode(int code){
         exitCode = code;
     }
@@ -160,7 +160,6 @@ public class Inquisitor {
         saveInner();
         try {
             this.botList.forEach(GuildBot::close);
-            RequestHandler.turnOff();
             RequestHandler.request(() -> this.client.logout());
             Log.info("Shutting down");
         }catch (Exception e){

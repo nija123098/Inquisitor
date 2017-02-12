@@ -104,17 +104,20 @@ public class Admin {
         Inquisitor.save();
         MessageHelper.react("floppy_disk", message);
     }
-    @Register(help = "Shuts down the bot without restart")
+    @Register(absoluteAliases = "close", help = "Shuts down the bot without restart")
     public static void close(User user, IMessage message, String s){
         Inquisitor.lockdown();
         switch (s){
-            case "":
-            case "update":
-                Inquisitor.setExitCode(1);
-                break;
             case "down":
                 Inquisitor.setExitCode(0);
                 break;
+            case "restart":
+                Inquisitor.setExitCode(1);
+                break;
+            case "":
+            case "update":
+                Inquisitor.setExitCode(2);
+            break;
             default:
                 MessageHelper.react("question", message);
                 return;
