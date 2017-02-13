@@ -164,6 +164,12 @@ public class Command {
         }
         return this.register.suspicion();
     }
+    public boolean guaranteedSuccess(){
+        if (DEFAULT.guaranteedSuccess() != this.clazz.guaranteedSuccess()){
+            return this.clazz.guaranteedSuccess();
+        }
+        return this.register.guaranteedSuccess();
+    }
     public boolean override(){
         return this.register.override();
     }
@@ -278,6 +284,6 @@ public class Command {
                 MessageHelper.react("eye", message);
             }
         }
-        return ret == null || Objects.equals(true, ret);
+        return this.guaranteedSuccess() || ret instanceof Boolean ? Objects.equals(ret, true) : ret != null;
     }
 }

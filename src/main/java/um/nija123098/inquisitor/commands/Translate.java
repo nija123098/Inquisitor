@@ -19,11 +19,11 @@ public class Translate {
         }
         String lang = Entity.getEntity("lang", "lang").getData(user);
         if (lang == null){
-            aid.withContent("Please set your language using ").withoutTranslateContent("@Inquisitor setlang");
+            aid.withContent("Please set your language using ").withRawContent("@Inquisitor setlang");
             return false;
         }
         IMessage message = reaction.getMessage();
-        aid.withDM().withTranslate().withoutTranslateContent(message.getAuthor().getName()).withContent(" said:\n" + message.getContent());
+        aid.withDM().withTranslate().withRawContent(message.getAuthor().getName()).withContent(" said:\n" + message.getContent());
         return true;
     }
 }

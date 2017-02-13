@@ -8,6 +8,7 @@ import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.util.MessageAid;
 import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.StringHelper;
 
@@ -17,25 +18,26 @@ import um.nija123098.inquisitor.util.StringHelper;
 @Register(rank = Rank.USER, hidden = true)
 public class Mark {
     @Register(defaul = true, guild = true, suspicious = 3, help = "Be careful or it could reveal your command")
-    public static void mark(User user, Guild guild, Channel channel, String s, Rank rank, Entity entity){
+    public static Boolean mark(User user, Guild guild, Channel channel, String s, Rank rank, Entity entity, MessageAid aid){
         String mark = guild.getID() + ":" + channel.getID();
         User u;
         if (s.length() != 0){
-            if (!Rank.isSufficient(Rank.BOT_ADMIN, rank)){
-                MessageHelper.send(channel, user.discord().mention() + ", you do not have permission to use another user's account for mark commands");
-                return;
+            if (!Rank.isSufficient(Rank.MAKER, rank)){
+                aid.withContent(user.discord().getDisplayName(guild.discord())).withContent(", you do not have permission to use another user's account for mark commands");
+                return false;
             }
             u = User.getUser(s);
             if (u != null){
                 mark += ":" + u.getID();
             }else{
-                MessageHelper.send(channel, "No account \"" + s + "\" found");
+                aid.withContent("No account \"").withRawContent(s).withContent("\" found");
             }
         }
         entity.putData(user, mark);
+        return true;
     }
     @Register(suspicious = 1, help = "Invokes a command using the mark parameters")
-    public static boolean invoke(User user, String s, IMessage message, Entity entity){
+    public static Boolean invoke(User user, String s, IMessage message, Entity entity){
         if (entity.getData(user) != null){
             String[] mark = entity.getData(user).split(":");
             if (mark.length == 3){
@@ -48,13 +50,14 @@ public class Mark {
         return false;
     }
     @Register(suspicious = .5f, help = "Displays info on the current mark")
-    public static void info(User user, Entity entity){
+    public static Boolean info(User user, Entity entity){
         if (entity.getData(user) == null){
             noMark(user);
-        }else{
-            String[] mark = entity.getData(user).split(":");
-            MessageHelper.send(user, "Marked " + Channel.getChannel(mark[1]).discord().getName() + " on guild " + Guild.getGuild(mark[0]).discord().getName() + (mark.length == 3 && User.getUserFromID(mark[2]) != null ? " using " + StringHelper.getPossessive(User.getUserFromID(mark[2]).discord().getName()) + " account" : ""));
+            return false;
         }
+        String[] mark = entity.getData(user).split(":");
+        MessageHelper.send(user, "Marked " + Channel.getChannel(mark[1]).discord().getName() + " on guild " + Guild.getGuild(mark[0]).discord().getName() + (mark.length == 3 && User.getUserFromID(mark[2]) != null ? " using " + StringHelper.getPossessive(User.getUserFromID(mark[2]).discord().getName()) + " account" : ""));
+        return true;
     }
     @Register(suspicious = 1.5f)
     public static void clear(User user, Entity entity){

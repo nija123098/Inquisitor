@@ -46,4 +46,5 @@ public @interface Register {
     String aliases() default "";
     String absoluteAliases() default "";
     String emoticonAliases() default "";
+    boolean guaranteedSuccess() default false;
 }

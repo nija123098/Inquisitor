@@ -3,15 +3,15 @@ package um.nija123098.inquisitor.commands;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 import sx.blah.discord.handle.obj.StatusType;
+import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
-import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.FormatHelper;
 import um.nija123098.inquisitor.util.Log;
-import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.MessageAid;
 
 /**
  * Made by nija123098 on 11/13/2016
@@ -25,16 +25,16 @@ public class Uptime {
         Inquisitor.discordClient().getUsers().forEach(user -> setPresence(User.getUserFromID(user.getID()), !user.getPresence().getStatus().equals(StatusType.OFFLINE)));
     }
     @Register(defaul = true, help = "Displays the time a user has been off or online")
-    public static void uptime(Channel channel, String s, Entity entity){
+    public static Boolean uptime(String s, Entity entity, MessageAid aid, Guild guild){
         User user;
         if (s.length() == 0){
             user = User.getUserFromID(Inquisitor.ourUser().getID());
         }else{
             user = User.getUser(s);
-        }
-        if (user == null){
-            MessageHelper.send(channel, "There is no user by that name");
-            return;
+            if (user == null){
+                aid.withContent("There is no user by that name");
+                return false;
+            }
         }
         s = entity.getData(user);
         if (s == null){
@@ -43,7 +43,8 @@ public class Uptime {
             s = entity.getData(user);
         }
         String[] strings = s.split(":");
-        MessageHelper.send(channel, user.discord().getName() + " has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for **" + FormatHelper.format(System.currentTimeMillis() - Long.parseLong(strings[1])) + "**");
+        aid.withRawContent(user.discord().getNicknameForGuild(guild.discord()).orElse(user.discord().getName())).withContent(" has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for").withRawContent(" **" + FormatHelper.format(System.currentTimeMillis() - Long.parseLong(strings[1])) + "**");
+        return true;
     }
     @EventSubscriber
     public void handle(PresenceUpdateEvent event){

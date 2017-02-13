@@ -281,11 +281,11 @@ public class Alert {
         String[] strings = string.split(" ");
         User bot = User.getUser(strings[0], guild);
         if (bot == null){
-            aid.withoutTranslateContent(StringHelper.addQuotes(strings[0])).withContent(" is not a recognized user");
+            aid.withRawContent(StringHelper.addQuotes(strings[0])).withContent(" is not a recognized user");
             return false;
         }
         if (!bot.discord().isBot()){
-            aid.withoutTranslateContent(StringHelper.addQuotes(strings[0])).withContent(" is not a bot");
+            aid.withRawContent(StringHelper.addQuotes(strings[0])).withContent(" is not a bot");
             return false;
         }
         BOT_WATCHES.putIfAbsent(bot.getID(), new ArrayList<>());
@@ -293,26 +293,26 @@ public class Alert {
         if (strings.length > 1){
             try{watch = Boolean.parseBoolean(strings[1]);
             }catch(Exception e){
-                aid.withoutTranslateContent(StringHelper.addQuotes(strings[1])).withContent(" is not true or false");
+                aid.withRawContent(StringHelper.addQuotes(strings[1])).withContent(" is not true or false");
                 return false;
             }
         }
         if (watch){
             if (BOT_WATCHES.get(bot.getID()).contains(user.getID())){
-                aid.withContent("You are already watching ").withoutTranslateContent(bot.discord().getDisplayName(guild.discord()));
+                aid.withContent("You are already watching ").withRawContent(bot.discord().getDisplayName(guild.discord()));
                 return false;
             }else{
                 BOT_WATCHES.get(bot.getID()).add(user.getID());
-                aid.withContent("You are now watching ").withoutTranslateContent(bot.discord().getDisplayName(guild.discord()));
+                aid.withContent("You are now watching ").withRawContent(bot.discord().getDisplayName(guild.discord()));
                 return true;
             }
         }else{
             if (BOT_WATCHES.get(bot.getID()).contains(user.getID())){
                 BOT_WATCHES.get(bot.getID()).remove(user.getID());
-                aid.withContent("You are no longer watching ").withoutTranslateContent(bot.discord().getDisplayName(guild.discord()));
+                aid.withContent("You are no longer watching ").withRawContent(bot.discord().getDisplayName(guild.discord()));
                 return true;
             }else{
-                aid.withContent("You are not watching ").withoutTranslateContent(bot.discord().getDisplayName(guild.discord()));
+                aid.withContent("You are not watching ").withRawContent(bot.discord().getDisplayName(guild.discord()));
                 return false;
             }
         }

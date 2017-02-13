@@ -1,7 +1,5 @@
 package um.nija123098.inquisitor.commands;
 
-import javafx.util.Pair;
-import um.nija123098.inquisitor.command.Registry;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -9,14 +7,11 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.CommonMessageHelper;
+import um.nija123098.inquisitor.util.MessageAid;
 import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.Rand;
 import um.nija123098.inquisitor.util.RequestHandler;
 import um.nija123098.inquisitor.util.StringHelper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * Made by nija123098 on 12/10/2016
@@ -36,7 +31,7 @@ public class Stat {
                 return;
             }
             String[] options = entity.getData("play_text", "").split(":");
-            Inquisitor.discordClient().getShards().forEach(iShard -> iShard.online(options[Rand.integer(options.length - 1)]));
+            Inquisitor.discordClient().online(options[Rand.integer(options.length - 1)]);
             changePlayText(entity);
         });
     }
@@ -46,74 +41,44 @@ public class Stat {
         CommonMessageHelper.displayList("# play text possibilities", "", StringHelper.getList(entity.getData("play_text", "").split(":")), user);
     }
     @Register(help = "Adds play text")
-    public static Boolean add(Channel channel, Entity entity, String s){
+    public static Boolean add(Channel channel, Entity entity, String s, MessageAid aid){
         if (s.length() == 0){
-            MessageHelper.send(channel, "Can not add a string of length 0");
+            aid.withContent("Can not add a string of length 0");
             return false;
         }
         entity.putData("play_text", entity.getData("play_text", "") + s + ":");
-        MessageHelper.send(channel, "Added playing text " + StringHelper.addQuotes(s));
+        aid.withContent("Added playing text ").withRawContent(StringHelper.addQuotes(s));
         return true;
     }
     @Register(help = "Removes the text specified")
-    public static Boolean remove(Channel channel, Entity entity, String s){
+    public static Boolean remove(Entity entity, String s, MessageAid aid){
         if (entity.getData("play_text").contains(s)){
             entity.putData("play_text", entity.getData("play_text", "").replace(s + ":", ""));
-            MessageHelper.send(channel, "Removed playing text " + StringHelper.addQuotes(s));
-        }else{
-            MessageHelper.send(channel, "No playing text " + StringHelper.addQuotes(s));
-            return false;
+            aid.withContent("Removed playing text ").withRawContent(StringHelper.addQuotes(s));
+            return true;
         }
-        return true;
+        aid.withContent("No playing text ").withRawContent(StringHelper.addQuotes(s));
+        return false;
     }
     @Register(help = "Removes the text by index")
-    public static Boolean removeIndex(Channel channel, Entity entity, String s){
+    public static Boolean removeIndex(Entity entity, String s, MessageAid aid){
         String[] options = entity.getData("play_text", "").split(":");
         int[] i = new int[1];
         try{i[0] = Integer.parseInt(s);
         }catch(Exception e){
-            MessageHelper.send(channel, "No such number " + StringHelper.addQuotes(s));
+            aid.withContent("No such number ").withRawContent(StringHelper.addQuotes(s));
             return false;
         }
         if (i[0] > options.length){
-            MessageHelper.send(channel, i[0] + " is too large of a number, the index goes up to " + (options.length - 1));
+            aid.withContent(i[0] + " is too large of a number, the index goes up to " + (options.length - 1));
             return false;
         }
         entity.putData("play_text", entity.getData("play_text").replace(options[i[0]] + ":", ""));
-        MessageHelper.send(channel, "Removed play text " + StringHelper.addQuotes(options[i[0]]));
+        aid.withContent("Removed play text ").withRawContent(StringHelper.addQuotes(options[i[0]]));
         return true;
     }
-    @Register(help = "Lists all play text messages")
+    @Register(guaranteedSuccess = true, help = "Lists all play text messages")
     public static void list(User user, Entity entity){
         CommonMessageHelper.displayList("# A list of play text displays", "", StringHelper.getList(entity.getData("play_text", "").split(":")), user);
-    }
-    private static final List<Pair<String, Function<String, String>>> PAIRS;
-    static {
-        PAIRS = new ArrayList<>();
-        PAIRS.add(new Pair<>("rand", s -> {
-            try{return Rand.integer(Integer.parseInt(s)) + "";
-            }catch(Exception e){return "rand";}
-        }));
-        PAIRS.add(new Pair<>("shards", s -> Inquisitor.discordClient().getShardCount() + ""));
-        PAIRS.add(new Pair<>("guilds", s -> Inquisitor.discordClient().getGuilds().size() + ""));
-        PAIRS.add(new Pair<>("users", s -> Inquisitor.discordClient().getUsers().size() + ""));
-        PAIRS.add(new Pair<>("commands", s -> Registry.getCommands().size() + ""));
-    }
-    private static String format(String string){
-        String s = "";
-        String[] strings = string.split(" ");
-        for (String str : strings) {
-            if (string.endsWith(">")) {
-                for (Pair<String, Function<String, String>> pair : PAIRS) {
-                    if (str.startsWith(pair.getKey() + "<") && str.endsWith(">")) {
-                        s += pair.getValue().apply(str.replace(pair.getKey() + "<", "").replace(">", ""));
-                        break;
-                    }
-                }
-            } else {
-                s += str;
-            }
-        }
-        return s;
     }
 }

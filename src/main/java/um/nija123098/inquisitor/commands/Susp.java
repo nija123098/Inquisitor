@@ -12,7 +12,7 @@ import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.Suspicion;
 import um.nija123098.inquisitor.context.User;
-import um.nija123098.inquisitor.util.MessageHelper;
+import um.nija123098.inquisitor.util.MessageAid;
 
 /**
  * Made by nija123098 on 11/12/2016
@@ -45,27 +45,29 @@ public class Susp {
         }
     }
     @Register(defaul = true, suspicious = .1f, help = "Displays the suspicion level of the user")
-    public static void suspicion(User user, Channel channel, Suspicion suspicion, Guild guild, String s){
+    public static Boolean suspicion(User user, Suspicion suspicion, Guild guild, String s, MessageAid aid){
         if (s.length() == 0){
-            MessageHelper.send(channel, user.discord().mention() + ", you are " + suspicion.name());
+            aid.withRawContent(user.discord().getDisplayName(guild.discord())).withContent(", you are " + suspicion.name());
         }else{
             User u = User.getUser(s, guild);
             if (u != null){
-                MessageHelper.send(channel, u.discord().getName() + "#" + u.discord().getDiscriminator() + " has been " + Suspicion.getLevel(u).name() + " (" + Suspicion.getValue(u) + ")");
+                aid.withRawContent(u.discord().getName() + "#" + u.discord().getDiscriminator()).withContent(" has been ").withRawContent(Suspicion.getLevel(u).name() + " (" + Suspicion.getValue(u) + ")");
             }else{
-                MessageHelper.send(channel, "No user has been found");
+                aid.withContent("No user has been found by that name");
+                return false;
             }
         }
+        return true;
     }
     @Register(rank = Rank.BOT_ADMIN, help = "Sets a user's suspicion level")
-    public static void set(User user, Channel channel, String s){
+    public static Boolean set(User user, Channel channel, String s, MessageAid aid){
         float v;
         try{v = Float.parseFloat(s);
         }catch(Exception e){
-            MessageHelper.send(channel, "\"" + s + "\" is not a number");
-            return;
+            aid.withRawContent("\"" + s + "").withContent(" is not a number");
+            return false;
         }
         Suspicion.setLevel(user, v, true);
-        suspicion(user, channel, Suspicion.getLevel(user), null, "");
+        return suspicion(user, Suspicion.getLevel(user), null, "", aid);
     }
 }

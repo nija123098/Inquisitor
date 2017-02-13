@@ -29,7 +29,7 @@ public class Basic {
     }
     @Register(help = "Lists information on Inquisitor")
     public static void info(Channel channel, MessageAid aid){
-        aid.withContent("This is ").withoutTranslateContent(Inquisitor.mention()).withContent(", a Discord info bot.\n" +
+        aid.withContent("This is ").withRawContent(Inquisitor.mention()).withContent(", a Discord info bot.\n" +
                 "It collects and displays information on servers, users, and bots for a benevolent purpose.\n" +
                 "To set a prefix other than mentioning me do `@Inquisitor prefix ?` to set the prefix to `?`" +
                 Inquisitor.ourUser().mention() + " is made by nija123098#7242");
@@ -84,7 +84,7 @@ public class Basic {
     public static void invite(Channel channel, MessageAid aid){
         aid.withContent("You must have the manage server permission to add this bot to the server.\n" +
                 "You may mention me at any time as a prefix,\n" +
-                "In order to let me to chat in a channel use ").withoutTranslateContent(Inquisitor.mention()).withContent(" chat true\n" +
+                "In order to let me to chat in a channel use ").withRawContent(Inquisitor.mention()).withContent(" chat true\n" +
                 "https://discordapp.com/oauth2/authorize?client_id=244634255727132673&scope=bot");
     }
     @Register(help = "Displays the GitHub link to Inquisitor's repo")

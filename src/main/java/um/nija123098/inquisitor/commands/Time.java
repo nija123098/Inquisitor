@@ -6,7 +6,6 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageAid;
-import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.StringHelper;
 
 import java.util.Calendar;
@@ -17,15 +16,15 @@ import java.util.TimeZone;
  */
 public class Time {
     @Register(defaul = true, help = "Gets the time in relation to another user, does not observe DST")
-    public static Boolean time(Guild guild, Channel channel, String in, Entity entity){
+    public static Boolean time(Guild guild, String in, Entity entity, MessageAid aid){
         User other = User.getUser(in);
         if (other == null){
-            MessageHelper.send(channel, "No such user \"" + in + "\"");
+            aid.withContent("No such user ").withRawContent("\"" + in + "\"");
             return false;
         }
         String da = entity.getData(other);
         if (da == null){
-            MessageHelper.send(channel, other.discord().getDisplayName(guild.discord()) + " has not set his or her UTC offset.");
+            aid.withRawContent(other.discord().getDisplayName(guild.discord())).withContent(" has not set his or her UTC offset.");
             return false;
         }
         float val = Float.parseFloat(entity.getData(other));
@@ -33,7 +32,7 @@ public class Time {
         Calendar.getInstance(timeZone).add(Calendar.HOUR_OF_DAY, ((int) val));
         Calendar.getInstance(timeZone).add(Calendar.MINUTE, (int) ((val % 1) * 60));
         Calendar calendar = Calendar.getInstance(timeZone);
-        MessageHelper.send(channel, "It is currently " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + (calendar.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM") + " for " + other.discord().getDisplayName(guild.discord()));
+        aid.withContent("It is currently " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + (calendar.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM") + " for ").withRawContent(other.discord().getDisplayName(guild.discord()));
         return true;
     }
     @Register(help = "Sets the UTC relation, ex: living in MST would mean setting the value to -7")
@@ -41,7 +40,7 @@ public class Time {
         float val;
         try{val = Float.parseFloat(s);
         }catch(Exception e){
-            aid.withoutTranslateContent(StringHelper.addQuotes(s) + " is not number");
+            aid.withRawContent(StringHelper.addQuotes(s) + " is not number");
             return false;
         }
         entity.putData(user, s);
@@ -49,7 +48,7 @@ public class Time {
         Calendar.getInstance(timeZone).add(Calendar.HOUR_OF_DAY, ((int) val));
         Calendar.getInstance(timeZone).add(Calendar.MINUTE, (int) ((val % 1) * 60));
         Calendar calendar = Calendar.getInstance(timeZone);
-        aid.withoutTranslateContent("UST" + (val >= 0 ? "+" : "") + val).withContent(" set as your timezone.  It should be ").withoutTranslateContent(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + (calendar.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM"));
+        aid.withRawContent("UST" + (val >= 0 ? "+" : "") + val).withContent(" set as your timezone.  It should be ").withRawContent(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + (calendar.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM"));
         return true;
     }
 }

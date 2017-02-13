@@ -10,6 +10,7 @@ import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.util.MessageAid;
 import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.StringHelper;
 
@@ -26,21 +27,21 @@ public class Nuisance {
     }
     @Register(defaul = true)
     public static void nuisance(Channel channel){
-        MessageHelper.send(channel, "These commands help in catching ");
+        MessageHelper.send(channel, "These commands help in catching trolls.");
     }
     @Register(guild = true, rank = Rank.GUILD_ADMIN, help = "Sets the time threshold to alert the guild liaison that a user is spamming in millis or 0 to disable")
-    public static boolean ratelimit(Guild guild, Channel channel, String s){
+    public static boolean ratelimit(Guild guild, String s, MessageAid aid){
         s = s.replace("ms", "");
         try{Integer.parseInt(s);
         }catch(Exception e){
-            MessageHelper.send(channel, StringHelper.addQuotes(s) + " is not a number");
+            aid.withRawContent(StringHelper.addQuotes(s)).withContent(" is not a number");
             return false;
         }
         guild.putData("ratelimit", s);
         if (s.equals("0")){
-            MessageHelper.send(channel, "Rate limiting is now disabled for this guild");
+            aid.withContent("Rate limiting is now disabled for this guild");
         }else{
-            MessageHelper.send(channel, "This guild now has a " + guild.getData("ratelimit") + "ms message rate limit");
+            aid.withContent("This guild now has a " + guild.getData("ratelimit") + "ms message rate limit");
         }
         return true;
     }

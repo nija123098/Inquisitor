@@ -66,7 +66,7 @@ public class MessageAid {
         this.contents.add(new Pair<>(s, true));
         return this;
     }
-    public MessageAid withoutTranslateContent(String s){
+    public MessageAid withRawContent(String s){
         this.contents.add(new Pair<>(s, false));
         return this;
     }
@@ -94,7 +94,7 @@ public class MessageAid {
         Pair<String, Boolean> langPair = LangHelper.getLang(this.user, this.guild);
         if (this.translate || !langPair.getKey().equals("en")){
             if (!langPair.getValue()){
-                this.withContent("\nYou can set your language of preference with ").withoutTranslateContent("@Inquisitor setlang").withContent(" <language name>");
+                this.withContent("\nYou can set your language of preference with ").withRawContent("@Inquisitor setlang").withContent(" <language name>");
             }
             content = LangHelper.getContent(langPair.getKey(), this.contents.toArray(new Pair[this.contents.size()]));
         }else{
