@@ -43,7 +43,7 @@ public class Uptime {
             s = entity.getData(user);
         }
         String[] strings = s.split(":");
-        aid.withRawContent(user.discord().getNicknameForGuild(guild.discord()).orElse(user.discord().getName())).withContent(" has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for").withRawContent(" **" + FormatHelper.format(System.currentTimeMillis() - Long.parseLong(strings[1])) + "**");
+        aid.withToggleContent(true, user.discord().getDisplayName(guild.discord()), " has been " + (Boolean.parseBoolean(strings[0]) ? "on" : "off") + "line for", " **" + FormatHelper.format(System.currentTimeMillis() - Long.parseLong(strings[1])) + "**");
         return true;
     }
     @EventSubscriber

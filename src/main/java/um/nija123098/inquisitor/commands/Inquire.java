@@ -13,6 +13,7 @@ import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.Suspicion;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.CommonMessageHelper;
+import um.nija123098.inquisitor.util.MessageAid;
 import um.nija123098.inquisitor.util.MessageHelper;
 import um.nija123098.inquisitor.util.StringHelper;
 
@@ -56,7 +57,7 @@ public class Inquire {
         CommonMessageHelper.displayLists("# Roles for guild \"" + iGuild.getName() + "\"", "", names, online, user);
     }
     @Register(suspicious = .5f, guild = true, help = "Lists the permissions of a role on a server, use everyone instead of @everyone")
-    public static Boolean role(Guild guild, User user, String s){
+    public static Boolean role(Guild guild, User user, String s, MessageAid aid){
         if (s.length() == 0){
             roles(guild, user);
         }else{
@@ -65,7 +66,7 @@ public class Inquire {
             }
             List<IRole> roles = guild.discord().getRolesByName(s);
             if (roles.size() == 0){
-                MessageHelper.send(user, "No roles called \"" + s + "\"");
+                aid.withToggleContent(false, "No roles called ", StringHelper.addQuotes(s));
                 return false;
             }
             for (IRole iRole : roles) {
@@ -80,31 +81,31 @@ public class Inquire {
         return true;
     }
     @Register(help = "Displays the language of a previous message")
-    public static Boolean lang(Channel channel){
+    public static Boolean lang(Channel channel, MessageAid aid){
         MessageList messages = channel.discord().getMessages();
         String content;
         for (IMessage message : messages) {
             content = message.getContent();
             if (content.startsWith("```")) {
                 content = content.replace("```", "").split("\n")[0];
-                MessageHelper.send(channel, "The language used is \"" + content + "\"");
+                aid.withToggleContent(false, "The language used is ", StringHelper.addQuotes(content));
                 return true;
             }
         }
-        MessageHelper.send(channel, "No language detected");
+        aid.withContent("No language detected");
         return false;
     }
     @Register(help = "Reads out the activity of the given user on the server for the last week")
-    public static Boolean activity(Guild guild, Channel channel, String s, String[] ss){
+    public static Boolean activity(Guild guild, String s, MessageAid aid){
         User inquired = User.getUser(s);
         if (inquired == null){
-            MessageHelper.send(channel, StringHelper.addQuotes(s) + " is not a known user.");
+            aid.withToggleContent(true, StringHelper.addQuotes(s), " is not a known user.");
             return false;
         }
         long current = System.currentTimeMillis();
         final int[] count = new int[1];
         StringHelper.getContentList(inquired.getData("tracking" + "message" + guild.getID(), "").split(":")).stream().filter(st -> current - Long.parseLong(st) < 604800000).forEach(st -> ++count[0]);
-        MessageHelper.send(channel, inquired.discord().getName() + " has sent " + count[0] + " messages in the last week");
+        aid.withToggleContent(true, inquired.discord().getName(), " has sent ", count[0] + "", " messages in the last week");
         return true;
     }
     @Register(startup = true, rank = Rank.NONE)

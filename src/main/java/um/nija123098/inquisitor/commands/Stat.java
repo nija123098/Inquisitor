@@ -41,23 +41,23 @@ public class Stat {
         CommonMessageHelper.displayList("# play text possibilities", "", StringHelper.getList(entity.getData("play_text", "").split(":")), user);
     }
     @Register(help = "Adds play text")
-    public static Boolean add(Channel channel, Entity entity, String s, MessageAid aid){
+    public static Boolean add(Entity entity, String s, MessageAid aid){
         if (s.length() == 0){
             aid.withContent("Can not add a string of length 0");
             return false;
         }
         entity.putData("play_text", entity.getData("play_text", "") + s + ":");
-        aid.withContent("Added playing text ").withRawContent(StringHelper.addQuotes(s));
+        aid.withToggleContent(false, "Added playing text ", StringHelper.addQuotes(s));
         return true;
     }
     @Register(help = "Removes the text specified")
     public static Boolean remove(Entity entity, String s, MessageAid aid){
         if (entity.getData("play_text").contains(s)){
             entity.putData("play_text", entity.getData("play_text", "").replace(s + ":", ""));
-            aid.withContent("Removed playing text ").withRawContent(StringHelper.addQuotes(s));
+            aid.withToggleContent(false, "Removed playing text ", StringHelper.addQuotes(s));
             return true;
         }
-        aid.withContent("No playing text ").withRawContent(StringHelper.addQuotes(s));
+        aid.withToggleContent(false, "No playing text ", StringHelper.addQuotes(s));
         return false;
     }
     @Register(help = "Removes the text by index")
@@ -66,7 +66,7 @@ public class Stat {
         int[] i = new int[1];
         try{i[0] = Integer.parseInt(s);
         }catch(Exception e){
-            aid.withContent("No such number ").withRawContent(StringHelper.addQuotes(s));
+            aid.withToggleContent(false, "No such number ", StringHelper.addQuotes(s));
             return false;
         }
         if (i[0] > options.length){
@@ -74,7 +74,7 @@ public class Stat {
             return false;
         }
         entity.putData("play_text", entity.getData("play_text").replace(options[i[0]] + ":", ""));
-        aid.withContent("Removed play text ").withRawContent(StringHelper.addQuotes(options[i[0]]));
+        aid.withToggleContent(false, "Removed play text ", StringHelper.addQuotes(options[i[0]]));
         return true;
     }
     @Register(guaranteedSuccess = true, help = "Lists all play text messages")

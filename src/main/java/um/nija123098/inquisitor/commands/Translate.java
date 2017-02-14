@@ -14,16 +14,16 @@ public class Translate {
     @Register(defaul = true, emoticonAliases = "speech_balloon, speech_left", help = "Translates speech when a speech bubble is reacted to a message")
     public static Boolean translate(User user, IReaction reaction, MessageAid aid){
         if (reaction == null){
-            aid.withContent("You must react with a speech bubble on a message to use this command.");
+            aid.withContent("You must react with a speech bubble on a message to use this command");
             return false;
         }
         String lang = Entity.getEntity("lang", "lang").getData(user);
         if (lang == null){
-            aid.withContent("Please set your language using ").withRawContent("@Inquisitor setlang");
+            aid.withToggleContent(false, "Please set your language using ", "@Inquisitor setlang");
             return false;
         }
         IMessage message = reaction.getMessage();
-        aid.withDM().withTranslate().withRawContent(message.getAuthor().getName()).withContent(" said:\n" + message.getContent());
+        aid.withDM().withTranslate().withToggleContent(true, message.getAuthor().getName(), " said:\n" + message.getContent());
         return true;
     }
 }

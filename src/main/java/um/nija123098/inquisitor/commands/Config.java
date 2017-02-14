@@ -20,12 +20,12 @@ import um.nija123098.inquisitor.util.StringHelper;
  */
 @Register(guild = true, rank = Rank.GUILD_ADMIN)
 public class Config {
-    @Register(natural = true, guild = true, rank = Rank.USER, override = true, help = "Changes or displays the prefix for the server")
-    public static void prefix(String[] s, Guild guild, Channel channel, User user, Rank rank){
+    @Register(natural = true, guild = true, rank = Rank.USER, override = true, guaranteedSuccess = true, help = "Changes or displays the prefix for the server")
+    public static void prefix(String[] s, Guild guild, Channel channel, User user, Rank rank, MessageAid aid){
         Entity prefixEntity = Inquisitor.getEntity("prefixes");
         if (s.length == 0){
             if (prefixEntity.getData(guild) == null){
-                MessageHelper.send(channel, "No prefix has been set for this guild, to add one use configure prefix");
+                aid.withContent("No prefix has been set for this guild, to add one use configure prefix");
             }else{
                 MessageHelper.send(channel, "The prefix on this server is \"" + prefixEntity.getData(guild) + "\"");
             }

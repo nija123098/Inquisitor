@@ -26,22 +26,22 @@ public class Nuisance {
         Inquisitor.registerListener(new Monitor());
     }
     @Register(defaul = true)
-    public static void nuisance(Channel channel){
-        MessageHelper.send(channel, "These commands help in catching trolls.");
+    public static void nuisance(MessageAid aid){
+        aid.withContent("These commands help in catching trolls.");
     }
     @Register(guild = true, rank = Rank.GUILD_ADMIN, help = "Sets the time threshold to alert the guild liaison that a user is spamming in millis or 0 to disable")
     public static boolean ratelimit(Guild guild, String s, MessageAid aid){
         s = s.replace("ms", "");
         try{Integer.parseInt(s);
         }catch(Exception e){
-            aid.withRawContent(StringHelper.addQuotes(s)).withContent(" is not a number");
+            aid.withToggleContent(false, StringHelper.addQuotes(s), " is not a number");
             return false;
         }
         guild.putData("ratelimit", s);
         if (s.equals("0")){
             aid.withContent("Rate limiting is now disabled for this guild");
         }else{
-            aid.withContent("This guild now has a " + guild.getData("ratelimit") + "ms message rate limit");
+            aid.withToggleContent(false, "This guild now has a ", guild.getData("ratelimit") + "ms", " message rate limit");
         }
         return true;
     }

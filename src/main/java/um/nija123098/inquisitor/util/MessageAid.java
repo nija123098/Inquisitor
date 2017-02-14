@@ -1,6 +1,7 @@
 package um.nija123098.inquisitor.util;
 
 import javafx.util.Pair;
+import sun.plugin2.message.Message;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.DiscordException;
@@ -68,6 +69,17 @@ public class MessageAid {
     }
     public MessageAid withRawContent(String s){
         this.contents.add(new Pair<>(s, false));
+        return this;
+    }
+    public MessageAid withToggleContent(boolean rawFirst, String...s){
+        for (String st : s){
+            rawFirst = !rawFirst;
+            if (rawFirst){
+                this.withRawContent(st);
+            }else{
+                this.withContent(st);
+            }
+        }
         return this;
     }
     public MessageAid withDelete(int delay){

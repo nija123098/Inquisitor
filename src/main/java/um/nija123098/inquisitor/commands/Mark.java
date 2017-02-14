@@ -23,14 +23,14 @@ public class Mark {
         User u;
         if (s.length() != 0){
             if (!Rank.isSufficient(Rank.MAKER, rank)){
-                aid.withContent(user.discord().getDisplayName(guild.discord())).withContent(", you do not have permission to use another user's account for mark commands");
+                aid.withToggleContent(false, user.discord().getDisplayName(guild.discord()), ", you do not have permission to use another user's account for mark commands");
                 return false;
             }
             u = User.getUser(s);
             if (u != null){
                 mark += ":" + u.getID();
             }else{
-                aid.withContent("No account \"").withRawContent(s).withContent("\" found");
+                aid.withToggleContent(false, "No account ", StringHelper.addQuotes(s), "found");
             }
         }
         entity.putData(user, mark);

@@ -19,12 +19,12 @@ public class Time {
     public static Boolean time(Guild guild, String in, Entity entity, MessageAid aid){
         User other = User.getUser(in);
         if (other == null){
-            aid.withContent("No such user ").withRawContent("\"" + in + "\"");
+            aid.withToggleContent(false, "No such user ", StringHelper.addQuotes(in));
             return false;
         }
         String da = entity.getData(other);
         if (da == null){
-            aid.withRawContent(other.discord().getDisplayName(guild.discord())).withContent(" has not set his or her UTC offset.");
+            aid.withToggleContent(true, other.discord().getDisplayName(guild.discord()), " has not set his or her UTC offset.");
             return false;
         }
         float val = Float.parseFloat(entity.getData(other));
@@ -32,7 +32,7 @@ public class Time {
         Calendar.getInstance(timeZone).add(Calendar.HOUR_OF_DAY, ((int) val));
         Calendar.getInstance(timeZone).add(Calendar.MINUTE, (int) ((val % 1) * 60));
         Calendar calendar = Calendar.getInstance(timeZone);
-        aid.withContent("It is currently " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + (calendar.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM") + " for ").withRawContent(other.discord().getDisplayName(guild.discord()));
+        aid.withToggleContent(false, "It is currently " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + (calendar.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM") + " for ", other.discord().getDisplayName(guild.discord()));
         return true;
     }
     @Register(help = "Sets the UTC relation, ex: living in MST would mean setting the value to -7")
