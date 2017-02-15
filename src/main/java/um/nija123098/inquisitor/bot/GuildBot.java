@@ -27,7 +27,7 @@ public class GuildBot implements Unique {
         if (event.getMessage().getContent() != null && !(event.getMessage().getChannel() instanceof IPrivateChannel) && event.getMessage().getChannel().getGuild().getID().equals(this.guildID)){
             String s = event.getMessage().getContent();
             s = StringHelper.limitOneSpace(s);
-            if (s.equals("?")){
+            if (s.length() < 1 || s.replace(s.charAt(0) + "", "").length() == 0){
                 return;
             }
             boolean command = true;
