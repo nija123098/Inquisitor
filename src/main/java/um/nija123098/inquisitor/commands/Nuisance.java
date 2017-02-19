@@ -6,7 +6,6 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 import sx.blah.discord.handle.obj.IGuild;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
-import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;

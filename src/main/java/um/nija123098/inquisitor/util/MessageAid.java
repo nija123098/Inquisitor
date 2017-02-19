@@ -1,7 +1,6 @@
 package um.nija123098.inquisitor.util;
 
 import javafx.util.Pair;
-import sun.plugin2.message.Message;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.DiscordException;

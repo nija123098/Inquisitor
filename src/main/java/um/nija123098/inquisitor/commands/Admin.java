@@ -1,6 +1,5 @@
 package um.nija123098.inquisitor.commands;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import sx.blah.discord.handle.obj.IMessage;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;

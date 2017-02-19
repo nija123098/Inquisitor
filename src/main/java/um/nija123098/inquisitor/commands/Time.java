@@ -2,7 +2,6 @@ package um.nija123098.inquisitor.commands;
 
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.command.Register;
-import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Guild;
 import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.MessageAid;
