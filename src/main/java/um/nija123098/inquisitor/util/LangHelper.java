@@ -119,6 +119,6 @@ public class LangHelper {
         JSONArray jsonArray = new JSONArray(response.toString());
         JSONArray jsonArray2 = (JSONArray) jsonArray.get(0);
         JSONArray jsonArray3 = (JSONArray) jsonArray2.get(0);
-        return jsonArray3.get(0).toString();
+        return new String(jsonArray3.get(0).toString().getBytes(), "UTF-8");
     }
 }
