@@ -26,16 +26,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * Made by nija123098 on 2/4/2017.
  */
 @Register(guild = true)
-public class Harold {
+public class Herald {
     private static final Map<IVoiceChannel, String> VOICE_CHANNELS = new ConcurrentHashMap<>();
     @Register(defaul = true, help = "Makes the bot join the channel and announce things")
-    public static Boolean harold(IVoiceChannel channel, User user, Guild guild, MessageAid aid){
+    public static Boolean herald(IVoiceChannel channel, User user, Guild guild, MessageAid aid){
         if (channel == null){
             aid.withContent("You are not in a voice channel in this guild");
             return false;
         }
         if (VOICE_CHANNELS.keySet().contains(channel) && Inquisitor.discordClient().getVoiceChannels().contains(channel)){
-            aid.withContent("That channel is already being harolded, use harold disband to stop the announcements");
+            aid.withContent("That channel is already being heralded, use herald disband to stop the announcements");
             return false;
         }
         EnumSet<Permissions> perms = channel.getModifiedPermissions(Inquisitor.ourUser());
@@ -49,7 +49,7 @@ public class Harold {
         }
         for (IVoiceChannel chan : VOICE_CHANNELS.keySet()){
             if (channel.getGuild().equals(chan.getGuild())){
-                aid.withContent("A channel in this guild is already being harolded");
+                aid.withContent("A channel in this guild is already being heralded");
                 return false;
             }
         }
@@ -64,13 +64,13 @@ public class Harold {
             aid.withContent("You are not in a voice channel in this guild");
             return false;
         }
-        String l = VOICE_CHANNELS.get(channel);
+        String l = VOICE_CHANNELS.remove(channel);
         if (l != null){
             AudioHelper.say(l, channel, new Pair<>("Inquisitor", false), new Pair<>(" is leaving the channel", true));
             RequestHandler.request(6000, channel::leave);
             return true;
         }else{
-            aid.withContent("You are not in a channel with harolding active");
+            aid.withContent("You are not in a channel with heralding active");
         }
         return false;
     }
