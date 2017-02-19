@@ -109,7 +109,7 @@ public class LangHelper {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
         String inputLine;
         StringBuilder response = new StringBuilder();
         while ((inputLine = in.readLine()) != null) {
@@ -119,6 +119,6 @@ public class LangHelper {
         JSONArray jsonArray = new JSONArray(response.toString());
         JSONArray jsonArray2 = (JSONArray) jsonArray.get(0);
         JSONArray jsonArray3 = (JSONArray) jsonArray2.get(0);
-        return new String(jsonArray3.get(0).toString().getBytes(), "UTF-8");
+        return jsonArray3.get(0).toString();
     }
 }
