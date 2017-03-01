@@ -31,10 +31,10 @@ public class Uptime {
             user = User.getUserFromID(Inquisitor.ourUser().getID());
         }else{
             user = User.getUser(s);
-            if (user == null){
-                aid.withContent("There is no user by that name");
-                return false;
-            }
+        }
+        if (user == null){
+            aid.withContent("There is no user by that name");
+            return false;
         }
         s = entity.getData(user);
         if (s == null){

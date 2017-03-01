@@ -60,16 +60,11 @@ public class AudioHelper {
         return file;
     }
     private static void getSynth(File to, String text){
-        InputStream inputStream = null;
         try {
-            inputStream = SYNTHESISER.getMP3Data(text);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[8192];
-        int bytesRead;
-        try {
+            InputStream inputStream = SYNTHESISER.getMP3Data(text);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[8192];
+            int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) > 0) {
                 baos.write(buffer, 0, bytesRead);
             }

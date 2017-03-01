@@ -11,13 +11,13 @@ import java.util.concurrent.atomic.AtomicLong;
  * Made by nija123098 on 1/14/2017
  */
 public class FormatHelper {
-    private static final Map<String, Long> TIME_SYMBOLS = new LinkedHashMap<>();
+    private static final Map<String, Long> TIME_SYMBOLS = new LinkedHashMap<>(5, 1);
     static {
-        TIME_SYMBOLS.put("w", 604800000L);
-        TIME_SYMBOLS.put("d", 86400000L);
-        TIME_SYMBOLS.put("h", 3600000L);
-        TIME_SYMBOLS.put("m", 60000L);
         TIME_SYMBOLS.put("s", 1000L);
+        TIME_SYMBOLS.put("m", 60000L);
+        TIME_SYMBOLS.put("h", 3600000L);
+        TIME_SYMBOLS.put("d", 86400000L);
+        TIME_SYMBOLS.put("w", 604800000L);
     }
     public static String format(long lon){
         final AtomicLong atomicLong = new AtomicLong(lon);
@@ -27,9 +27,8 @@ public class FormatHelper {
         int num;
         for (int i = 0; i < TIME_SYMBOLS.size(); i++) {
             num = (int) (atomicLong.get() / entries.get(i).getValue());
-            System.out.println(num + " on " + entries.get(i).getKey());
             if (num > 0){
-                builder.append(num + entries.get(i).getKey());
+                builder.append(num).append(entries.get(i).getKey());
                 atomicLong.addAndGet(-num * entries.get(i).getValue());
             }
         }
