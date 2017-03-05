@@ -73,11 +73,7 @@ public class MessageAid {
     public MessageAid withToggleContent(boolean rawFirst, String...s){
         for (String st : s){
             rawFirst = !rawFirst;
-            if (rawFirst){
-                this.withRawContent(st);
-            }else{
-                this.withContent(st);
-            }
+            this.contents.add(new Pair<>(st, rawFirst));
         }
         return this;
     }

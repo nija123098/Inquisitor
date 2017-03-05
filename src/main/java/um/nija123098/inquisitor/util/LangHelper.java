@@ -13,10 +13,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Made by nija123098 on 1/13/2017
@@ -61,18 +58,13 @@ public class LangHelper {
     public static synchronized String getContent(String lang, Pair<String, Boolean>...translationPairs){
         String building = "";
         for (Pair<String, Boolean> translationPair : translationPairs) {
-            String space = "";
-            String key = translationPair.getKey();
-            while (true){
-                if (key.startsWith(" ")){
-                    space += " ";
-                    key = key.substring(1);
-                }else{
-                    break;
-                }
-            }
-            building += translationPair.getValue() ? space + getContent(lang, translationPair.getKey()) : translationPair.getKey();
+            String res = translationPair.getValue() ? getContent(lang, translationPair.getKey()) : translationPair.getKey();
+            //System.out.println();
+            //System.out.println(translationPair.getValue());
+            //System.out.println(res);
+            building += res;
         }
+        //System.out.println(building);
         return building;
     }
     public static synchronized String getContent(String lang, String content){
@@ -81,21 +73,40 @@ public class LangHelper {
         for (String c : contents) {
             content += getSingleContent(lang, c) + "\n";
         }
-        return content;
+        return content.substring(0, content.length() - 1);
     }
     private static synchronized String getSingleContent(String lang, String content){
         if (!LANG_CONTENT.containsKey(lang)){
             LANG_CONTENT.put(lang, new ArrayList<>());
         }
+        int before = 0, after = 0;
+        for (int i = 0; i < content.length(); i++) {
+            if (content.charAt(i) != ' '){
+                before = i;
+                break;
+            }
+        }
+        for (int i = content.length() - 1; i > -1; --i) {
+            if (content.charAt(i) != ' '){
+                after = content.length() - i - 1;
+                break;
+            }
+        }
+        content = content.substring(before, content.length() - after);
         List<Pair<String, String>> lan = LANG_CONTENT.get(lang);
         for (Pair<String, String> pair : lan) {
             if (pair.getKey().equals(lang)){
                 return pair.getValue();
             }
         }
-        String result = translate(lang, content);
-        lan.add(new Pair<>(content, result));
-        return result;
+        content = translate(lang, content);
+        for (int i = 0; i < before; i++) {
+            content = " " + content;
+        }
+        for (int i = 0; i < before; i++) {
+            content += " ";
+        }
+        return content;
     }
     private static String translate(String isoTo, String content){
         try {

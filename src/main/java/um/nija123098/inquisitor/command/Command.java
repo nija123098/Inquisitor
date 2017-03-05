@@ -25,7 +25,7 @@ public class Command {
     private final List<String> aliases, reactionAliases, names;
     private final String name;
     private final Method method;
-    private final Register register, clazz;
+    public final Register register, clazz;
     private final Entity entity;
     Command(Method method, List<Method> others) {
         this.method = method;

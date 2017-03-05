@@ -1,6 +1,7 @@
 package um.nija123098.inquisitor.commands;
 
 import sx.blah.discord.handle.obj.IMessage;
+import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
@@ -104,11 +105,11 @@ public class Admin {
         Log.warn(user.discord().getName() + " put Inquisitor in lockdown");
     }
     @Register(guaranteedSuccess = true, emoticonAliases = "floppy_disk", help = "Saves all bot configuration files")
-    public static void save(IMessage message){
+    public static void save(IMessage message, Command command){
         Inquisitor.save();
         MessageHelper.react("floppy_disk", message);
     }
-    @Register(absoluteAliases = "close", help = "Shuts down the bot without restart")
+    @Register(absoluteAliases = "close", help = "Shuts down the bot")
     public static Boolean close(User user, IMessage message, String s){
         Inquisitor.lockdown();
         switch (s){
