@@ -83,7 +83,7 @@ public class Admin {
         return false;
     }
     @Register(help = "Unbans a user from using the bot")
-    public static Boolean unban(Channel channel, String s, MessageAid aid){
+    public static Boolean unban(String s, MessageAid aid){
         Entity entity = Inquisitor.getEntity("permissions");
         User user = User.getUser(s);
         if (user == null){
@@ -104,7 +104,7 @@ public class Admin {
         MessageHelper.react("lock", message);
         Log.warn(user.discord().getName() + " put Inquisitor in lockdown");
     }
-    @Register(guaranteedSuccess = true, emoticonAliases = "floppy_disk", help = "Saves all bot configuration files")
+    @Register(guaranteedSuccess = true, absoluteAliases = "save", emoticonAliases = "floppy_disk", help = "Saves all bot configuration files")
     public static void save(IMessage message, Command command){
         Inquisitor.save();
         MessageHelper.react("floppy_disk", message);

@@ -82,7 +82,7 @@ public class Herald {
                 return;
             }
             if (VOICE_CHANNELS.keySet().contains(leave.getVoiceChannel())){
-                if (leave.getVoiceChannel().getConnectedUsers().stream().filter(user -> !user.isBot()).count() == 1){
+                if (leave.getVoiceChannel().getConnectedUsers().stream().filter(user -> !user.isBot()).count() < 1){
                     VOICE_CHANNELS.remove(leave.getVoiceChannel());
                     leave.getVoiceChannel().leave();
                 }else{
@@ -96,7 +96,7 @@ public class Herald {
             }
             move(true, move.getUser(), move.getNewChannel());
             if (VOICE_CHANNELS.keySet().contains(move.getOldChannel())){
-                if (move.getOldChannel().getConnectedUsers().stream().filter(user -> !user.isBot()).count() == 1){
+                if (move.getOldChannel().getConnectedUsers().stream().filter(user -> !user.isBot()).count() < 1){
                     VOICE_CHANNELS.remove(move.getOldChannel());
                     move.getOldChannel().leave();
                 }else{
