@@ -33,6 +33,9 @@ public class Registry {
                 Command command = new Command(method, methods);
                 COMMANDS.add(command);
                 command.names().forEach(s -> {
+                    if (s == null){// skip emoticon aliases that are not on the local computer
+                        return;
+                    }
                     String[] strings = s.split(" ");
                     if (COMMAND_TRIPLE.get(strings.length) == null){
                         COMMAND_TRIPLE.add(strings.length, new ArrayList<>());
