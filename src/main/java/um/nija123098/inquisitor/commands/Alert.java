@@ -223,16 +223,15 @@ public class Alert {
     @Register(help = "Notifies if an specified user stops playing games")
     public static Boolean noStatus(Channel channel, User user, String[] strings, String s){
         User target = User.getUser(strings[0]);
-        if (target != null){
-            if (user.equals(target) && user.discord().getPresence().getStatus() == StatusType.ONLINE){
-                MessageHelper.send(channel, target.discord().getName() + " is not playing a game already");
-                return false;
-            }
-        }else{
+        if (target == null){
             MessageHelper.send(channel, "No such user " + StringHelper.addQuotes(strings[0]));
             return false;
         }
-        MessageHelper.send(channel, Inquisitor.ourUser().mention() + " will alert you when " + user.discord().getName() + " is no longer playing a game");
+        if (target.discord().getPresence().getStatus() == StatusType.ONLINE && !target.discord().getPresence().getPlayingText().isPresent()){
+            MessageHelper.send(channel, target.discord().getName() + " is not playing a game already");
+            return false;
+        }
+        MessageHelper.send(channel, Inquisitor.ourUser().mention() + " will alert you when " + target.discord().getName() + " is no longer playing a game");
         new NoStatusWatch(user, target);
         return true;
     }
@@ -250,7 +249,7 @@ public class Alert {
         }
         @Override
         boolean condition(PresenceUpdateEvent event) {
-            return event.getUser().equals(this.target.discord()) && event.getNewPresence().getStatus() == StatusType.ONLINE;
+            return event.getUser().equals(this.target.discord()) && event.getNewPresence().getStatus() == StatusType.ONLINE && !event.getNewPresence().getPlayingText().isPresent();
         }
         @Override
         void satisfied(){
@@ -258,7 +257,7 @@ public class Alert {
         }
         @Override
         String save() {
-            return this.user.getID() + this.target.getID();
+            return this.user.getID() + ":" + this.target.getID();
         }
     }
     @Register
