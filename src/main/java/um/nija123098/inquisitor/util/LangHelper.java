@@ -72,7 +72,11 @@ public class LangHelper {
         return content.substring(0, content.length() - 1);
     }
     private static synchronized String getSingleContent(String lang, String content){
-        LANG_CONTENT.computeIfAbsent(lang, s -> new HashMap());
+        Map<String, String> lan = LANG_CONTENT.computeIfAbsent(lang, s -> new HashMap());
+        String translate = lan.get(content);
+        if (translate != null) {
+            return translate;
+        }
         int before = 0, after = 0;
         for (int i = 0; i < content.length(); i++) {
             if (content.charAt(i) != ' '){
@@ -87,11 +91,6 @@ public class LangHelper {
             }
         }
         content = content.substring(before, content.length() - after);
-        Map<String, String> lan = LANG_CONTENT.get(lang);
-        String translate = lan.get(content);
-        if (translate != null){
-            return translate;
-        }
         translate = translate(lang, content);
         for (int i = 0; i < before; i++) {
             translate = " " + translate;
@@ -100,12 +99,14 @@ public class LangHelper {
             translate += " ";
         }
         lan.put(content, translate);
-        return content;
+        return translate;
     }
     private static String translate(String isoTo, String content){
         try {
             return get(isoTo, content);
         } catch (Exception e){
+            Log.error("Translation exception: " + content);
+            e.printStackTrace();
             return content;
         }
     }
