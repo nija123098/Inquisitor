@@ -3,8 +3,11 @@ package um.nija123098.inquisitor.commands;
 import javafx.util.Pair;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
-import sx.blah.discord.handle.obj.*;
-import sx.blah.discord.util.MessageList;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IRole;
+import sx.blah.discord.handle.obj.StatusType;
+import sx.blah.discord.util.MessageHistory;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
@@ -82,7 +85,7 @@ public class Inquire {
     }
     @Register(help = "Displays the language of a previous message")
     public static Boolean lang(Channel channel, MessageAid aid){
-        MessageList messages = channel.discord().getMessages();
+        MessageHistory messages = channel.discord().getMessageHistory(20);
         String content;
         for (IMessage message : messages) {
             content = message.getContent();

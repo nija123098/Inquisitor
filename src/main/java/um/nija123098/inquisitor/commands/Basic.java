@@ -3,15 +3,15 @@ package um.nija123098.inquisitor.commands;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.MessageList;
-import um.nija123098.inquisitor.context.Channel;
-import um.nija123098.inquisitor.context.Rank;
-import um.nija123098.inquisitor.context.Suspicion;
-import um.nija123098.inquisitor.context.User;
+import sx.blah.discord.util.MessageHistory;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Command;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.command.Registry;
+import um.nija123098.inquisitor.context.Channel;
+import um.nija123098.inquisitor.context.Rank;
+import um.nija123098.inquisitor.context.Suspicion;
+import um.nija123098.inquisitor.context.User;
 import um.nija123098.inquisitor.util.*;
 
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class Basic {
                 count = 100;
             }
         }
-        MessageList messages = channel.discord().getMessages();
+        MessageHistory messages = channel.discord().getMessageHistory();
         IUser user = Inquisitor.ourUser();
         List<IMessage> deletes = new ArrayList<>(count);
         int i = 0;

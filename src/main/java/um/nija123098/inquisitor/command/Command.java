@@ -241,8 +241,8 @@ public class Command {
                 if (user == null){
                     objects[i] = null;
                 }else{
-                    for (IVoiceChannel vChannel : user.discord().getConnectedVoiceChannels()) {
-                        if (vChannel.getGuild().getID().equals(guild.getID())){
+                    for (String vChannel : user.discord().getVoiceStates().keySet()) {
+                        if (vChannel.equals(guild.getID())){
                             objects[i] = vChannel;
                             break;
                         }
