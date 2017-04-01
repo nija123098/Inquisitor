@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 11/7/2016
@@ -241,8 +242,8 @@ public class Command {
                 if (user == null){
                     objects[i] = null;
                 }else{
-                    for (String vChannel : user.discord().getVoiceStates().keySet()) {
-                        if (vChannel.equals(guild.getID())){
+                    for (IVoiceChannel vChannel : user.discord().getVoiceStates().values().stream().map(IVoiceState::getChannel).filter(Objects::nonNull).collect(Collectors.toList())) {
+                        if (vChannel.getGuild().getID().equals(guild.getID())){
                             objects[i] = vChannel;
                             break;
                         }

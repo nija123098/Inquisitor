@@ -109,7 +109,11 @@ public class Herald {
     private static void move(boolean join, IUser user, IVoiceChannel channel){
         String lang = VOICE_CHANNELS.get(channel);
         if (lang != null){
-            AudioHelper.say(lang, channel, new Pair<>(user.getDisplayName(channel.getGuild()), false), new Pair<>(" has " + (join ? "joined" : "left") + " the channel", true));
+            String name = user.getDisplayName(channel.getGuild());
+            if (name.length() > 10){
+                name = name.substring(10) + "...";
+            }
+            AudioHelper.say(lang, channel, new Pair<>(name, false), new Pair<>(" has " + (join ? "joined" : "left") + " the channel", true));
         }
     }
     @Register(shutdown = true)
