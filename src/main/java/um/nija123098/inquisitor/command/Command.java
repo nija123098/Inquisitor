@@ -207,12 +207,12 @@ public class Command {
                 }
             }
             suspicion = Suspicion.getLevel(user);
-            if (Suspicion.isSufficient(this.suspicion(), suspicion)){
+            /*if (Suspicion.isSufficient(this.suspicion(), suspicion)){
                 if (warn){
                     MessageHelper.send(channel, user.discord().mention() + " you are " + Suspicion.getLevel(user).name() + ", you can not use that command");
                 }
                 return false;
-            }
+            }*/
         }
         MessageAid aider = null;
         Class[] parameterTypes = this.method.getParameterTypes();
