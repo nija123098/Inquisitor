@@ -4,18 +4,15 @@ import org.eclipse.jetty.util.ConcurrentHashSet;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 import sx.blah.discord.handle.obj.StatusType;
-import um.nija123098.inquisitor.context.Guild;
-import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.bot.Inquisitor;
 import um.nija123098.inquisitor.command.Register;
 import um.nija123098.inquisitor.context.Channel;
 import um.nija123098.inquisitor.context.Rank;
 import um.nija123098.inquisitor.context.User;
+import um.nija123098.inquisitor.saving.Entity;
 import um.nija123098.inquisitor.util.*;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -304,8 +301,8 @@ public class Alert {
         void satisfied() {}
         @Override
         boolean condition(PresenceUpdateEvent event){
-            if (event.getNewPresence().getStatus() != event.getOldPresence().getStatus()){
-                MessageHelper.send(User.getUserFromID(event.getUser().getID()), event.getUser().mention() + " is now " + event.getNewPresence().getStatus());
+            if (event.getNewPresence().getStatus() != event.getOldPresence().getStatus() && event.getUser().getID().equals(this.target.getID())){
+                MessageHelper.send(User.getUserFromID(this.watcher.getID()), event.getUser().mention() + " is now " + event.getNewPresence().getStatus());
             }// no point in returning true to indicate to call two methods that do nothing
             return false;
         }
