@@ -56,7 +56,7 @@ public class Entity {
         if (strings == null){
             strings = new ArrayList<>(0);
         }
-        strings.forEach(str -> {
+        strings.stream().filter(s -> s.length() > 2).forEach(str -> {
             String[] st = str.split(":");
             this.stringMap.put(st[0], str.substring(st[0].length() + 1));
         });

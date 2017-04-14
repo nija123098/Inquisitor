@@ -33,6 +33,7 @@ public class Inquisitor {
         Runtime.getRuntime().addShutdownHook(new Thread(Inquisitor::save, "Shutdown Hook"));
         Registry.register(ClassFinder.find("um.nija123098.inquisitor.commands").stream().collect(Collectors.toList()));
         Log.info("Command registration complete");
+        RequestHandler.request(3600000, Inquisitor::save);
     }
     private static Inquisitor inquisitor;
     public static IDiscordClient discordClient(){
