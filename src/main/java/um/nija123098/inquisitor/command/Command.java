@@ -124,10 +124,10 @@ public class Command {
         if (DEFAULT.rank() != this.clazz.rank()){
             return this.clazz.rank();
         }
-        return this.register.rank();
+        return !startup() && !shutdown() ? this.register.rank() : Rank.NONE;
     }
     public boolean rankSufficient(Rank rank){
-        return Rank.isSufficient(this.rank(), rank);
+        return !startup() && !shutdown() && Rank.isSufficient(this.rank(), rank);
     }
     public boolean startup() {
         if (DEFAULT.startup() != this.clazz.startup()){
